@@ -1,0 +1,60 @@
+{
+  "files": {
+    "code": [
+      "ai/ai.config.ts",
+      "ai/index.ts",
+      "index.ts",
+      "modes/agent/action-tracker.ts",
+      "modes/agent/agent-tools.ts",
+      "modes/agent/approval.ts",
+      "modes/agent/diff-view.ts",
+      "modes/agent/orchestrator.ts",
+      "modes/agent/tool-executor.ts",
+      "modes/agent/types.ts",
+      "modes/ask/orchestrator.ts",
+      "modes/cli.ts",
+      "modes/plan/orchestrator.ts",
+      "modes/plan/planner.ts",
+      "modes/plan/selection.ts",
+      "modes/plan/types.ts",
+      "modes/plan/web-tools.ts",
+      "modes/telegram/agent-run.ts",
+      "modes/telegram/approval-session.ts",
+      "modes/telegram/auth.ts",
+      "modes/telegram/constants.ts",
+      "modes/telegram/handlers.ts",
+      "modes/telegram/index.ts",
+      "modes/telegram/plan-session.ts",
+      "modes/telegram/text.ts",
+      "tui/terminal-md.ts",
+      "tui/wakeup.ts"
+    ],
+    "document": [
+      "README.md",
+      "test.md"
+    ],
+    "paper": [],
+    "image": [],
+    "video": []
+  },
+  "total_files": 29,
+  "total_words": 6781,
+  "needs_graph": false,
+  "warning": "Corpus is ~6,781 words - fits in a single context window. You may not need a graph.",
+  "skipped_sensitive": [],
+  "graphifyignore_patterns": 19,
+  "scope": {
+    "requested_mode": "all",
+    "resolved_mode": "all",
+    "source": "configured-default",
+    "root": ".",
+    "candidate_count": null,
+    "included_count": 29,
+    "excluded_untracked_count": 0,
+    "excluded_ignored_count": 0,
+    "excluded_sensitive_count": 0,
+    "missing_committed_count": 0,
+    "warnings": [],
+    "recommendation": null
+  }
+}
