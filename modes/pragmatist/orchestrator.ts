@@ -4,6 +4,10 @@ import { isCancel, text } from "@clack/prompts";
 import { runRepoWithEnvCheck } from "../../services/repo-runner";
 import { runWithRepoProgress } from "../../services/repo-progress";
 
+function isAffirmative(value: string): boolean {
+  return ["y", "yes"].includes(value.trim().toLowerCase());
+}
+
 function splitArgs(input: string): string[] {
   const args: string[] = [];
   let current = "";
@@ -102,9 +106,26 @@ export async function runPragmatistMode(): Promise<void> {
 
   const args = rawArgs.trim() ? splitArgs(rawArgs) : [];
 
+  const networkAnswer = await text({
+    message:
+      "Does this repo need internet access to run (e.g. calling an external API)? (y/N)",
+    placeholder: "n",
+    validate: (value) => {
+      const trimmed = (value ?? "").trim().toLowerCase();
+      if (trimmed && !["y", "n", "yes", "no"].includes(trimmed)) {
+        return 'Please answer "y" or "n".';
+      }
+      return undefined;
+    },
+  });
+
+  if (isCancel(networkAnswer)) return;
+
+  const allowNetwork = isAffirmative(networkAnswer ?? "");
+
   try {
     const result = await runWithRepoProgress("pragmatist run", async () => {
-      return runRepoWithEnvCheck(repoUrl.trim(), args);
+      return runRepoWithEnvCheck(repoUrl.trim(), args, { allowNetwork });
     });
 
     if ("error" in result) {
