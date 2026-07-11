@@ -34,10 +34,11 @@ export function createRepoAgentTools() {
       inputSchema: z.object({
         repoUrl: z.string(),
         args: z.array(z.string()),
+        allowNetwork: z.boolean().default(false),
       }),
-      execute: async ({ repoUrl, args }) =>
+      execute: async ({ repoUrl, args, allowNetwork }) =>
         runWithRepoProgress("run_repo_once", async ({ signal, onStatus }) => {
-          const result = await runRepo(repoUrl, args, { signal, onStatus });
+          const result = await runRepo(repoUrl, args, { signal, onStatus, allowNetwork });
           return {
             stdout: result.stdout,
             stderr: result.stderr,
@@ -52,12 +53,14 @@ export function createRepoAgentTools() {
       inputSchema: z.object({
         repoUrl: z.string(),
         containerPort: z.number().int(),
+        allowNetwork: z.boolean().default(false),
       }),
-      execute: async ({ repoUrl, containerPort }) =>
+      execute: async ({ repoUrl, containerPort, allowNetwork }) =>
         runWithRepoProgress("start_repo_service", async ({ signal, onStatus }) => {
           const handle = await runRepoAsService(repoUrl, containerPort, {
             signal,
             onStatus,
+            allowNetwork,
           });
           activeServices.set(handle.containerName, handle);
           return {
@@ -138,10 +141,11 @@ export function createRepoAgentTools() {
       inputSchema: z.object({
         repoUrl: z.string(),
         args: z.array(z.string()),
+        allowNetwork: z.boolean().default(false),
       }),
-      execute: async ({ repoUrl, args }) =>
+      execute: async ({ repoUrl, args, allowNetwork }) =>
         runWithRepoProgress("run_repo_with_env", async () => {
-          const result = await runRepoWithEnvCheck(repoUrl, args);
+          const result = await runRepoWithEnvCheck(repoUrl, args, { allowNetwork });
           if (isErrorResult(result)) {
             return result;
           }

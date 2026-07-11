@@ -193,16 +193,18 @@ export async function promptForEnvValues(
   const signal = getRepoToolContext()?.signal;
   const values: Record<string, string> = {};
 
+  output.write("\n");
+
   for (const requirement of requirements) {
     while (true) {
-      const parts = [requirement.key];
+      output.write(`${requirement.key}`);
       if (requirement.description.trim()) {
-        parts.push(`- ${requirement.description.trim()}`);
+        output.write(` - ${requirement.description.trim()}`);
       }
-      parts.push(requirement.required ? "(required)" : "(optional)");
+      output.write(requirement.required ? " (required)\n" : " (optional)\n");
 
       const answer = await askQuestion(
-        `${parts.join(" ")}: `,
+        "> ",
         isSecretKey(requirement.key),
         signal,
       );
@@ -216,9 +218,10 @@ export async function promptForEnvValues(
         break;
       }
 
-      output.write(`${requirement.key} is required.\n`);
+      output.write(`${requirement.key} is required.\n\n`);
     }
   }
 
+  output.write("\n");
   return values;
 }
