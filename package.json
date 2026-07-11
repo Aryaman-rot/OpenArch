@@ -1,0 +1,31 @@
+{
+  "name": "openarch-build",
+  "module": "index.ts",
+  "type": "module",
+  "private": true,
+  "bin": {
+    "openarch-build": "./index.ts"
+  },
+  "devDependencies": {
+    "@types/bun": "latest"
+  },
+  "peerDependencies": {
+    "typescript": "^5"
+  },
+  "dependencies": {
+    "@clack/core": "^1.4.0",
+    "@clack/prompts": "^1.5.0",
+    "@mendable/firecrawl-js": "^4.28.2",
+    "@openrouter/ai-sdk-provider": "^2.9.0",
+    "@types/marked-terminal": "^6.1.1",
+    "@types/node": "^25.9.1",
+    "ai": "^6.0.194",
+    "chalk": "^5.6.2",
+    "commander": "^15.0.0",
+    "diff": "^9.0.0",
+    "figlet": "^1.11.0",
+    "marked": "^18.0.4",
+    "marked-terminal": "^7.3.0",
+    "telegraf": "^4.16.3"
+  }
+}
