@@ -33,3 +33,9 @@ export interface ToolSchema {
     required: boolean;
   }>;
 }
+
+export interface EnvRequirement {
+  key: string;
+  description: string;
+  required: boolean;
+}

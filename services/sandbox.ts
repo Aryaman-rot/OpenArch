@@ -227,7 +227,7 @@ export async function buildImage(
 export async function runContainer(
   imageName: string,
   args: string[],
-  opts?: { timeoutMs?: number; signal?: AbortSignal },
+  opts?: { timeoutMs?: number; signal?: AbortSignal; env?: Record<string, string> },
 ): Promise<RunResult> {
   const dockerArgs = [
     "run",
@@ -236,9 +236,15 @@ export async function runContainer(
     "none",
     "--memory=512m",
     "--cpus=1",
-    imageName,
-    ...args,
   ];
+
+  if (opts?.env) {
+    for (const [key, value] of Object.entries(opts.env)) {
+      dockerArgs.push("-e", `${key}=${value}`);
+    }
+  }
+
+  dockerArgs.push(imageName, ...args);
 
   const result = await runCommand("docker", dockerArgs, {
     timeoutMs: opts?.timeoutMs,
@@ -273,7 +279,7 @@ export async function removeImage(imageName: string): Promise<void> {
 export async function startService(
   imageName: string,
   containerPort: number,
-  opts?: { signal?: AbortSignal },
+  opts?: { signal?: AbortSignal; env?: Record<string, string> },
 ): Promise<ServiceHandle> {
   const hostPort = await findFreePort();
   const containerName = `openarch-service-${sanitizeNameSegment(imageName)}-${Math.random()
@@ -302,6 +308,7 @@ export async function startService(
         "--cpus=1",
         "-p",
         `${hostPort}:${containerPort}`,
+        ...(opts?.env ? Object.entries(opts.env).flatMap(([key, value]) => ["-e", `${key}=${value}`]) : []),
         imageName,
       ],
       { signal: opts?.signal },

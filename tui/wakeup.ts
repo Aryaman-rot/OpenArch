@@ -28,40 +28,41 @@ function printBannerWithShadow(ascii: string) {
 
 
 export async function runWakeup() {
-    let ascii:string;
-    try {
-        ascii = figlet.textSync("OpenArch", { font: BANNER_FONT });
-    } catch (error) {
-        ascii = figlet.textSync("OpenArch", { font: "Standard" });
-    }
-    printBannerWithShadow(ascii)
+  let ascii: string;
+  try {
+    ascii = figlet.textSync("OpenArch", { font: BANNER_FONT });
+  } catch (error) {
+    ascii = figlet.textSync("OpenArch", { font: "Standard" });
+  }
 
+  printBannerWithShadow(ascii);
+
+  while (true) {
     const mode = await select({
-        message: "Choose your mode",
-        options: [
-            { value: "cli", label: "CLI" },
-            { value: "telegram", label: "Telegram" },
-            { value: "exit", label: "Exit" },
-        ],
+      message: "Choose your mode",
+      options: [
+        { value: "cli", label: "CLI" },
+        { value: "telegram", label: "Telegram" },
+        { value: "exit", label: "Exit" },
+      ],
     });
-    
-    if (isCancel(mode) || mode === "exit") {
-        console.log(chalk.dim("\n Exiting... \n"))
-        console.log(chalk.dim("Arrivederci!"));
-        return;
-    }
 
+    if (isCancel(mode) || mode === "exit") {
+      console.log(chalk.dim("\n Exiting... \n"));
+      console.log(chalk.dim("Arrivederci!"));
+      return;
+    }
 
     if (mode === "cli") {
-        console.log(chalk.dim("You chose CLI mode!"))
-        console.log(chalk.dim("Starting CLI..."))
-        await runCliMode()
+      console.log(chalk.dim("You chose CLI mode!"));
+      console.log(chalk.dim("Starting CLI..."));
+      await runCliMode();
+    } else if (mode === "telegram") {
+      console.log(chalk.dim("You chose Telegram mode!"));
+      console.log(chalk.dim("Starting Telegram Bot..."));
+      await runTelegramMode();
     }
-    else if (mode === "telegram") {
-        console.log(chalk.dim("You chose Telegram mode!"))
-        console.log(chalk.dim("Starting Telegram Bot..."))
-        await runTelegramMode()
-    }
+  }
 }
 
 
