@@ -1,0 +1,118 @@
+{
+  "C:/OpenArch-build/ai/ai.config.ts": {
+    "mtime": 1780427097686.6943,
+    "hash": "d08b6d4eb49a274aeb76e87be5bad4f3"
+  },
+  "C:/OpenArch-build/ai/index.ts": {
+    "mtime": 1780426901683.645,
+    "hash": "af99bc2b9021e021e1bb96350876682f"
+  },
+  "C:/OpenArch-build/index.ts": {
+    "mtime": 1780508990636.6487,
+    "hash": "37a52efc4b2b2d6ccace5b3cc03ca19c"
+  },
+  "C:/OpenArch-build/modes/agent/action-tracker.ts": {
+    "mtime": 1780428547687.459,
+    "hash": "715333b54e6194453b42b7ab69ec2add"
+  },
+  "C:/OpenArch-build/modes/agent/agent-tools.ts": {
+    "mtime": 1780485070095.6443,
+    "hash": "d26355ae61b9f749d294baadc6684954"
+  },
+  "C:/OpenArch-build/modes/agent/approval.ts": {
+    "mtime": 1781633730574.382,
+    "hash": "afc83e2df7870f40354f16c3933bb163"
+  },
+  "C:/OpenArch-build/modes/agent/diff-view.ts": {
+    "mtime": 1780597329907.396,
+    "hash": "4274e00ae11429c5eb5bdd72105e131c"
+  },
+  "C:/OpenArch-build/modes/agent/orchestrator.ts": {
+    "mtime": 1780487634445.0803,
+    "hash": "76e33ab299d55a24dda9ad91ed438142"
+  },
+  "C:/OpenArch-build/modes/agent/tool-executor.ts": {
+    "mtime": 1780461750487.0676,
+    "hash": "c0d01acc69d1ed75106c4dbe41ac16aa"
+  },
+  "C:/OpenArch-build/modes/agent/types.ts": {
+    "mtime": 1780427781198.878,
+    "hash": "c34407018ed89a9f5374a0652c280325"
+  },
+  "C:/OpenArch-build/modes/ask/orchestrator.ts": {
+    "mtime": 1781979487440.3694,
+    "hash": "be1e815867aa115933875aa9ef49d3d9"
+  },
+  "C:/OpenArch-build/modes/cli.ts": {
+    "mtime": 1781978941276.3723,
+    "hash": "34c98bdce05fbded234ba3ff231385ae"
+  },
+  "C:/OpenArch-build/modes/plan/orchestrator.ts": {
+    "mtime": 1781978846706.7283,
+    "hash": "43c79f112da1e4afba5d1a1394d91dbe"
+  },
+  "C:/OpenArch-build/modes/plan/planner.ts": {
+    "mtime": 1781978846838.4038,
+    "hash": "44c4b1d58cc33b3eed9e08e1f112502e"
+  },
+  "C:/OpenArch-build/modes/plan/selection.ts": {
+    "mtime": 1781978725422.1628,
+    "hash": "9226c3ae2764ae65a209e236727e6c31"
+  },
+  "C:/OpenArch-build/modes/plan/types.ts": {
+    "mtime": 1781978725299.0032,
+    "hash": "7b66fcd6857d27202d000f84944095bc"
+  },
+  "C:/OpenArch-build/modes/plan/web-tools.ts": {
+    "mtime": 1781978897267.3809,
+    "hash": "c28b09ba5f2547938f9b69a54b592072"
+  },
+  "C:/OpenArch-build/modes/telegram/agent-run.ts": {
+    "mtime": 1782844039883.955,
+    "hash": "f3b5e19926f5484941c2dec1329a56d1"
+  },
+  "C:/OpenArch-build/modes/telegram/approval-session.ts": {
+    "mtime": 1782844098161.7642,
+    "hash": "fd5210698e250125a9d0e97e2952780b"
+  },
+  "C:/OpenArch-build/modes/telegram/auth.ts": {
+    "mtime": 1782843491614.458,
+    "hash": "e11b935ef2331d4d98214958d9bd91dc"
+  },
+  "C:/OpenArch-build/modes/telegram/constants.ts": {
+    "mtime": 1782845308555.7534,
+    "hash": "d9c11b4a39d1613d4aa81838627ec51f"
+  },
+  "C:/OpenArch-build/modes/telegram/handlers.ts": {
+    "mtime": 1782844397026.421,
+    "hash": "f54f83d6ef78e646055ac02663160d3c"
+  },
+  "C:/OpenArch-build/modes/telegram/index.ts": {
+    "mtime": 1782844357134.359,
+    "hash": "f1508be98ee2577f2371383087f535c6"
+  },
+  "C:/OpenArch-build/modes/telegram/plan-session.ts": {
+    "mtime": 1782844070307.5515,
+    "hash": "d302d3ae3c43c2d542b5faf0b45b2f33"
+  },
+  "C:/OpenArch-build/modes/telegram/text.ts": {
+    "mtime": 1782844097976.6748,
+    "hash": "295e7f447bce0c73bdaa5fbe1269135f"
+  },
+  "C:/OpenArch-build/tui/terminal-md.ts": {
+    "mtime": 1780486833869.214,
+    "hash": "22fb73eda141c914dfb8394872e21047"
+  },
+  "C:/OpenArch-build/tui/wakeup.ts": {
+    "mtime": 1782845148723.4814,
+    "hash": "c4e62f48dd88e7b8d22db36506ae8492"
+  },
+  "C:/OpenArch-build/README.md": {
+    "mtime": 1782846088042.247,
+    "hash": "27d68db7b3e3e568294a21e3987fe023"
+  },
+  "C:/OpenArch-build/test.md": {
+    "mtime": 1781635579154.5688,
+    "hash": "8cd557b6d4c409f0ab0e07ef972aff41"
+  }
+}

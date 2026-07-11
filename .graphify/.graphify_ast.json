@@ -1,0 +1,3942 @@
+{
+  "nodes": [
+    {
+      "id": "ai_ai_config",
+      "label": "ai.config.ts",
+      "file_type": "code",
+      "source_file": "ai/ai.config.ts",
+      "source_location": "L1"
+    },
+    {
+      "id": "ai_ai_config_getagentmodel",
+      "label": "getAgentModel()",
+      "file_type": "code",
+      "source_file": "ai/ai.config.ts",
+      "source_location": "L3"
+    },
+    {
+      "id": "ai_index",
+      "label": "index.ts",
+      "file_type": "code",
+      "source_file": "ai/index.ts",
+      "source_location": "L1"
+    },
+    {
+      "id": "index",
+      "label": "index.ts",
+      "file_type": "code",
+      "source_file": "index.ts",
+      "source_location": "L1"
+    },
+    {
+      "id": "index_program",
+      "label": "program",
+      "file_type": "code",
+      "source_file": "index.ts",
+      "source_location": "L6"
+    },
+    {
+      "id": "agent_action_tracker",
+      "label": "action-tracker.ts",
+      "file_type": "code",
+      "source_file": "modes/agent/action-tracker.ts",
+      "source_location": "L1"
+    },
+    {
+      "id": "agent_action_tracker_actiontracker",
+      "label": "ActionTracker",
+      "file_type": "code",
+      "source_file": "modes/agent/action-tracker.ts",
+      "source_location": "L4"
+    },
+    {
+      "id": "agent_action_tracker_actiontracker_log",
+      "label": ".log()",
+      "file_type": "code",
+      "source_file": "modes/agent/action-tracker.ts",
+      "source_location": "L7"
+    },
+    {
+      "id": "agent_action_tracker_actiontracker_getactions",
+      "label": ".getActions()",
+      "file_type": "code",
+      "source_file": "modes/agent/action-tracker.ts",
+      "source_location": "L26"
+    },
+    {
+      "id": "agent_action_tracker_actiontracker_getpendingmutations",
+      "label": ".getPendingMutations()",
+      "file_type": "code",
+      "source_file": "modes/agent/action-tracker.ts",
+      "source_location": "L30"
+    },
+    {
+      "id": "agent_action_tracker_actiontracker_updatestatus",
+      "label": ".updateStatus()",
+      "file_type": "code",
+      "source_file": "modes/agent/action-tracker.ts",
+      "source_location": "L36"
+    },
+    {
+      "id": "agent_agent_tools",
+      "label": "agent-tools.ts",
+      "file_type": "code",
+      "source_file": "modes/agent/agent-tools.ts",
+      "source_location": "L1"
+    },
+    {
+      "id": "agent_agent_tools_createagenttools",
+      "label": "createAgentTools()",
+      "file_type": "code",
+      "source_file": "modes/agent/agent-tools.ts",
+      "source_location": "L5"
+    },
+    {
+      "id": "agent_approval",
+      "label": "approval.ts",
+      "file_type": "code",
+      "source_file": "modes/agent/approval.ts",
+      "source_location": "L1"
+    },
+    {
+      "id": "agent_approval_reviewgroup",
+      "label": "ReviewGroup",
+      "file_type": "code",
+      "source_file": "modes/agent/approval.ts",
+      "source_location": "L8"
+    },
+    {
+      "id": "agent_approval_grouppending",
+      "label": "groupPending()",
+      "file_type": "code",
+      "source_file": "modes/agent/approval.ts",
+      "source_location": "L14"
+    },
+    {
+      "id": "agent_approval_runapprovalflow",
+      "label": "runApprovalFlow()",
+      "file_type": "code",
+      "source_file": "modes/agent/approval.ts",
+      "source_location": "L65"
+    },
+    {
+      "id": "agent_diff_view",
+      "label": "diff-view.ts",
+      "file_type": "code",
+      "source_file": "modes/agent/diff-view.ts",
+      "source_location": "L1"
+    },
+    {
+      "id": "agent_diff_view_formatpatch",
+      "label": "formatPatch()",
+      "file_type": "code",
+      "source_file": "modes/agent/diff-view.ts",
+      "source_location": "L4"
+    },
+    {
+      "id": "agent_diff_view_composebeforeafter",
+      "label": "composeBeforeAfter()",
+      "file_type": "code",
+      "source_file": "modes/agent/diff-view.ts",
+      "source_location": "L8"
+    },
+    {
+      "id": "agent_orchestrator",
+      "label": "orchestrator.ts",
+      "file_type": "code",
+      "source_file": "modes/agent/orchestrator.ts",
+      "source_location": "L1"
+    },
+    {
+      "id": "agent_orchestrator_runagentmode",
+      "label": "runAgentMode()",
+      "file_type": "code",
+      "source_file": "modes/agent/orchestrator.ts",
+      "source_location": "L12"
+    },
+    {
+      "id": "agent_tool_executor",
+      "label": "tool-executor.ts",
+      "file_type": "code",
+      "source_file": "modes/agent/tool-executor.ts",
+      "source_location": "L1"
+    },
+    {
+      "id": "agent_tool_executor_text_ext",
+      "label": "TEXT_EXT",
+      "file_type": "code",
+      "source_file": "modes/agent/tool-executor.ts",
+      "source_location": "L8"
+    },
+    {
+      "id": "agent_tool_executor_isprobablytextfile",
+      "label": "isProbablyTextFile()",
+      "file_type": "code",
+      "source_file": "modes/agent/tool-executor.ts",
+      "source_location": "L27"
+    },
+    {
+      "id": "agent_tool_executor_toolexecutor",
+      "label": "ToolExecutor",
+      "file_type": "code",
+      "source_file": "modes/agent/tool-executor.ts",
+      "source_location": "L32"
+    },
+    {
+      "id": "agent_tool_executor_toolexecutor_constructor",
+      "label": ".constructor()",
+      "file_type": "code",
+      "source_file": "modes/agent/tool-executor.ts",
+      "source_location": "L38"
+    },
+    {
+      "id": "agent_tool_executor_toolexecutor_resolvesafe",
+      "label": ".resolveSafe()",
+      "file_type": "code",
+      "source_file": "modes/agent/tool-executor.ts",
+      "source_location": "L43"
+    },
+    {
+      "id": "agent_tool_executor_toolexecutor_excluded",
+      "label": ".excluded()",
+      "file_type": "code",
+      "source_file": "modes/agent/tool-executor.ts",
+      "source_location": "L53"
+    },
+    {
+      "id": "agent_tool_executor_toolexecutor_assertnotexcluded",
+      "label": ".assertNotExcluded()",
+      "file_type": "code",
+      "source_file": "modes/agent/tool-executor.ts",
+      "source_location": "L68"
+    },
+    {
+      "id": "agent_tool_executor_toolexecutor_geteffectivetext",
+      "label": ".getEffectiveText()",
+      "file_type": "code",
+      "source_file": "modes/agent/tool-executor.ts",
+      "source_location": "L74"
+    },
+    {
+      "id": "agent_tool_executor_toolexecutor_readfile",
+      "label": ".readFile()",
+      "file_type": "code",
+      "source_file": "modes/agent/tool-executor.ts",
+      "source_location": "L83"
+    },
+    {
+      "id": "agent_tool_executor_toolexecutor_createfile",
+      "label": ".createFile()",
+      "file_type": "code",
+      "source_file": "modes/agent/tool-executor.ts",
+      "source_location": "L103"
+    },
+    {
+      "id": "agent_tool_executor_toolexecutor_modifyfile",
+      "label": ".modifyFile()",
+      "file_type": "code",
+      "source_file": "modes/agent/tool-executor.ts",
+      "source_location": "L123"
+    },
+    {
+      "id": "agent_tool_executor_toolexecutor_deletefile",
+      "label": ".deleteFile()",
+      "file_type": "code",
+      "source_file": "modes/agent/tool-executor.ts",
+      "source_location": "L141"
+    },
+    {
+      "id": "agent_tool_executor_toolexecutor_createfolder",
+      "label": ".createFolder()",
+      "file_type": "code",
+      "source_file": "modes/agent/tool-executor.ts",
+      "source_location": "L160"
+    },
+    {
+      "id": "agent_tool_executor_toolexecutor_listfiles",
+      "label": ".listFiles()",
+      "file_type": "code",
+      "source_file": "modes/agent/tool-executor.ts",
+      "source_location": "L174"
+    },
+    {
+      "id": "agent_tool_executor_toolexecutor_searchfiles",
+      "label": ".searchFiles()",
+      "file_type": "code",
+      "source_file": "modes/agent/tool-executor.ts",
+      "source_location": "L208"
+    },
+    {
+      "id": "agent_tool_executor_toolexecutor_analyzecodebase",
+      "label": ".analyzeCodebase()",
+      "file_type": "code",
+      "source_file": "modes/agent/tool-executor.ts",
+      "source_location": "L269"
+    },
+    {
+      "id": "agent_tool_executor_toolexecutor_queueshell",
+      "label": ".queueShell()",
+      "file_type": "code",
+      "source_file": "modes/agent/tool-executor.ts",
+      "source_location": "L302"
+    },
+    {
+      "id": "agent_tool_executor_toolexecutor_skillroots",
+      "label": ".skillRoots()",
+      "file_type": "code",
+      "source_file": "modes/agent/tool-executor.ts",
+      "source_location": "L313"
+    },
+    {
+      "id": "agent_tool_executor_toolexecutor_listskills",
+      "label": ".listSkills()",
+      "file_type": "code",
+      "source_file": "modes/agent/tool-executor.ts",
+      "source_location": "L325"
+    },
+    {
+      "id": "agent_tool_executor_toolexecutor_readskill",
+      "label": ".readSkill()",
+      "file_type": "code",
+      "source_file": "modes/agent/tool-executor.ts",
+      "source_location": "L348"
+    },
+    {
+      "id": "agent_tool_executor_toolexecutor_applyapprovedfromtracker",
+      "label": ".applyApprovedFromTracker()",
+      "file_type": "code",
+      "source_file": "modes/agent/tool-executor.ts",
+      "source_location": "L367"
+    },
+    {
+      "id": "agent_tool_executor_toolexecutor_clearstaging",
+      "label": ".clearStaging()",
+      "file_type": "code",
+      "source_file": "modes/agent/tool-executor.ts",
+      "source_location": "L426"
+    },
+    {
+      "id": "agent_types",
+      "label": "types.ts",
+      "file_type": "code",
+      "source_file": "modes/agent/types.ts",
+      "source_location": "L1"
+    },
+    {
+      "id": "agent_types_actiontype",
+      "label": "ActionType",
+      "file_type": "code",
+      "source_file": "modes/agent/types.ts",
+      "source_location": "L1"
+    },
+    {
+      "id": "agent_types_actionstatus",
+      "label": "ActionStatus",
+      "file_type": "code",
+      "source_file": "modes/agent/types.ts",
+      "source_location": "L9"
+    },
+    {
+      "id": "agent_types_actionlog",
+      "label": "ActionLog",
+      "file_type": "code",
+      "source_file": "modes/agent/types.ts",
+      "source_location": "L11"
+    },
+    {
+      "id": "agent_types_agentconfig",
+      "label": "AgentConfig",
+      "file_type": "code",
+      "source_file": "modes/agent/types.ts",
+      "source_location": "L28"
+    },
+    {
+      "id": "agent_types_defaultagentconfig",
+      "label": "defaultAgentConfig()",
+      "file_type": "code",
+      "source_file": "modes/agent/types.ts",
+      "source_location": "L40"
+    },
+    {
+      "id": "agent_types_ismutationtype",
+      "label": "isMutationType()",
+      "file_type": "code",
+      "source_file": "modes/agent/types.ts",
+      "source_location": "L60"
+    },
+    {
+      "id": "ask_orchestrator",
+      "label": "orchestrator.ts",
+      "file_type": "code",
+      "source_file": "modes/ask/orchestrator.ts",
+      "source_location": "L1"
+    },
+    {
+      "id": "ask_orchestrator_createasktools",
+      "label": "createAskTools()",
+      "file_type": "code",
+      "source_file": "modes/ask/orchestrator.ts",
+      "source_location": "L14"
+    },
+    {
+      "id": "ask_orchestrator_asmd",
+      "label": "asMd()",
+      "file_type": "code",
+      "source_file": "modes/ask/orchestrator.ts",
+      "source_location": "L76"
+    },
+    {
+      "id": "ask_orchestrator_runaskmode",
+      "label": "runAskMode()",
+      "file_type": "code",
+      "source_file": "modes/ask/orchestrator.ts",
+      "source_location": "L80"
+    },
+    {
+      "id": "modes_cli",
+      "label": "cli.ts",
+      "file_type": "code",
+      "source_file": "modes/cli.ts",
+      "source_location": "L1"
+    },
+    {
+      "id": "modes_cli_runclimode",
+      "label": "runCliMode()",
+      "file_type": "code",
+      "source_file": "modes/cli.ts",
+      "source_location": "L7"
+    },
+    {
+      "id": "plan_orchestrator",
+      "label": "orchestrator.ts",
+      "file_type": "code",
+      "source_file": "modes/plan/orchestrator.ts",
+      "source_location": "L1"
+    },
+    {
+      "id": "plan_orchestrator_stepprompt",
+      "label": "stepPrompt()",
+      "file_type": "code",
+      "source_file": "modes/plan/orchestrator.ts",
+      "source_location": "L17"
+    },
+    {
+      "id": "plan_orchestrator_runplanmode",
+      "label": "runPlanMode()",
+      "file_type": "code",
+      "source_file": "modes/plan/orchestrator.ts",
+      "source_location": "L22"
+    },
+    {
+      "id": "plan_planner",
+      "label": "planner.ts",
+      "file_type": "code",
+      "source_file": "modes/plan/planner.ts",
+      "source_location": "L1"
+    },
+    {
+      "id": "plan_planner_planschema",
+      "label": "planSchema",
+      "file_type": "code",
+      "source_file": "modes/plan/planner.ts",
+      "source_location": "L18"
+    },
+    {
+      "id": "plan_planner_readonlytools",
+      "label": "readOnlyTools()",
+      "file_type": "code",
+      "source_file": "modes/plan/planner.ts",
+      "source_location": "L33"
+    },
+    {
+      "id": "plan_planner_plan_instructions",
+      "label": "PLAN_INSTRUCTIONS()",
+      "file_type": "code",
+      "source_file": "modes/plan/planner.ts",
+      "source_location": "L95"
+    },
+    {
+      "id": "plan_planner_generateplan",
+      "label": "generatePlan()",
+      "file_type": "code",
+      "source_file": "modes/plan/planner.ts",
+      "source_location": "L107"
+    },
+    {
+      "id": "plan_selection",
+      "label": "selection.ts",
+      "file_type": "code",
+      "source_file": "modes/plan/selection.ts",
+      "source_location": "L1"
+    },
+    {
+      "id": "plan_selection_complexity_color",
+      "label": "COMPLEXITY_COLOR",
+      "file_type": "code",
+      "source_file": "modes/plan/selection.ts",
+      "source_location": "L7"
+    },
+    {
+      "id": "plan_selection_printplan",
+      "label": "printPlan()",
+      "file_type": "code",
+      "source_file": "modes/plan/selection.ts",
+      "source_location": "L14"
+    },
+    {
+      "id": "plan_selection_selectsteps",
+      "label": "selectSteps()",
+      "file_type": "code",
+      "source_file": "modes/plan/selection.ts",
+      "source_location": "L28"
+    },
+    {
+      "id": "plan_types",
+      "label": "types.ts",
+      "file_type": "code",
+      "source_file": "modes/plan/types.ts",
+      "source_location": "L1"
+    },
+    {
+      "id": "plan_types_planstep",
+      "label": "PlanStep",
+      "file_type": "code",
+      "source_file": "modes/plan/types.ts",
+      "source_location": "L1"
+    },
+    {
+      "id": "plan_types_plan",
+      "label": "Plan",
+      "file_type": "code",
+      "source_file": "modes/plan/types.ts",
+      "source_location": "L9"
+    },
+    {
+      "id": "plan_web_tools",
+      "label": "web-tools.ts",
+      "file_type": "code",
+      "source_file": "modes/plan/web-tools.ts",
+      "source_location": "L1"
+    },
+    {
+      "id": "plan_web_tools_getclient",
+      "label": "getClient()",
+      "file_type": "code",
+      "source_file": "modes/plan/web-tools.ts",
+      "source_location": "L8"
+    },
+    {
+      "id": "plan_web_tools_clip",
+      "label": "clip()",
+      "file_type": "code",
+      "source_file": "modes/plan/web-tools.ts",
+      "source_location": "L16"
+    },
+    {
+      "id": "plan_web_tools_createwebtools",
+      "label": "createWebTools()",
+      "file_type": "code",
+      "source_file": "modes/plan/web-tools.ts",
+      "source_location": "L20"
+    },
+    {
+      "id": "telegram_agent_run",
+      "label": "agent-run.ts",
+      "file_type": "code",
+      "source_file": "modes/telegram/agent-run.ts",
+      "source_location": "L1"
+    },
+    {
+      "id": "telegram_agent_run_readonlyconfig",
+      "label": "readOnlyConfig()",
+      "file_type": "code",
+      "source_file": "modes/telegram/agent-run.ts",
+      "source_location": "L13"
+    },
+    {
+      "id": "telegram_agent_run_agentoptions",
+      "label": "agentOptions()",
+      "file_type": "code",
+      "source_file": "modes/telegram/agent-run.ts",
+      "source_location": "L22"
+    },
+    {
+      "id": "telegram_agent_run_createreadonlytools",
+      "label": "createReadOnlyTools()",
+      "file_type": "code",
+      "source_file": "modes/telegram/agent-run.ts",
+      "source_location": "L30"
+    },
+    {
+      "id": "telegram_agent_run_extrawebtools",
+      "label": "extraWebTools()",
+      "file_type": "code",
+      "source_file": "modes/telegram/agent-run.ts",
+      "source_location": "L65"
+    },
+    {
+      "id": "telegram_agent_run_runask",
+      "label": "runAsk()",
+      "file_type": "code",
+      "source_file": "modes/telegram/agent-run.ts",
+      "source_location": "L70"
+    },
+    {
+      "id": "telegram_agent_run_runagent",
+      "label": "runAgent()",
+      "file_type": "code",
+      "source_file": "modes/telegram/agent-run.ts",
+      "source_location": "L84"
+    },
+    {
+      "id": "telegram_agent_run_runplansteps",
+      "label": "runPlanSteps()",
+      "file_type": "code",
+      "source_file": "modes/telegram/agent-run.ts",
+      "source_location": "L98"
+    },
+    {
+      "id": "telegram_approval_session",
+      "label": "approval-session.ts",
+      "file_type": "code",
+      "source_file": "modes/telegram/approval-session.ts",
+      "source_location": "L1"
+    },
+    {
+      "id": "telegram_approval_session_approvalsession",
+      "label": "ApprovalSession",
+      "file_type": "code",
+      "source_file": "modes/telegram/approval-session.ts",
+      "source_location": "L8"
+    },
+    {
+      "id": "telegram_approval_session_approvalsessions",
+      "label": "approvalSessions",
+      "file_type": "code",
+      "source_file": "modes/telegram/approval-session.ts",
+      "source_location": "L14"
+    },
+    {
+      "id": "telegram_approval_session_grouppending",
+      "label": "groupPending()",
+      "file_type": "code",
+      "source_file": "modes/telegram/approval-session.ts",
+      "source_location": "L16"
+    },
+    {
+      "id": "telegram_approval_session_approvalsummary",
+      "label": "approvalSummary()",
+      "file_type": "code",
+      "source_file": "modes/telegram/approval-session.ts",
+      "source_location": "L29"
+    },
+    {
+      "id": "telegram_approval_session_approvaldiff",
+      "label": "approvalDiff()",
+      "file_type": "code",
+      "source_file": "modes/telegram/approval-session.ts",
+      "source_location": "L39"
+    },
+    {
+      "id": "telegram_approval_session_promptapproval",
+      "label": "promptApproval()",
+      "file_type": "code",
+      "source_file": "modes/telegram/approval-session.ts",
+      "source_location": "L51"
+    },
+    {
+      "id": "telegram_approval_session_finishorapprove",
+      "label": "finishOrApprove()",
+      "file_type": "code",
+      "source_file": "modes/telegram/approval-session.ts",
+      "source_location": "L68"
+    },
+    {
+      "id": "telegram_auth",
+      "label": "auth.ts",
+      "file_type": "code",
+      "source_file": "modes/telegram/auth.ts",
+      "source_location": "L1"
+    },
+    {
+      "id": "telegram_auth_isowner",
+      "label": "isOwner()",
+      "file_type": "code",
+      "source_file": "modes/telegram/auth.ts",
+      "source_location": "L1"
+    },
+    {
+      "id": "telegram_constants",
+      "label": "constants.ts",
+      "file_type": "code",
+      "source_file": "modes/telegram/constants.ts",
+      "source_location": "L1"
+    },
+    {
+      "id": "telegram_constants_welcome",
+      "label": "WELCOME",
+      "file_type": "code",
+      "source_file": "modes/telegram/constants.ts",
+      "source_location": "L1"
+    },
+    {
+      "id": "telegram_handlers",
+      "label": "handlers.ts",
+      "file_type": "code",
+      "source_file": "modes/telegram/handlers.ts",
+      "source_location": "L1"
+    },
+    {
+      "id": "telegram_handlers_registerhandlers",
+      "label": "registerHandlers()",
+      "file_type": "code",
+      "source_file": "modes/telegram/handlers.ts",
+      "source_location": "L10"
+    },
+    {
+      "id": "telegram_index",
+      "label": "index.ts",
+      "file_type": "code",
+      "source_file": "modes/telegram/index.ts",
+      "source_location": "L1"
+    },
+    {
+      "id": "telegram_index_runtelegrammode",
+      "label": "runTelegramMode()",
+      "file_type": "code",
+      "source_file": "modes/telegram/index.ts",
+      "source_location": "L7"
+    },
+    {
+      "id": "telegram_plan_session",
+      "label": "plan-session.ts",
+      "file_type": "code",
+      "source_file": "modes/telegram/plan-session.ts",
+      "source_location": "L1"
+    },
+    {
+      "id": "telegram_plan_session_plansession",
+      "label": "PlanSession",
+      "file_type": "code",
+      "source_file": "modes/telegram/plan-session.ts",
+      "source_location": "L5"
+    },
+    {
+      "id": "telegram_plan_session_plansessions",
+      "label": "planSessions",
+      "file_type": "code",
+      "source_file": "modes/telegram/plan-session.ts",
+      "source_location": "L10"
+    },
+    {
+      "id": "telegram_plan_session_planmessage",
+      "label": "planMessage()",
+      "file_type": "code",
+      "source_file": "modes/telegram/plan-session.ts",
+      "source_location": "L12"
+    },
+    {
+      "id": "telegram_plan_session_plankeyboard",
+      "label": "planKeyboard()",
+      "file_type": "code",
+      "source_file": "modes/telegram/plan-session.ts",
+      "source_location": "L27"
+    },
+    {
+      "id": "telegram_plan_session_refreshplanui",
+      "label": "refreshPlanUi()",
+      "file_type": "code",
+      "source_file": "modes/telegram/plan-session.ts",
+      "source_location": "L43"
+    },
+    {
+      "id": "telegram_text",
+      "label": "text.ts",
+      "file_type": "code",
+      "source_file": "modes/telegram/text.ts",
+      "source_location": "L1"
+    },
+    {
+      "id": "telegram_text_clip",
+      "label": "clip()",
+      "file_type": "code",
+      "source_file": "modes/telegram/text.ts",
+      "source_location": "L1"
+    },
+    {
+      "id": "telegram_text_replymd",
+      "label": "replyMd()",
+      "file_type": "code",
+      "source_file": "modes/telegram/text.ts",
+      "source_location": "L4"
+    },
+    {
+      "id": "telegram_text_commandarg",
+      "label": "commandArg()",
+      "file_type": "code",
+      "source_file": "modes/telegram/text.ts",
+      "source_location": "L8"
+    },
+    {
+      "id": "tui_terminal_md",
+      "label": "terminal-md.ts",
+      "file_type": "code",
+      "source_file": "tui/terminal-md.ts",
+      "source_location": "L1"
+    },
+    {
+      "id": "tui_terminal_md_ensuremarked",
+      "label": "ensureMarked()",
+      "file_type": "code",
+      "source_file": "tui/terminal-md.ts",
+      "source_location": "L6"
+    },
+    {
+      "id": "tui_terminal_md_renderterminalmarkdown",
+      "label": "renderTerminalMarkdown()",
+      "file_type": "code",
+      "source_file": "tui/terminal-md.ts",
+      "source_location": "L14"
+    },
+    {
+      "id": "tui_wakeup",
+      "label": "wakeup.ts",
+      "file_type": "code",
+      "source_file": "tui/wakeup.ts",
+      "source_location": "L1"
+    },
+    {
+      "id": "tui_wakeup_shadow",
+      "label": "SHADOW",
+      "file_type": "code",
+      "source_file": "tui/wakeup.ts",
+      "source_location": "L9"
+    },
+    {
+      "id": "tui_wakeup_printbannerwithshadow",
+      "label": "printBannerWithShadow()",
+      "file_type": "code",
+      "source_file": "tui/wakeup.ts",
+      "source_location": "L12"
+    },
+    {
+      "id": "tui_wakeup_runwakeup",
+      "label": "runWakeup()",
+      "file_type": "code",
+      "source_file": "tui/wakeup.ts",
+      "source_location": "L30"
+    }
+  ],
+  "edges": [
+    {
+      "source": "ai_ai_config",
+      "target": "ai_sdk_provider",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "ai/ai.config.ts",
+      "source_location": "L1",
+      "weight": 1
+    },
+    {
+      "source": "ai_ai_config",
+      "target": "ai_ai_config_getagentmodel",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "ai/ai.config.ts",
+      "source_location": "L3",
+      "weight": 1
+    },
+    {
+      "source": "ai_index",
+      "target": "ai_ai_config",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "ai/index.ts",
+      "source_location": "L1",
+      "weight": 1,
+      "context": "re-export"
+    },
+    {
+      "source": "ai_index",
+      "target": "ai_ai_config_getagentmodel",
+      "relation": "re_exports",
+      "confidence": "EXTRACTED",
+      "source_file": "ai/index.ts",
+      "source_location": "L1",
+      "weight": 1,
+      "context": "re-export"
+    },
+    {
+      "source": "index",
+      "target": "commander",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "index.ts",
+      "source_location": "L3",
+      "weight": 1
+    },
+    {
+      "source": "index",
+      "target": "tui_wakeup",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "index.ts",
+      "source_location": "L4",
+      "weight": 1
+    },
+    {
+      "source": "index",
+      "target": "tui_wakeup_runwakeup",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "index.ts",
+      "source_location": "L4",
+      "weight": 1
+    },
+    {
+      "source": "index",
+      "target": "index_program",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "index.ts",
+      "source_location": "L6",
+      "weight": 1
+    },
+    {
+      "source": "agent_action_tracker",
+      "target": "agent_types",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/agent/action-tracker.ts",
+      "source_location": "L1",
+      "weight": 1
+    },
+    {
+      "source": "agent_action_tracker",
+      "target": "agent_types_actionlog",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/agent/action-tracker.ts",
+      "source_location": "L1",
+      "weight": 1
+    },
+    {
+      "source": "agent_action_tracker",
+      "target": "agent_types_actionstatus",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/agent/action-tracker.ts",
+      "source_location": "L1",
+      "weight": 1
+    },
+    {
+      "source": "agent_action_tracker",
+      "target": "agent_types",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/agent/action-tracker.ts",
+      "source_location": "L2",
+      "weight": 1
+    },
+    {
+      "source": "agent_action_tracker",
+      "target": "agent_types_ismutationtype",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/agent/action-tracker.ts",
+      "source_location": "L2",
+      "weight": 1
+    },
+    {
+      "source": "agent_action_tracker",
+      "target": "agent_action_tracker_actiontracker",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/agent/action-tracker.ts",
+      "source_location": "L4",
+      "weight": 1
+    },
+    {
+      "source": "agent_action_tracker_actiontracker",
+      "target": "agent_action_tracker_actiontracker_log",
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/agent/action-tracker.ts",
+      "source_location": "L7",
+      "weight": 1
+    },
+    {
+      "source": "agent_action_tracker_actiontracker",
+      "target": "agent_action_tracker_actiontracker_getactions",
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/agent/action-tracker.ts",
+      "source_location": "L26",
+      "weight": 1
+    },
+    {
+      "source": "agent_action_tracker_actiontracker",
+      "target": "agent_action_tracker_actiontracker_getpendingmutations",
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/agent/action-tracker.ts",
+      "source_location": "L30",
+      "weight": 1
+    },
+    {
+      "source": "agent_action_tracker_actiontracker",
+      "target": "agent_action_tracker_actiontracker_updatestatus",
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/agent/action-tracker.ts",
+      "source_location": "L36",
+      "weight": 1
+    },
+    {
+      "source": "agent_agent_tools",
+      "target": "ai",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/agent/agent-tools.ts",
+      "source_location": "L1",
+      "weight": 1
+    },
+    {
+      "source": "agent_agent_tools",
+      "target": "agent_tool_executor",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/agent/agent-tools.ts",
+      "source_location": "L2",
+      "weight": 1
+    },
+    {
+      "source": "agent_agent_tools",
+      "target": "agent_tool_executor_toolexecutor",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/agent/agent-tools.ts",
+      "source_location": "L2",
+      "weight": 1
+    },
+    {
+      "source": "agent_agent_tools",
+      "target": "zod",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/agent/agent-tools.ts",
+      "source_location": "L3",
+      "weight": 1
+    },
+    {
+      "source": "agent_agent_tools",
+      "target": "agent_agent_tools_createagenttools",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/agent/agent-tools.ts",
+      "source_location": "L5",
+      "weight": 1
+    },
+    {
+      "source": "agent_approval",
+      "target": "prompts",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/agent/approval.ts",
+      "source_location": "L1",
+      "weight": 1
+    },
+    {
+      "source": "agent_approval",
+      "target": "chalk",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/agent/approval.ts",
+      "source_location": "L2",
+      "weight": 1
+    },
+    {
+      "source": "agent_approval",
+      "target": "agent_action_tracker",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/agent/approval.ts",
+      "source_location": "L3",
+      "weight": 1
+    },
+    {
+      "source": "agent_approval",
+      "target": "agent_action_tracker_actiontracker",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/agent/approval.ts",
+      "source_location": "L3",
+      "weight": 1
+    },
+    {
+      "source": "agent_approval",
+      "target": "agent_types",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/agent/approval.ts",
+      "source_location": "L4",
+      "weight": 1
+    },
+    {
+      "source": "agent_approval",
+      "target": "agent_types_actionlog",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/agent/approval.ts",
+      "source_location": "L4",
+      "weight": 1
+    },
+    {
+      "source": "agent_approval",
+      "target": "agent_diff_view",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/agent/approval.ts",
+      "source_location": "L5",
+      "weight": 1
+    },
+    {
+      "source": "agent_approval",
+      "target": "agent_diff_view_composebeforeafter",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/agent/approval.ts",
+      "source_location": "L5",
+      "weight": 1
+    },
+    {
+      "source": "agent_approval",
+      "target": "agent_diff_view_formatpatch",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/agent/approval.ts",
+      "source_location": "L5",
+      "weight": 1
+    },
+    {
+      "source": "agent_approval",
+      "target": "tui_terminal_md",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/agent/approval.ts",
+      "source_location": "L6",
+      "weight": 1
+    },
+    {
+      "source": "agent_approval",
+      "target": "tui_terminal_md_renderterminalmarkdown",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/agent/approval.ts",
+      "source_location": "L6",
+      "weight": 1
+    },
+    {
+      "source": "agent_approval",
+      "target": "agent_approval_reviewgroup",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/agent/approval.ts",
+      "source_location": "L8",
+      "weight": 1
+    },
+    {
+      "source": "agent_approval",
+      "target": "agent_approval_grouppending",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/agent/approval.ts",
+      "source_location": "L14",
+      "weight": 1
+    },
+    {
+      "source": "agent_approval",
+      "target": "agent_approval_runapprovalflow",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/agent/approval.ts",
+      "source_location": "L65",
+      "weight": 1
+    },
+    {
+      "source": "agent_approval_runapprovalflow",
+      "target": "agent_approval_grouppending",
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/agent/approval.ts",
+      "source_location": "L96",
+      "weight": 1
+    },
+    {
+      "source": "agent_diff_view",
+      "target": "diff",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/agent/diff-view.ts",
+      "source_location": "L1",
+      "weight": 1
+    },
+    {
+      "source": "agent_diff_view",
+      "target": "agent_types",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/agent/diff-view.ts",
+      "source_location": "L2",
+      "weight": 1
+    },
+    {
+      "source": "agent_diff_view",
+      "target": "agent_types_actionlog",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/agent/diff-view.ts",
+      "source_location": "L2",
+      "weight": 1
+    },
+    {
+      "source": "agent_diff_view",
+      "target": "agent_diff_view_formatpatch",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/agent/diff-view.ts",
+      "source_location": "L4",
+      "weight": 1
+    },
+    {
+      "source": "agent_diff_view",
+      "target": "agent_diff_view_composebeforeafter",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/agent/diff-view.ts",
+      "source_location": "L8",
+      "weight": 1
+    },
+    {
+      "source": "agent_orchestrator",
+      "target": "prompts",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/agent/orchestrator.ts",
+      "source_location": "L1",
+      "weight": 1
+    },
+    {
+      "source": "agent_orchestrator",
+      "target": "chalk",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/agent/orchestrator.ts",
+      "source_location": "L2",
+      "weight": 1
+    },
+    {
+      "source": "agent_orchestrator",
+      "target": "agent_types",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/agent/orchestrator.ts",
+      "source_location": "L3",
+      "weight": 1
+    },
+    {
+      "source": "agent_orchestrator",
+      "target": "agent_types_defaultagentconfig",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/agent/orchestrator.ts",
+      "source_location": "L3",
+      "weight": 1
+    },
+    {
+      "source": "agent_orchestrator",
+      "target": "agent_action_tracker",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/agent/orchestrator.ts",
+      "source_location": "L4",
+      "weight": 1
+    },
+    {
+      "source": "agent_orchestrator",
+      "target": "agent_action_tracker_actiontracker",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/agent/orchestrator.ts",
+      "source_location": "L4",
+      "weight": 1
+    },
+    {
+      "source": "agent_orchestrator",
+      "target": "agent_tool_executor",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/agent/orchestrator.ts",
+      "source_location": "L5",
+      "weight": 1
+    },
+    {
+      "source": "agent_orchestrator",
+      "target": "agent_tool_executor_toolexecutor",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/agent/orchestrator.ts",
+      "source_location": "L5",
+      "weight": 1
+    },
+    {
+      "source": "agent_orchestrator",
+      "target": "agent_agent_tools",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/agent/orchestrator.ts",
+      "source_location": "L6",
+      "weight": 1
+    },
+    {
+      "source": "agent_orchestrator",
+      "target": "agent_agent_tools_createagenttools",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/agent/orchestrator.ts",
+      "source_location": "L6",
+      "weight": 1
+    },
+    {
+      "source": "agent_orchestrator",
+      "target": "ai",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/agent/orchestrator.ts",
+      "source_location": "L7",
+      "weight": 1
+    },
+    {
+      "source": "agent_orchestrator",
+      "target": "ai_index",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/agent/orchestrator.ts",
+      "source_location": "L8",
+      "weight": 1
+    },
+    {
+      "source": "agent_orchestrator",
+      "target": "ai_index_getagentmodel",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/agent/orchestrator.ts",
+      "source_location": "L8",
+      "weight": 1
+    },
+    {
+      "source": "agent_orchestrator",
+      "target": "tui_terminal_md",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/agent/orchestrator.ts",
+      "source_location": "L9",
+      "weight": 1
+    },
+    {
+      "source": "agent_orchestrator",
+      "target": "tui_terminal_md_renderterminalmarkdown",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/agent/orchestrator.ts",
+      "source_location": "L9",
+      "weight": 1
+    },
+    {
+      "source": "agent_orchestrator",
+      "target": "agent_approval",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/agent/orchestrator.ts",
+      "source_location": "L10",
+      "weight": 1
+    },
+    {
+      "source": "agent_orchestrator",
+      "target": "agent_approval_runapprovalflow",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/agent/orchestrator.ts",
+      "source_location": "L10",
+      "weight": 1
+    },
+    {
+      "source": "agent_orchestrator",
+      "target": "agent_orchestrator_runagentmode",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/agent/orchestrator.ts",
+      "source_location": "L12",
+      "weight": 1
+    },
+    {
+      "source": "agent_tool_executor",
+      "target": "node_fs",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/agent/tool-executor.ts",
+      "source_location": "L1",
+      "weight": 1
+    },
+    {
+      "source": "agent_tool_executor",
+      "target": "node_path",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/agent/tool-executor.ts",
+      "source_location": "L2",
+      "weight": 1
+    },
+    {
+      "source": "agent_tool_executor",
+      "target": "node_os",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/agent/tool-executor.ts",
+      "source_location": "L3",
+      "weight": 1
+    },
+    {
+      "source": "agent_tool_executor",
+      "target": "node_child_process",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/agent/tool-executor.ts",
+      "source_location": "L4",
+      "weight": 1
+    },
+    {
+      "source": "agent_tool_executor",
+      "target": "agent_types",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/agent/tool-executor.ts",
+      "source_location": "L5",
+      "weight": 1
+    },
+    {
+      "source": "agent_tool_executor",
+      "target": "agent_types_agentconfig",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/agent/tool-executor.ts",
+      "source_location": "L5",
+      "weight": 1
+    },
+    {
+      "source": "agent_tool_executor",
+      "target": "agent_types_actionlog",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/agent/tool-executor.ts",
+      "source_location": "L5",
+      "weight": 1
+    },
+    {
+      "source": "agent_tool_executor",
+      "target": "agent_action_tracker",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/agent/tool-executor.ts",
+      "source_location": "L6",
+      "weight": 1
+    },
+    {
+      "source": "agent_tool_executor",
+      "target": "agent_action_tracker_actiontracker",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/agent/tool-executor.ts",
+      "source_location": "L6",
+      "weight": 1
+    },
+    {
+      "source": "agent_tool_executor",
+      "target": "agent_tool_executor_text_ext",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/agent/tool-executor.ts",
+      "source_location": "L8",
+      "weight": 1
+    },
+    {
+      "source": "agent_tool_executor",
+      "target": "agent_tool_executor_isprobablytextfile",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/agent/tool-executor.ts",
+      "source_location": "L27",
+      "weight": 1
+    },
+    {
+      "source": "agent_tool_executor",
+      "target": "agent_tool_executor_toolexecutor",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/agent/tool-executor.ts",
+      "source_location": "L32",
+      "weight": 1
+    },
+    {
+      "source": "agent_tool_executor_toolexecutor",
+      "target": "agent_tool_executor_toolexecutor_constructor",
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/agent/tool-executor.ts",
+      "source_location": "L38",
+      "weight": 1
+    },
+    {
+      "source": "agent_tool_executor_toolexecutor",
+      "target": "agent_tool_executor_toolexecutor_resolvesafe",
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/agent/tool-executor.ts",
+      "source_location": "L43",
+      "weight": 1
+    },
+    {
+      "source": "agent_tool_executor_toolexecutor",
+      "target": "agent_tool_executor_toolexecutor_excluded",
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/agent/tool-executor.ts",
+      "source_location": "L53",
+      "weight": 1
+    },
+    {
+      "source": "agent_tool_executor_toolexecutor",
+      "target": "agent_tool_executor_toolexecutor_assertnotexcluded",
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/agent/tool-executor.ts",
+      "source_location": "L68",
+      "weight": 1
+    },
+    {
+      "source": "agent_tool_executor_toolexecutor",
+      "target": "agent_tool_executor_toolexecutor_geteffectivetext",
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/agent/tool-executor.ts",
+      "source_location": "L74",
+      "weight": 1
+    },
+    {
+      "source": "agent_tool_executor_toolexecutor",
+      "target": "agent_tool_executor_toolexecutor_readfile",
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/agent/tool-executor.ts",
+      "source_location": "L83",
+      "weight": 1
+    },
+    {
+      "source": "agent_tool_executor_toolexecutor",
+      "target": "agent_tool_executor_toolexecutor_createfile",
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/agent/tool-executor.ts",
+      "source_location": "L103",
+      "weight": 1
+    },
+    {
+      "source": "agent_tool_executor_toolexecutor",
+      "target": "agent_tool_executor_toolexecutor_modifyfile",
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/agent/tool-executor.ts",
+      "source_location": "L123",
+      "weight": 1
+    },
+    {
+      "source": "agent_tool_executor_toolexecutor",
+      "target": "agent_tool_executor_toolexecutor_deletefile",
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/agent/tool-executor.ts",
+      "source_location": "L141",
+      "weight": 1
+    },
+    {
+      "source": "agent_tool_executor_toolexecutor",
+      "target": "agent_tool_executor_toolexecutor_createfolder",
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/agent/tool-executor.ts",
+      "source_location": "L160",
+      "weight": 1
+    },
+    {
+      "source": "agent_tool_executor_toolexecutor",
+      "target": "agent_tool_executor_toolexecutor_listfiles",
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/agent/tool-executor.ts",
+      "source_location": "L174",
+      "weight": 1
+    },
+    {
+      "source": "agent_tool_executor_toolexecutor",
+      "target": "agent_tool_executor_toolexecutor_searchfiles",
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/agent/tool-executor.ts",
+      "source_location": "L208",
+      "weight": 1
+    },
+    {
+      "source": "agent_tool_executor_toolexecutor",
+      "target": "agent_tool_executor_toolexecutor_analyzecodebase",
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/agent/tool-executor.ts",
+      "source_location": "L269",
+      "weight": 1
+    },
+    {
+      "source": "agent_tool_executor_toolexecutor",
+      "target": "agent_tool_executor_toolexecutor_queueshell",
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/agent/tool-executor.ts",
+      "source_location": "L302",
+      "weight": 1
+    },
+    {
+      "source": "agent_tool_executor_toolexecutor",
+      "target": "agent_tool_executor_toolexecutor_skillroots",
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/agent/tool-executor.ts",
+      "source_location": "L313",
+      "weight": 1
+    },
+    {
+      "source": "agent_tool_executor_toolexecutor",
+      "target": "agent_tool_executor_toolexecutor_listskills",
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/agent/tool-executor.ts",
+      "source_location": "L325",
+      "weight": 1
+    },
+    {
+      "source": "agent_tool_executor_toolexecutor",
+      "target": "agent_tool_executor_toolexecutor_readskill",
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/agent/tool-executor.ts",
+      "source_location": "L348",
+      "weight": 1
+    },
+    {
+      "source": "agent_tool_executor_toolexecutor",
+      "target": "agent_tool_executor_toolexecutor_applyapprovedfromtracker",
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/agent/tool-executor.ts",
+      "source_location": "L367",
+      "weight": 1
+    },
+    {
+      "source": "agent_tool_executor_toolexecutor",
+      "target": "agent_tool_executor_toolexecutor_clearstaging",
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/agent/tool-executor.ts",
+      "source_location": "L426",
+      "weight": 1
+    },
+    {
+      "source": "agent_tool_executor_toolexecutor_assertnotexcluded",
+      "target": "agent_tool_executor_toolexecutor_excluded",
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/agent/tool-executor.ts",
+      "source_location": "L69",
+      "weight": 1
+    },
+    {
+      "source": "agent_tool_executor_toolexecutor_geteffectivetext",
+      "target": "agent_tool_executor_toolexecutor_resolvesafe",
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/agent/tool-executor.ts",
+      "source_location": "L78",
+      "weight": 1
+    },
+    {
+      "source": "agent_tool_executor_toolexecutor_readfile",
+      "target": "agent_tool_executor_toolexecutor_assertnotexcluded",
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/agent/tool-executor.ts",
+      "source_location": "L84",
+      "weight": 1
+    },
+    {
+      "source": "agent_tool_executor_toolexecutor_readfile",
+      "target": "agent_tool_executor_toolexecutor_resolvesafe",
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/agent/tool-executor.ts",
+      "source_location": "L85",
+      "weight": 1
+    },
+    {
+      "source": "agent_tool_executor_toolexecutor_createfile",
+      "target": "agent_tool_executor_toolexecutor_assertnotexcluded",
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/agent/tool-executor.ts",
+      "source_location": "L106",
+      "weight": 1
+    },
+    {
+      "source": "agent_tool_executor_toolexecutor_createfile",
+      "target": "agent_tool_executor_toolexecutor_resolvesafe",
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/agent/tool-executor.ts",
+      "source_location": "L108",
+      "weight": 1
+    },
+    {
+      "source": "agent_tool_executor_toolexecutor_modifyfile",
+      "target": "agent_tool_executor_toolexecutor_assertnotexcluded",
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/agent/tool-executor.ts",
+      "source_location": "L126",
+      "weight": 1
+    },
+    {
+      "source": "agent_tool_executor_toolexecutor_modifyfile",
+      "target": "agent_tool_executor_toolexecutor_geteffectivetext",
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/agent/tool-executor.ts",
+      "source_location": "L127",
+      "weight": 1
+    },
+    {
+      "source": "agent_tool_executor_toolexecutor_deletefile",
+      "target": "agent_tool_executor_toolexecutor_assertnotexcluded",
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/agent/tool-executor.ts",
+      "source_location": "L144",
+      "weight": 1
+    },
+    {
+      "source": "agent_tool_executor_toolexecutor_deletefile",
+      "target": "agent_tool_executor_toolexecutor_geteffectivetext",
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/agent/tool-executor.ts",
+      "source_location": "L145",
+      "weight": 1
+    },
+    {
+      "source": "agent_tool_executor_toolexecutor_createfolder",
+      "target": "agent_tool_executor_toolexecutor_assertnotexcluded",
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/agent/tool-executor.ts",
+      "source_location": "L163",
+      "weight": 1
+    },
+    {
+      "source": "agent_tool_executor_toolexecutor_listfiles",
+      "target": "agent_tool_executor_toolexecutor_assertnotexcluded",
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/agent/tool-executor.ts",
+      "source_location": "L175",
+      "weight": 1
+    },
+    {
+      "source": "agent_tool_executor_toolexecutor_listfiles",
+      "target": "agent_tool_executor_toolexecutor_resolvesafe",
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/agent/tool-executor.ts",
+      "source_location": "L176",
+      "weight": 1
+    },
+    {
+      "source": "agent_tool_executor_toolexecutor_searchfiles",
+      "target": "agent_tool_executor_toolexecutor_assertnotexcluded",
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/agent/tool-executor.ts",
+      "source_location": "L213",
+      "weight": 1
+    },
+    {
+      "source": "agent_tool_executor_toolexecutor_searchfiles",
+      "target": "agent_tool_executor_toolexecutor_resolvesafe",
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/agent/tool-executor.ts",
+      "source_location": "L214",
+      "weight": 1
+    },
+    {
+      "source": "agent_tool_executor_toolexecutor_analyzecodebase",
+      "target": "agent_tool_executor_toolexecutor_resolvesafe",
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/agent/tool-executor.ts",
+      "source_location": "L270",
+      "weight": 1
+    },
+    {
+      "source": "agent_tool_executor_toolexecutor_listskills",
+      "target": "agent_tool_executor_toolexecutor_skillroots",
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/agent/tool-executor.ts",
+      "source_location": "L327",
+      "weight": 1
+    },
+    {
+      "source": "agent_tool_executor_toolexecutor_readskill",
+      "target": "agent_tool_executor_toolexecutor_skillroots",
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/agent/tool-executor.ts",
+      "source_location": "L352",
+      "weight": 1
+    },
+    {
+      "source": "agent_tool_executor_toolexecutor_applyapprovedfromtracker",
+      "target": "agent_tool_executor_toolexecutor_resolvesafe",
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/agent/tool-executor.ts",
+      "source_location": "L375",
+      "weight": 1
+    },
+    {
+      "source": "agent_types",
+      "target": "agent_types_actiontype",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/agent/types.ts",
+      "source_location": "L1",
+      "weight": 1
+    },
+    {
+      "source": "agent_types",
+      "target": "agent_types_actionstatus",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/agent/types.ts",
+      "source_location": "L9",
+      "weight": 1
+    },
+    {
+      "source": "agent_types",
+      "target": "agent_types_actionlog",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/agent/types.ts",
+      "source_location": "L11",
+      "weight": 1
+    },
+    {
+      "source": "agent_types",
+      "target": "agent_types_agentconfig",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/agent/types.ts",
+      "source_location": "L28",
+      "weight": 1
+    },
+    {
+      "source": "agent_types",
+      "target": "agent_types_defaultagentconfig",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/agent/types.ts",
+      "source_location": "L40",
+      "weight": 1
+    },
+    {
+      "source": "agent_types",
+      "target": "agent_types_ismutationtype",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/agent/types.ts",
+      "source_location": "L60",
+      "weight": 1
+    },
+    {
+      "source": "ask_orchestrator",
+      "target": "chalk",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/ask/orchestrator.ts",
+      "source_location": "L1",
+      "weight": 1
+    },
+    {
+      "source": "ask_orchestrator",
+      "target": "prompts",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/ask/orchestrator.ts",
+      "source_location": "L2",
+      "weight": 1
+    },
+    {
+      "source": "ask_orchestrator",
+      "target": "ai",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/ask/orchestrator.ts",
+      "source_location": "L3",
+      "weight": 1
+    },
+    {
+      "source": "ask_orchestrator",
+      "target": "zod",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/ask/orchestrator.ts",
+      "source_location": "L4",
+      "weight": 1
+    },
+    {
+      "source": "ask_orchestrator",
+      "target": "ai_ai_config",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/ask/orchestrator.ts",
+      "source_location": "L5",
+      "weight": 1
+    },
+    {
+      "source": "ask_orchestrator",
+      "target": "ai_ai_config_getagentmodel",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/ask/orchestrator.ts",
+      "source_location": "L5",
+      "weight": 1
+    },
+    {
+      "source": "ask_orchestrator",
+      "target": "agent_action_tracker",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/ask/orchestrator.ts",
+      "source_location": "L6",
+      "weight": 1
+    },
+    {
+      "source": "ask_orchestrator",
+      "target": "agent_action_tracker_actiontracker",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/ask/orchestrator.ts",
+      "source_location": "L6",
+      "weight": 1
+    },
+    {
+      "source": "ask_orchestrator",
+      "target": "agent_tool_executor",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/ask/orchestrator.ts",
+      "source_location": "L7",
+      "weight": 1
+    },
+    {
+      "source": "ask_orchestrator",
+      "target": "agent_tool_executor_toolexecutor",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/ask/orchestrator.ts",
+      "source_location": "L7",
+      "weight": 1
+    },
+    {
+      "source": "ask_orchestrator",
+      "target": "agent_types",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/ask/orchestrator.ts",
+      "source_location": "L8",
+      "weight": 1
+    },
+    {
+      "source": "ask_orchestrator",
+      "target": "agent_types_defaultagentconfig",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/ask/orchestrator.ts",
+      "source_location": "L8",
+      "weight": 1
+    },
+    {
+      "source": "ask_orchestrator",
+      "target": "tui_terminal_md",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/ask/orchestrator.ts",
+      "source_location": "L9",
+      "weight": 1
+    },
+    {
+      "source": "ask_orchestrator",
+      "target": "tui_terminal_md_renderterminalmarkdown",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/ask/orchestrator.ts",
+      "source_location": "L9",
+      "weight": 1
+    },
+    {
+      "source": "ask_orchestrator",
+      "target": "agent_approval",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/ask/orchestrator.ts",
+      "source_location": "L10",
+      "weight": 1
+    },
+    {
+      "source": "ask_orchestrator",
+      "target": "agent_approval_runapprovalflow",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/ask/orchestrator.ts",
+      "source_location": "L10",
+      "weight": 1
+    },
+    {
+      "source": "ask_orchestrator",
+      "target": "plan_web_tools",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/ask/orchestrator.ts",
+      "source_location": "L11",
+      "weight": 1
+    },
+    {
+      "source": "ask_orchestrator",
+      "target": "plan_web_tools_createwebtools",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/ask/orchestrator.ts",
+      "source_location": "L11",
+      "weight": 1
+    },
+    {
+      "source": "ask_orchestrator",
+      "target": "ask_orchestrator_createasktools",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/ask/orchestrator.ts",
+      "source_location": "L14",
+      "weight": 1
+    },
+    {
+      "source": "ask_orchestrator",
+      "target": "ask_orchestrator_asmd",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/ask/orchestrator.ts",
+      "source_location": "L76",
+      "weight": 1
+    },
+    {
+      "source": "ask_orchestrator",
+      "target": "ask_orchestrator_runaskmode",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/ask/orchestrator.ts",
+      "source_location": "L80",
+      "weight": 1
+    },
+    {
+      "source": "ask_orchestrator_runaskmode",
+      "target": "ask_orchestrator_createasktools",
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/ask/orchestrator.ts",
+      "source_location": "L97",
+      "weight": 1
+    },
+    {
+      "source": "ask_orchestrator_runaskmode",
+      "target": "ask_orchestrator_asmd",
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/ask/orchestrator.ts",
+      "source_location": "L130",
+      "weight": 1
+    },
+    {
+      "source": "modes_cli",
+      "target": "chalk",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/cli.ts",
+      "source_location": "L1",
+      "weight": 1
+    },
+    {
+      "source": "modes_cli",
+      "target": "prompts",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/cli.ts",
+      "source_location": "L2",
+      "weight": 1
+    },
+    {
+      "source": "modes_cli",
+      "target": "agent_orchestrator",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/cli.ts",
+      "source_location": "L3",
+      "weight": 1
+    },
+    {
+      "source": "modes_cli",
+      "target": "agent_orchestrator_runagentmode",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/cli.ts",
+      "source_location": "L3",
+      "weight": 1
+    },
+    {
+      "source": "modes_cli",
+      "target": "ask_orchestrator",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/cli.ts",
+      "source_location": "L4",
+      "weight": 1
+    },
+    {
+      "source": "modes_cli",
+      "target": "ask_orchestrator_runaskmode",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/cli.ts",
+      "source_location": "L4",
+      "weight": 1
+    },
+    {
+      "source": "modes_cli",
+      "target": "plan_orchestrator",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/cli.ts",
+      "source_location": "L5",
+      "weight": 1
+    },
+    {
+      "source": "modes_cli",
+      "target": "plan_orchestrator_runplanmode",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/cli.ts",
+      "source_location": "L5",
+      "weight": 1
+    },
+    {
+      "source": "modes_cli",
+      "target": "modes_cli_runclimode",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/cli.ts",
+      "source_location": "L7",
+      "weight": 1
+    },
+    {
+      "source": "plan_orchestrator",
+      "target": "chalk",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/plan/orchestrator.ts",
+      "source_location": "L1",
+      "weight": 1
+    },
+    {
+      "source": "plan_orchestrator",
+      "target": "prompts",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/plan/orchestrator.ts",
+      "source_location": "L2",
+      "weight": 1
+    },
+    {
+      "source": "plan_orchestrator",
+      "target": "ai",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/plan/orchestrator.ts",
+      "source_location": "L3",
+      "weight": 1
+    },
+    {
+      "source": "plan_orchestrator",
+      "target": "ai_ai_config",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/plan/orchestrator.ts",
+      "source_location": "L4",
+      "weight": 1
+    },
+    {
+      "source": "plan_orchestrator",
+      "target": "ai_ai_config_getagentmodel",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/plan/orchestrator.ts",
+      "source_location": "L4",
+      "weight": 1
+    },
+    {
+      "source": "plan_orchestrator",
+      "target": "agent_action_tracker",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/plan/orchestrator.ts",
+      "source_location": "L5",
+      "weight": 1
+    },
+    {
+      "source": "plan_orchestrator",
+      "target": "agent_action_tracker_actiontracker",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/plan/orchestrator.ts",
+      "source_location": "L5",
+      "weight": 1
+    },
+    {
+      "source": "plan_orchestrator",
+      "target": "agent_tool_executor",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/plan/orchestrator.ts",
+      "source_location": "L6",
+      "weight": 1
+    },
+    {
+      "source": "plan_orchestrator",
+      "target": "agent_tool_executor_toolexecutor",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/plan/orchestrator.ts",
+      "source_location": "L6",
+      "weight": 1
+    },
+    {
+      "source": "plan_orchestrator",
+      "target": "agent_agent_tools",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/plan/orchestrator.ts",
+      "source_location": "L7",
+      "weight": 1
+    },
+    {
+      "source": "plan_orchestrator",
+      "target": "agent_agent_tools_createagenttools",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/plan/orchestrator.ts",
+      "source_location": "L7",
+      "weight": 1
+    },
+    {
+      "source": "plan_orchestrator",
+      "target": "agent_types",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/plan/orchestrator.ts",
+      "source_location": "L8",
+      "weight": 1
+    },
+    {
+      "source": "plan_orchestrator",
+      "target": "agent_types_defaultagentconfig",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/plan/orchestrator.ts",
+      "source_location": "L8",
+      "weight": 1
+    },
+    {
+      "source": "plan_orchestrator",
+      "target": "agent_approval",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/plan/orchestrator.ts",
+      "source_location": "L9",
+      "weight": 1
+    },
+    {
+      "source": "plan_orchestrator",
+      "target": "agent_approval_runapprovalflow",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/plan/orchestrator.ts",
+      "source_location": "L9",
+      "weight": 1
+    },
+    {
+      "source": "plan_orchestrator",
+      "target": "tui_terminal_md",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/plan/orchestrator.ts",
+      "source_location": "L10",
+      "weight": 1
+    },
+    {
+      "source": "plan_orchestrator",
+      "target": "tui_terminal_md_renderterminalmarkdown",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/plan/orchestrator.ts",
+      "source_location": "L10",
+      "weight": 1
+    },
+    {
+      "source": "plan_orchestrator",
+      "target": "plan_planner",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/plan/orchestrator.ts",
+      "source_location": "L11",
+      "weight": 1
+    },
+    {
+      "source": "plan_orchestrator",
+      "target": "plan_planner_generateplan",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/plan/orchestrator.ts",
+      "source_location": "L11",
+      "weight": 1
+    },
+    {
+      "source": "plan_orchestrator",
+      "target": "plan_selection",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/plan/orchestrator.ts",
+      "source_location": "L12",
+      "weight": 1
+    },
+    {
+      "source": "plan_orchestrator",
+      "target": "plan_selection_printplan",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/plan/orchestrator.ts",
+      "source_location": "L12",
+      "weight": 1
+    },
+    {
+      "source": "plan_orchestrator",
+      "target": "plan_selection_selectsteps",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/plan/orchestrator.ts",
+      "source_location": "L12",
+      "weight": 1
+    },
+    {
+      "source": "plan_orchestrator",
+      "target": "plan_types",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/plan/orchestrator.ts",
+      "source_location": "L13",
+      "weight": 1
+    },
+    {
+      "source": "plan_orchestrator",
+      "target": "plan_types_planstep",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/plan/orchestrator.ts",
+      "source_location": "L13",
+      "weight": 1
+    },
+    {
+      "source": "plan_orchestrator",
+      "target": "plan_web_tools",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/plan/orchestrator.ts",
+      "source_location": "L14",
+      "weight": 1
+    },
+    {
+      "source": "plan_orchestrator",
+      "target": "plan_web_tools_createwebtools",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/plan/orchestrator.ts",
+      "source_location": "L14",
+      "weight": 1
+    },
+    {
+      "source": "plan_orchestrator",
+      "target": "plan_orchestrator_stepprompt",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/plan/orchestrator.ts",
+      "source_location": "L17",
+      "weight": 1
+    },
+    {
+      "source": "plan_orchestrator",
+      "target": "plan_orchestrator_runplanmode",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/plan/orchestrator.ts",
+      "source_location": "L22",
+      "weight": 1
+    },
+    {
+      "source": "plan_orchestrator_runplanmode",
+      "target": "plan_orchestrator_stepprompt",
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/plan/orchestrator.ts",
+      "source_location": "L59",
+      "weight": 1
+    },
+    {
+      "source": "plan_planner",
+      "target": "ai",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/plan/planner.ts",
+      "source_location": "L1",
+      "weight": 1
+    },
+    {
+      "source": "plan_planner",
+      "target": "zod",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/plan/planner.ts",
+      "source_location": "L9",
+      "weight": 1
+    },
+    {
+      "source": "plan_planner",
+      "target": "chalk",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/plan/planner.ts",
+      "source_location": "L10",
+      "weight": 1
+    },
+    {
+      "source": "plan_planner",
+      "target": "ai_ai_config",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/plan/planner.ts",
+      "source_location": "L11",
+      "weight": 1
+    },
+    {
+      "source": "plan_planner",
+      "target": "ai_ai_config_getagentmodel",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/plan/planner.ts",
+      "source_location": "L11",
+      "weight": 1
+    },
+    {
+      "source": "plan_planner",
+      "target": "agent_action_tracker",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/plan/planner.ts",
+      "source_location": "L12",
+      "weight": 1
+    },
+    {
+      "source": "plan_planner",
+      "target": "agent_action_tracker_actiontracker",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/plan/planner.ts",
+      "source_location": "L12",
+      "weight": 1
+    },
+    {
+      "source": "plan_planner",
+      "target": "agent_tool_executor",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/plan/planner.ts",
+      "source_location": "L13",
+      "weight": 1
+    },
+    {
+      "source": "plan_planner",
+      "target": "agent_tool_executor_toolexecutor",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/plan/planner.ts",
+      "source_location": "L13",
+      "weight": 1
+    },
+    {
+      "source": "plan_planner",
+      "target": "agent_types",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/plan/planner.ts",
+      "source_location": "L14",
+      "weight": 1
+    },
+    {
+      "source": "plan_planner",
+      "target": "agent_types_defaultagentconfig",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/plan/planner.ts",
+      "source_location": "L14",
+      "weight": 1
+    },
+    {
+      "source": "plan_planner",
+      "target": "plan_types",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/plan/planner.ts",
+      "source_location": "L15",
+      "weight": 1
+    },
+    {
+      "source": "plan_planner",
+      "target": "plan_types_plan",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/plan/planner.ts",
+      "source_location": "L15",
+      "weight": 1
+    },
+    {
+      "source": "plan_planner",
+      "target": "plan_types_planstep",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/plan/planner.ts",
+      "source_location": "L15",
+      "weight": 1
+    },
+    {
+      "source": "plan_planner",
+      "target": "plan_web_tools",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/plan/planner.ts",
+      "source_location": "L16",
+      "weight": 1
+    },
+    {
+      "source": "plan_planner",
+      "target": "plan_web_tools_createwebtools",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/plan/planner.ts",
+      "source_location": "L16",
+      "weight": 1
+    },
+    {
+      "source": "plan_planner",
+      "target": "plan_planner_planschema",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/plan/planner.ts",
+      "source_location": "L18",
+      "weight": 1
+    },
+    {
+      "source": "plan_planner",
+      "target": "plan_planner_readonlytools",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/plan/planner.ts",
+      "source_location": "L33",
+      "weight": 1
+    },
+    {
+      "source": "plan_planner",
+      "target": "plan_planner_plan_instructions",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/plan/planner.ts",
+      "source_location": "L95",
+      "weight": 1
+    },
+    {
+      "source": "plan_planner",
+      "target": "plan_planner_generateplan",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/plan/planner.ts",
+      "source_location": "L107",
+      "weight": 1
+    },
+    {
+      "source": "plan_planner_generateplan",
+      "target": "plan_planner_readonlytools",
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/plan/planner.ts",
+      "source_location": "L120",
+      "weight": 1
+    },
+    {
+      "source": "plan_planner_generateplan",
+      "target": "plan_planner_plan_instructions",
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/plan/planner.ts",
+      "source_location": "L128",
+      "weight": 1
+    },
+    {
+      "source": "plan_selection",
+      "target": "prompts",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/plan/selection.ts",
+      "source_location": "L1",
+      "weight": 1
+    },
+    {
+      "source": "plan_selection",
+      "target": "chalk",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/plan/selection.ts",
+      "source_location": "L2",
+      "weight": 1
+    },
+    {
+      "source": "plan_selection",
+      "target": "plan_types",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/plan/selection.ts",
+      "source_location": "L3",
+      "weight": 1
+    },
+    {
+      "source": "plan_selection",
+      "target": "plan_types_plan",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/plan/selection.ts",
+      "source_location": "L3",
+      "weight": 1
+    },
+    {
+      "source": "plan_selection",
+      "target": "plan_types_planstep",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/plan/selection.ts",
+      "source_location": "L3",
+      "weight": 1
+    },
+    {
+      "source": "plan_selection",
+      "target": "tui_terminal_md",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/plan/selection.ts",
+      "source_location": "L4",
+      "weight": 1
+    },
+    {
+      "source": "plan_selection",
+      "target": "tui_terminal_md_renderterminalmarkdown",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/plan/selection.ts",
+      "source_location": "L4",
+      "weight": 1
+    },
+    {
+      "source": "plan_selection",
+      "target": "plan_selection_complexity_color",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/plan/selection.ts",
+      "source_location": "L7",
+      "weight": 1
+    },
+    {
+      "source": "plan_selection",
+      "target": "plan_selection_printplan",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/plan/selection.ts",
+      "source_location": "L14",
+      "weight": 1
+    },
+    {
+      "source": "plan_selection",
+      "target": "plan_selection_selectsteps",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/plan/selection.ts",
+      "source_location": "L28",
+      "weight": 1
+    },
+    {
+      "source": "plan_types",
+      "target": "plan_types_planstep",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/plan/types.ts",
+      "source_location": "L1",
+      "weight": 1
+    },
+    {
+      "source": "plan_types",
+      "target": "plan_types_plan",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/plan/types.ts",
+      "source_location": "L9",
+      "weight": 1
+    },
+    {
+      "source": "plan_web_tools",
+      "target": "ai",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/plan/web-tools.ts",
+      "source_location": "L1",
+      "weight": 1
+    },
+    {
+      "source": "plan_web_tools",
+      "target": "zod",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/plan/web-tools.ts",
+      "source_location": "L2",
+      "weight": 1
+    },
+    {
+      "source": "plan_web_tools",
+      "target": "firecrawl_js",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/plan/web-tools.ts",
+      "source_location": "L3",
+      "weight": 1
+    },
+    {
+      "source": "plan_web_tools",
+      "target": "agent_action_tracker",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/plan/web-tools.ts",
+      "source_location": "L4",
+      "weight": 1
+    },
+    {
+      "source": "plan_web_tools",
+      "target": "agent_action_tracker_actiontracker",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/plan/web-tools.ts",
+      "source_location": "L4",
+      "weight": 1
+    },
+    {
+      "source": "plan_web_tools",
+      "target": "plan_web_tools_getclient",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/plan/web-tools.ts",
+      "source_location": "L8",
+      "weight": 1
+    },
+    {
+      "source": "plan_web_tools",
+      "target": "plan_web_tools_clip",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/plan/web-tools.ts",
+      "source_location": "L16",
+      "weight": 1
+    },
+    {
+      "source": "plan_web_tools",
+      "target": "plan_web_tools_createwebtools",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/plan/web-tools.ts",
+      "source_location": "L20",
+      "weight": 1
+    },
+    {
+      "source": "telegram_agent_run",
+      "target": "ai",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/telegram/agent-run.ts",
+      "source_location": "L1",
+      "weight": 1
+    },
+    {
+      "source": "telegram_agent_run",
+      "target": "zod",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/telegram/agent-run.ts",
+      "source_location": "L2",
+      "weight": 1
+    },
+    {
+      "source": "telegram_agent_run",
+      "target": "ai_ai_config",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/telegram/agent-run.ts",
+      "source_location": "L3",
+      "weight": 1
+    },
+    {
+      "source": "telegram_agent_run",
+      "target": "ai_ai_config_getagentmodel",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/telegram/agent-run.ts",
+      "source_location": "L3",
+      "weight": 1
+    },
+    {
+      "source": "telegram_agent_run",
+      "target": "agent_action_tracker",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/telegram/agent-run.ts",
+      "source_location": "L4",
+      "weight": 1
+    },
+    {
+      "source": "telegram_agent_run",
+      "target": "agent_action_tracker_actiontracker",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/telegram/agent-run.ts",
+      "source_location": "L4",
+      "weight": 1
+    },
+    {
+      "source": "telegram_agent_run",
+      "target": "agent_tool_executor",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/telegram/agent-run.ts",
+      "source_location": "L5",
+      "weight": 1
+    },
+    {
+      "source": "telegram_agent_run",
+      "target": "agent_tool_executor_toolexecutor",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/telegram/agent-run.ts",
+      "source_location": "L5",
+      "weight": 1
+    },
+    {
+      "source": "telegram_agent_run",
+      "target": "agent_agent_tools",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/telegram/agent-run.ts",
+      "source_location": "L6",
+      "weight": 1
+    },
+    {
+      "source": "telegram_agent_run",
+      "target": "agent_agent_tools_createagenttools",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/telegram/agent-run.ts",
+      "source_location": "L6",
+      "weight": 1
+    },
+    {
+      "source": "telegram_agent_run",
+      "target": "agent_types",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/telegram/agent-run.ts",
+      "source_location": "L7",
+      "weight": 1
+    },
+    {
+      "source": "telegram_agent_run",
+      "target": "agent_types_defaultagentconfig",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/telegram/agent-run.ts",
+      "source_location": "L7",
+      "weight": 1
+    },
+    {
+      "source": "telegram_agent_run",
+      "target": "agent_types_agentconfig",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/telegram/agent-run.ts",
+      "source_location": "L7",
+      "weight": 1
+    },
+    {
+      "source": "telegram_agent_run",
+      "target": "plan_web_tools",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/telegram/agent-run.ts",
+      "source_location": "L8",
+      "weight": 1
+    },
+    {
+      "source": "telegram_agent_run",
+      "target": "plan_web_tools_createwebtools",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/telegram/agent-run.ts",
+      "source_location": "L8",
+      "weight": 1
+    },
+    {
+      "source": "telegram_agent_run",
+      "target": "plan_types",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/telegram/agent-run.ts",
+      "source_location": "L9",
+      "weight": 1
+    },
+    {
+      "source": "telegram_agent_run",
+      "target": "plan_types_plan",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/telegram/agent-run.ts",
+      "source_location": "L9",
+      "weight": 1
+    },
+    {
+      "source": "telegram_agent_run",
+      "target": "plan_types_planstep",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/telegram/agent-run.ts",
+      "source_location": "L9",
+      "weight": 1
+    },
+    {
+      "source": "telegram_agent_run",
+      "target": "telegram_text",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/telegram/agent-run.ts",
+      "source_location": "L10",
+      "weight": 1
+    },
+    {
+      "source": "telegram_agent_run",
+      "target": "telegram_text_replymd",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/telegram/agent-run.ts",
+      "source_location": "L10",
+      "weight": 1
+    },
+    {
+      "source": "telegram_agent_run",
+      "target": "telegram_approval_session",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/telegram/agent-run.ts",
+      "source_location": "L11",
+      "weight": 1
+    },
+    {
+      "source": "telegram_agent_run",
+      "target": "telegram_approval_session_finishorapprove",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/telegram/agent-run.ts",
+      "source_location": "L11",
+      "weight": 1
+    },
+    {
+      "source": "telegram_agent_run",
+      "target": "telegram_agent_run_readonlyconfig",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/telegram/agent-run.ts",
+      "source_location": "L13",
+      "weight": 1
+    },
+    {
+      "source": "telegram_agent_run",
+      "target": "telegram_agent_run_agentoptions",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/telegram/agent-run.ts",
+      "source_location": "L22",
+      "weight": 1
+    },
+    {
+      "source": "telegram_agent_run",
+      "target": "telegram_agent_run_createreadonlytools",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/telegram/agent-run.ts",
+      "source_location": "L30",
+      "weight": 1
+    },
+    {
+      "source": "telegram_agent_run",
+      "target": "telegram_agent_run_extrawebtools",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/telegram/agent-run.ts",
+      "source_location": "L65",
+      "weight": 1
+    },
+    {
+      "source": "telegram_agent_run",
+      "target": "telegram_agent_run_runask",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/telegram/agent-run.ts",
+      "source_location": "L70",
+      "weight": 1
+    },
+    {
+      "source": "telegram_agent_run",
+      "target": "telegram_agent_run_runagent",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/telegram/agent-run.ts",
+      "source_location": "L84",
+      "weight": 1
+    },
+    {
+      "source": "telegram_agent_run",
+      "target": "telegram_agent_run_runplansteps",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/telegram/agent-run.ts",
+      "source_location": "L98",
+      "weight": 1
+    },
+    {
+      "source": "telegram_agent_run_runask",
+      "target": "telegram_agent_run_readonlyconfig",
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/telegram/agent-run.ts",
+      "source_location": "L71",
+      "weight": 1
+    },
+    {
+      "source": "telegram_agent_run_runask",
+      "target": "telegram_agent_run_createreadonlytools",
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/telegram/agent-run.ts",
+      "source_location": "L74",
+      "weight": 1
+    },
+    {
+      "source": "telegram_agent_run_runask",
+      "target": "telegram_agent_run_extrawebtools",
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/telegram/agent-run.ts",
+      "source_location": "L74",
+      "weight": 1
+    },
+    {
+      "source": "telegram_agent_run_runask",
+      "target": "telegram_agent_run_agentoptions",
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/telegram/agent-run.ts",
+      "source_location": "L76",
+      "weight": 1
+    },
+    {
+      "source": "telegram_agent_run_runagent",
+      "target": "telegram_agent_run_agentoptions",
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/telegram/agent-run.ts",
+      "source_location": "L90",
+      "weight": 1
+    },
+    {
+      "source": "telegram_agent_run_runplansteps",
+      "target": "telegram_agent_run_extrawebtools",
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/telegram/agent-run.ts",
+      "source_location": "L107",
+      "weight": 1
+    },
+    {
+      "source": "telegram_agent_run_runplansteps",
+      "target": "telegram_agent_run_agentoptions",
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/telegram/agent-run.ts",
+      "source_location": "L113",
+      "weight": 1
+    },
+    {
+      "source": "telegram_approval_session",
+      "target": "telegraf",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/telegram/approval-session.ts",
+      "source_location": "L1",
+      "weight": 1
+    },
+    {
+      "source": "telegram_approval_session",
+      "target": "agent_action_tracker",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/telegram/approval-session.ts",
+      "source_location": "L2",
+      "weight": 1
+    },
+    {
+      "source": "telegram_approval_session",
+      "target": "agent_action_tracker_actiontracker",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/telegram/approval-session.ts",
+      "source_location": "L2",
+      "weight": 1
+    },
+    {
+      "source": "telegram_approval_session",
+      "target": "agent_tool_executor",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/telegram/approval-session.ts",
+      "source_location": "L3",
+      "weight": 1
+    },
+    {
+      "source": "telegram_approval_session",
+      "target": "agent_tool_executor_toolexecutor",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/telegram/approval-session.ts",
+      "source_location": "L3",
+      "weight": 1
+    },
+    {
+      "source": "telegram_approval_session",
+      "target": "agent_types",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/telegram/approval-session.ts",
+      "source_location": "L4",
+      "weight": 1
+    },
+    {
+      "source": "telegram_approval_session",
+      "target": "agent_types_actionlog",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/telegram/approval-session.ts",
+      "source_location": "L4",
+      "weight": 1
+    },
+    {
+      "source": "telegram_approval_session",
+      "target": "agent_diff_view",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/telegram/approval-session.ts",
+      "source_location": "L5",
+      "weight": 1
+    },
+    {
+      "source": "telegram_approval_session",
+      "target": "agent_diff_view_composebeforeafter",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/telegram/approval-session.ts",
+      "source_location": "L5",
+      "weight": 1
+    },
+    {
+      "source": "telegram_approval_session",
+      "target": "agent_diff_view_formatpatch",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/telegram/approval-session.ts",
+      "source_location": "L5",
+      "weight": 1
+    },
+    {
+      "source": "telegram_approval_session",
+      "target": "telegram_text",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/telegram/approval-session.ts",
+      "source_location": "L6",
+      "weight": 1
+    },
+    {
+      "source": "telegram_approval_session",
+      "target": "telegram_text_clip",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/telegram/approval-session.ts",
+      "source_location": "L6",
+      "weight": 1
+    },
+    {
+      "source": "telegram_approval_session",
+      "target": "telegram_approval_session_approvalsession",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/telegram/approval-session.ts",
+      "source_location": "L8",
+      "weight": 1
+    },
+    {
+      "source": "telegram_approval_session",
+      "target": "telegram_approval_session_approvalsessions",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/telegram/approval-session.ts",
+      "source_location": "L14",
+      "weight": 1
+    },
+    {
+      "source": "telegram_approval_session",
+      "target": "telegram_approval_session_grouppending",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/telegram/approval-session.ts",
+      "source_location": "L16",
+      "weight": 1
+    },
+    {
+      "source": "telegram_approval_session",
+      "target": "telegram_approval_session_approvalsummary",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/telegram/approval-session.ts",
+      "source_location": "L29",
+      "weight": 1
+    },
+    {
+      "source": "telegram_approval_session",
+      "target": "telegram_approval_session_approvaldiff",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/telegram/approval-session.ts",
+      "source_location": "L39",
+      "weight": 1
+    },
+    {
+      "source": "telegram_approval_session",
+      "target": "telegram_approval_session_promptapproval",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/telegram/approval-session.ts",
+      "source_location": "L51",
+      "weight": 1
+    },
+    {
+      "source": "telegram_approval_session",
+      "target": "telegram_approval_session_finishorapprove",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/telegram/approval-session.ts",
+      "source_location": "L68",
+      "weight": 1
+    },
+    {
+      "source": "telegram_approval_session_approvalsummary",
+      "target": "telegram_approval_session_grouppending",
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/telegram/approval-session.ts",
+      "source_location": "L30",
+      "weight": 1
+    },
+    {
+      "source": "telegram_approval_session_approvaldiff",
+      "target": "telegram_approval_session_grouppending",
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/telegram/approval-session.ts",
+      "source_location": "L40",
+      "weight": 1
+    },
+    {
+      "source": "telegram_approval_session_promptapproval",
+      "target": "telegram_approval_session_approvalsummary",
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/telegram/approval-session.ts",
+      "source_location": "L57",
+      "weight": 1
+    },
+    {
+      "source": "telegram_approval_session_finishorapprove",
+      "target": "telegram_approval_session_promptapproval",
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/telegram/approval-session.ts",
+      "source_location": "L80",
+      "weight": 1
+    },
+    {
+      "source": "telegram_auth",
+      "target": "telegram_auth_isowner",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/telegram/auth.ts",
+      "source_location": "L1",
+      "weight": 1
+    },
+    {
+      "source": "telegram_constants",
+      "target": "telegram_constants_welcome",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/telegram/constants.ts",
+      "source_location": "L1",
+      "weight": 1
+    },
+    {
+      "source": "telegram_handlers",
+      "target": "telegraf",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/telegram/handlers.ts",
+      "source_location": "L1",
+      "weight": 1
+    },
+    {
+      "source": "telegram_handlers",
+      "target": "telegram_auth",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/telegram/handlers.ts",
+      "source_location": "L2",
+      "weight": 1
+    },
+    {
+      "source": "telegram_handlers",
+      "target": "telegram_auth_isowner",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/telegram/handlers.ts",
+      "source_location": "L2",
+      "weight": 1
+    },
+    {
+      "source": "telegram_handlers",
+      "target": "telegram_constants",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/telegram/handlers.ts",
+      "source_location": "L3",
+      "weight": 1
+    },
+    {
+      "source": "telegram_handlers",
+      "target": "telegram_constants_welcome",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/telegram/handlers.ts",
+      "source_location": "L3",
+      "weight": 1
+    },
+    {
+      "source": "telegram_handlers",
+      "target": "telegram_text",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/telegram/handlers.ts",
+      "source_location": "L4",
+      "weight": 1
+    },
+    {
+      "source": "telegram_handlers",
+      "target": "telegram_text_clip",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/telegram/handlers.ts",
+      "source_location": "L4",
+      "weight": 1
+    },
+    {
+      "source": "telegram_handlers",
+      "target": "telegram_text_commandarg",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/telegram/handlers.ts",
+      "source_location": "L4",
+      "weight": 1
+    },
+    {
+      "source": "telegram_handlers",
+      "target": "telegram_agent_run",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/telegram/handlers.ts",
+      "source_location": "L5",
+      "weight": 1
+    },
+    {
+      "source": "telegram_handlers",
+      "target": "telegram_agent_run_runagent",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/telegram/handlers.ts",
+      "source_location": "L5",
+      "weight": 1
+    },
+    {
+      "source": "telegram_handlers",
+      "target": "telegram_agent_run_runask",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/telegram/handlers.ts",
+      "source_location": "L5",
+      "weight": 1
+    },
+    {
+      "source": "telegram_handlers",
+      "target": "telegram_agent_run_runplansteps",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/telegram/handlers.ts",
+      "source_location": "L5",
+      "weight": 1
+    },
+    {
+      "source": "telegram_handlers",
+      "target": "plan_planner",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/telegram/handlers.ts",
+      "source_location": "L6",
+      "weight": 1
+    },
+    {
+      "source": "telegram_handlers",
+      "target": "plan_planner_generateplan",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/telegram/handlers.ts",
+      "source_location": "L6",
+      "weight": 1
+    },
+    {
+      "source": "telegram_handlers",
+      "target": "telegram_plan_session",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/telegram/handlers.ts",
+      "source_location": "L7",
+      "weight": 1
+    },
+    {
+      "source": "telegram_handlers",
+      "target": "telegram_plan_session_plankeyboard",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/telegram/handlers.ts",
+      "source_location": "L7",
+      "weight": 1
+    },
+    {
+      "source": "telegram_handlers",
+      "target": "telegram_plan_session_planmessage",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/telegram/handlers.ts",
+      "source_location": "L7",
+      "weight": 1
+    },
+    {
+      "source": "telegram_handlers",
+      "target": "telegram_plan_session_plansessions",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/telegram/handlers.ts",
+      "source_location": "L7",
+      "weight": 1
+    },
+    {
+      "source": "telegram_handlers",
+      "target": "telegram_plan_session_refreshplanui",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/telegram/handlers.ts",
+      "source_location": "L7",
+      "weight": 1
+    },
+    {
+      "source": "telegram_handlers",
+      "target": "telegram_plan_session_plansession",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/telegram/handlers.ts",
+      "source_location": "L7",
+      "weight": 1
+    },
+    {
+      "source": "telegram_handlers",
+      "target": "telegram_approval_session",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/telegram/handlers.ts",
+      "source_location": "L8",
+      "weight": 1
+    },
+    {
+      "source": "telegram_handlers",
+      "target": "telegram_approval_session_approvaldiff",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/telegram/handlers.ts",
+      "source_location": "L8",
+      "weight": 1
+    },
+    {
+      "source": "telegram_handlers",
+      "target": "telegram_approval_session_approvalsessions",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/telegram/handlers.ts",
+      "source_location": "L8",
+      "weight": 1
+    },
+    {
+      "source": "telegram_handlers",
+      "target": "telegram_handlers_registerhandlers",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/telegram/handlers.ts",
+      "source_location": "L10",
+      "weight": 1
+    },
+    {
+      "source": "telegram_index",
+      "target": "telegraf",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/telegram/index.ts",
+      "source_location": "L1",
+      "weight": 1
+    },
+    {
+      "source": "telegram_index",
+      "target": "chalk",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/telegram/index.ts",
+      "source_location": "L2",
+      "weight": 1
+    },
+    {
+      "source": "telegram_index",
+      "target": "telegram_constants",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/telegram/index.ts",
+      "source_location": "L3",
+      "weight": 1
+    },
+    {
+      "source": "telegram_index",
+      "target": "telegram_constants_welcome",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/telegram/index.ts",
+      "source_location": "L3",
+      "weight": 1
+    },
+    {
+      "source": "telegram_index",
+      "target": "node_dns",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/telegram/index.ts",
+      "source_location": "L4",
+      "weight": 1
+    },
+    {
+      "source": "telegram_index",
+      "target": "telegram_handlers",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/telegram/index.ts",
+      "source_location": "L5",
+      "weight": 1
+    },
+    {
+      "source": "telegram_index",
+      "target": "telegram_handlers_registerhandlers",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/telegram/index.ts",
+      "source_location": "L5",
+      "weight": 1
+    },
+    {
+      "source": "telegram_index",
+      "target": "telegram_index_runtelegrammode",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/telegram/index.ts",
+      "source_location": "L7",
+      "weight": 1
+    },
+    {
+      "source": "telegram_plan_session",
+      "target": "telegraf",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/telegram/plan-session.ts",
+      "source_location": "L1",
+      "weight": 1
+    },
+    {
+      "source": "telegram_plan_session",
+      "target": "plan_types",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/telegram/plan-session.ts",
+      "source_location": "L2",
+      "weight": 1
+    },
+    {
+      "source": "telegram_plan_session",
+      "target": "plan_types_plan",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/telegram/plan-session.ts",
+      "source_location": "L2",
+      "weight": 1
+    },
+    {
+      "source": "telegram_plan_session",
+      "target": "telegram_plan_session_plansession",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/telegram/plan-session.ts",
+      "source_location": "L5",
+      "weight": 1
+    },
+    {
+      "source": "telegram_plan_session",
+      "target": "telegram_plan_session_plansessions",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/telegram/plan-session.ts",
+      "source_location": "L10",
+      "weight": 1
+    },
+    {
+      "source": "telegram_plan_session",
+      "target": "telegram_plan_session_planmessage",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/telegram/plan-session.ts",
+      "source_location": "L12",
+      "weight": 1
+    },
+    {
+      "source": "telegram_plan_session",
+      "target": "telegram_plan_session_plankeyboard",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/telegram/plan-session.ts",
+      "source_location": "L27",
+      "weight": 1
+    },
+    {
+      "source": "telegram_plan_session",
+      "target": "telegram_plan_session_refreshplanui",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/telegram/plan-session.ts",
+      "source_location": "L43",
+      "weight": 1
+    },
+    {
+      "source": "telegram_plan_session_refreshplanui",
+      "target": "telegram_plan_session_planmessage",
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/telegram/plan-session.ts",
+      "source_location": "L47",
+      "weight": 1
+    },
+    {
+      "source": "telegram_plan_session_refreshplanui",
+      "target": "telegram_plan_session_plankeyboard",
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/telegram/plan-session.ts",
+      "source_location": "L49",
+      "weight": 1
+    },
+    {
+      "source": "telegram_text",
+      "target": "telegram_text_clip",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/telegram/text.ts",
+      "source_location": "L1",
+      "weight": 1
+    },
+    {
+      "source": "telegram_text",
+      "target": "telegram_text_replymd",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/telegram/text.ts",
+      "source_location": "L4",
+      "weight": 1
+    },
+    {
+      "source": "telegram_text",
+      "target": "telegram_text_commandarg",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/telegram/text.ts",
+      "source_location": "L8",
+      "weight": 1
+    },
+    {
+      "source": "telegram_text_replymd",
+      "target": "telegram_text_clip",
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "modes/telegram/text.ts",
+      "source_location": "L5",
+      "weight": 1
+    },
+    {
+      "source": "tui_terminal_md",
+      "target": "marked",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "tui/terminal-md.ts",
+      "source_location": "L1",
+      "weight": 1
+    },
+    {
+      "source": "tui_terminal_md",
+      "target": "marked_terminal",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "tui/terminal-md.ts",
+      "source_location": "L2",
+      "weight": 1
+    },
+    {
+      "source": "tui_terminal_md",
+      "target": "tui_terminal_md_ensuremarked",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tui/terminal-md.ts",
+      "source_location": "L6",
+      "weight": 1
+    },
+    {
+      "source": "tui_terminal_md",
+      "target": "tui_terminal_md_renderterminalmarkdown",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tui/terminal-md.ts",
+      "source_location": "L14",
+      "weight": 1
+    },
+    {
+      "source": "tui_terminal_md_renderterminalmarkdown",
+      "target": "tui_terminal_md_ensuremarked",
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "tui/terminal-md.ts",
+      "source_location": "L15",
+      "weight": 1
+    },
+    {
+      "source": "tui_wakeup",
+      "target": "prompts",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "tui/wakeup.ts",
+      "source_location": "L1",
+      "weight": 1
+    },
+    {
+      "source": "tui_wakeup",
+      "target": "chalk",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "tui/wakeup.ts",
+      "source_location": "L2",
+      "weight": 1
+    },
+    {
+      "source": "tui_wakeup",
+      "target": "console",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "tui/wakeup.ts",
+      "source_location": "L3",
+      "weight": 1
+    },
+    {
+      "source": "tui_wakeup",
+      "target": "figlet",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "tui/wakeup.ts",
+      "source_location": "L4",
+      "weight": 1
+    },
+    {
+      "source": "tui_wakeup",
+      "target": "modes_cli",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "tui/wakeup.ts",
+      "source_location": "L5",
+      "weight": 1
+    },
+    {
+      "source": "tui_wakeup",
+      "target": "modes_cli_runclimode",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "tui/wakeup.ts",
+      "source_location": "L5",
+      "weight": 1
+    },
+    {
+      "source": "tui_wakeup",
+      "target": "telegram_index",
+      "relation": "imports_from",
+      "confidence": "EXTRACTED",
+      "source_file": "tui/wakeup.ts",
+      "source_location": "L6",
+      "weight": 1
+    },
+    {
+      "source": "tui_wakeup",
+      "target": "telegram_index_runtelegrammode",
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "tui/wakeup.ts",
+      "source_location": "L6",
+      "weight": 1
+    },
+    {
+      "source": "tui_wakeup",
+      "target": "tui_wakeup_shadow",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tui/wakeup.ts",
+      "source_location": "L9",
+      "weight": 1
+    },
+    {
+      "source": "tui_wakeup",
+      "target": "tui_wakeup_printbannerwithshadow",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tui/wakeup.ts",
+      "source_location": "L12",
+      "weight": 1
+    },
+    {
+      "source": "tui_wakeup",
+      "target": "tui_wakeup_runwakeup",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tui/wakeup.ts",
+      "source_location": "L30",
+      "weight": 1
+    },
+    {
+      "source": "tui_wakeup_printbannerwithshadow",
+      "target": "tui_wakeup_shadow",
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "tui/wakeup.ts",
+      "source_location": "L19",
+      "weight": 1
+    },
+    {
+      "source": "tui_wakeup_runwakeup",
+      "target": "tui_wakeup_printbannerwithshadow",
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "tui/wakeup.ts",
+      "source_location": "L37",
+      "weight": 1
+    }
+  ],
+  "input_tokens": 0,
+  "output_tokens": 0,
+  "hyperedges": []
+}
