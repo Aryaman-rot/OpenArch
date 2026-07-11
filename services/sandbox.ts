@@ -227,16 +227,18 @@ export async function buildImage(
 export async function runContainer(
   imageName: string,
   args: string[],
-  opts?: { timeoutMs?: number; signal?: AbortSignal; env?: Record<string, string> },
+  opts?: { timeoutMs?: number; signal?: AbortSignal; env?: Record<string, string>; allowNetwork?: boolean },
 ): Promise<RunResult> {
   const dockerArgs = [
     "run",
     "--rm",
-    "--network",
-    "none",
     "--memory=512m",
     "--cpus=1",
   ];
+
+  if (!opts?.allowNetwork) {
+    dockerArgs.push("--network", "none");
+  }
 
   if (opts?.env) {
     for (const [key, value] of Object.entries(opts.env)) {
@@ -279,7 +281,7 @@ export async function removeImage(imageName: string): Promise<void> {
 export async function startService(
   imageName: string,
   containerPort: number,
-  opts?: { signal?: AbortSignal; env?: Record<string, string> },
+  opts?: { signal?: AbortSignal; env?: Record<string, string>; allowNetwork?: boolean },
 ): Promise<ServiceHandle> {
   const hostPort = await findFreePort();
   const containerName = `openarch-service-${sanitizeNameSegment(imageName)}-${Math.random()
@@ -306,6 +308,7 @@ export async function startService(
         containerName,
         "--memory=512m",
         "--cpus=1",
+        ...(!opts?.allowNetwork ? ["--network", "none"] : []),
         "-p",
         `${hostPort}:${containerPort}`,
         ...(opts?.env ? Object.entries(opts.env).flatMap(([key, value]) => ["-e", `${key}=${value}`]) : []),
@@ -324,6 +327,7 @@ export async function startService(
           containerName,
           "--memory=512m",
           "--cpus=1",
+          ...(!opts?.allowNetwork ? ["--network", "none"] : []),
           "-p",
           `${hostPort}:${containerPort}`,
           imageName,

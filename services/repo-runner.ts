@@ -451,7 +451,7 @@ async function prepareRepoImage(
 export async function runRepo(
   url: string,
   args: string[],
-  opts?: { signal?: AbortSignal; onStatus?: (message: string) => void },
+  opts?: { signal?: AbortSignal; onStatus?: (message: string) => void; allowNetwork?: boolean },
 ): Promise<RunResult> {
   const imageName = imageNameFromUrl(url);
   let repoPath = "";
@@ -461,7 +461,7 @@ export async function runRepo(
     repoPath = prepared.repoPath;
 
     (opts?.onStatus ?? console.log)("Running in sandbox...");
-    const result = await runContainer(imageName, args, { signal: opts?.signal });
+    const result = await runContainer(imageName, args, { signal: opts?.signal, allowNetwork: opts?.allowNetwork });
     return result;
   } finally {
     if (repoPath) {
@@ -473,9 +473,11 @@ export async function runRepo(
 export async function runRepoWithEnvCheck(
   repoUrl: string,
   args: string[],
+  opts?: { allowNetwork?: boolean },
 ): Promise<RunResult> {
   const context = getRepoToolContext();
   const status = context?.onStatus ?? console.log;
+  const allowNetwork = opts?.allowNetwork ?? false;
 
   const prepared = await prepareRepoImage(
     repoUrl,
@@ -496,6 +498,7 @@ export async function runRepoWithEnvCheck(
     const result = await runContainer(prepared.imageName, args, {
       signal: context?.signal,
       env: prepared.env,
+      allowNetwork,
     });
     return result;
   } finally {
@@ -506,13 +509,14 @@ export async function runRepoWithEnvCheck(
 export async function runRepoAsService(
   url: string,
   containerPort: number,
-  opts?: { signal?: AbortSignal; onStatus?: (message: string) => void },
+  opts?: { signal?: AbortSignal; onStatus?: (message: string) => void; allowNetwork?: boolean },
 ): Promise<ServiceHandle> {
   const prepared = await prepareRepoImage(url, opts);
   try {
     (opts?.onStatus ?? console.log)("Starting service...");
     return await startService(prepared.imageName, containerPort, {
       signal: opts?.signal,
+      allowNetwork: opts?.allowNetwork,
     });
   } catch (error) {
     await removeImage(prepared.imageName);
