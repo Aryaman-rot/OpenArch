@@ -11,7 +11,31 @@ import {
   runContainer,
   startService,
 } from "./sandbox";
+import { detectEnvRequirements, promptForEnvValues } from "./pragmatist";
+import { getRepoToolContext } from "./tool-context";
 import type { RuntimeInfo, RunResult, ServiceHandle } from "./types";
+
+const CLONE_TIMEOUT_MS = 30_000;
+
+function killGitProcessTree(childPid: number): void {
+  if (process.platform === "win32") {
+    try {
+      spawn("taskkill", ["/PID", String(childPid), "/T", "/F"], {
+        shell: false,
+        stdio: "ignore",
+      });
+    } catch {
+      // Best effort.
+    }
+    return;
+  }
+
+  try {
+    process.kill(childPid, "SIGKILL");
+  } catch {
+    // Best effort.
+  }
+}
 
 function runGitClone(
   url: string,
@@ -19,13 +43,20 @@ function runGitClone(
   opts?: { signal?: AbortSignal },
 ): Promise<void> {
   return new Promise((resolve, reject) => {
+    const startedAt = Date.now();
     const child = spawn("git", ["clone", url, targetDir], {
       shell: false,
       stdio: ["ignore", "pipe", "pipe"],
+      env: {
+        ...process.env,
+        GIT_TERMINAL_PROMPT: "0",
+      },
     });
 
     let stdout = "";
     let stderr = "";
+    let timedOut = false;
+    let timeout: ReturnType<typeof setTimeout> | undefined;
 
     child.stdout?.setEncoding("utf8");
     child.stderr?.setEncoding("utf8");
@@ -44,15 +75,17 @@ function runGitClone(
         return;
       }
       settled = true;
+      if (timeout) {
+        clearTimeout(timeout);
+      }
       reject(error);
     };
 
     const interrupt = () => {
-      try {
-        child.kill("SIGTERM");
-      } catch {
-        // Best effort.
+      if (timeout) {
+        clearTimeout(timeout);
       }
+      killGitProcessTree(child.pid ?? 0);
       rejectIfOpen(new Error(`Interrupted while cloning repo: ${url}`));
     };
 
@@ -79,9 +112,23 @@ function runGitClone(
       if (settled) {
         return;
       }
-      settled = true;
+      if (timeout) {
+        clearTimeout(timeout);
+      }
+
+      if (timedOut) {
+        settled = true;
+        reject(
+          new Error(
+            "Clone timed out after 30s - check the URL is correct and reachable.",
+          ),
+        );
+        return;
+      }
+
       if (code !== 0) {
-        rejectIfOpen(
+        settled = true;
+        reject(
           new Error(
             [
               `Failed to clone repo: ${url}`,
@@ -96,8 +143,23 @@ function runGitClone(
         return;
       }
 
+      settled = true;
       resolve();
     });
+
+    timeout = setTimeout(() => {
+      timedOut = true;
+      const elapsedMs = Date.now() - startedAt;
+      console.warn(
+        `[repo-runner] git clone timeout fired after ${elapsedMs}ms for ${url}`,
+      );
+      killGitProcessTree(child.pid ?? 0);
+      rejectIfOpen(
+        new Error(
+          "Clone timed out after 30s - check the URL is correct and reachable.",
+        ),
+      );
+    }, CLONE_TIMEOUT_MS);
   });
 }
 
@@ -151,11 +213,14 @@ function parseCommand(command: string): string[] {
   return parts;
 }
 
-function detectNodeStartCommand(pkg: Record<string, unknown>): string {
+function detectNodeStartCommand(
+  pkg: Record<string, unknown>,
+  packageManager: NodePackageManager,
+): string {
   const scripts = pkg.scripts as Record<string, unknown> | undefined;
   const startScript = scripts?.start;
   if (typeof startScript === "string" && startScript.trim()) {
-    return startScript.trim();
+    return getStartCommand(packageManager);
   }
 
   const bin = pkg.bin;
@@ -174,6 +239,40 @@ function detectNodeStartCommand(pkg: Record<string, unknown>): string {
   }
 
   return "node index.js";
+}
+
+type NodePackageManager = "npm" | "yarn";
+
+function detectNodePackageManager(repoPath: string): NodePackageManager {
+  if (existsSync(path.join(repoPath, "yarn.lock"))) {
+    return "yarn";
+  }
+
+  return "npm";
+}
+
+function getInstallCommand(packageManager: NodePackageManager): string {
+  if (packageManager === "yarn") {
+    return "RUN yarn install";
+  }
+
+  return "RUN npm install";
+}
+
+function getBuildCommand(packageManager: NodePackageManager): string {
+  if (packageManager === "yarn") {
+    return "RUN yarn build";
+  }
+
+  return "RUN npm run build";
+}
+
+function getStartCommand(packageManager: NodePackageManager): string {
+  if (packageManager === "yarn") {
+    return "yarn start";
+  }
+
+  return "npm start";
 }
 
 export async function cloneRepo(
@@ -202,6 +301,7 @@ export function detectRuntime(repoPath: string): RuntimeInfo {
   const packageJsonPath = path.join(repoPath, "package.json");
   if (existsSync(packageJsonPath)) {
     let pkg: Record<string, unknown>;
+    const packageManager = detectNodePackageManager(repoPath);
 
     try {
       pkg = JSON.parse(readFileSync(packageJsonPath, "utf8")) as Record<string, unknown>;
@@ -213,7 +313,7 @@ export function detectRuntime(repoPath: string): RuntimeInfo {
 
     return {
       kind: "node",
-      startCommand: detectNodeStartCommand(pkg),
+      startCommand: detectNodeStartCommand(pkg, packageManager),
       hasDockerfile: false,
     };
   }
@@ -254,12 +354,35 @@ export function generateDockerfile(repoPath: string, runtimeInfo: RuntimeInfo): 
   let dockerfile = "";
 
   if (runtimeInfo.kind === "node") {
+    const packageManager = detectNodePackageManager(repoPath);
+    const packageJsonPath = path.join(repoPath, "package.json");
+    let pkg: Record<string, unknown> = {};
+
+    try {
+      if (existsSync(packageJsonPath)) {
+        pkg = JSON.parse(readFileSync(packageJsonPath, "utf8")) as Record<string, unknown>;
+      }
+    } catch (error) {
+      throw new Error(
+        `Failed to parse package.json at ${packageJsonPath}: ${error instanceof Error ? error.message : String(error)}`,
+      );
+    }
+
+    const scripts = pkg.scripts as Record<string, unknown> | undefined;
+    const hasBuildScript =
+      typeof scripts?.build === "string" && scripts.build.trim().length > 0;
+    const hasStartScript =
+      typeof scripts?.start === "string" && scripts.start.trim().length > 0;
+
     dockerfile = [
       "FROM node:20-slim",
       "WORKDIR /app",
       "COPY . .",
-      "RUN npm install",
-      `ENTRYPOINT ${toDockerEntrypoint(runtimeInfo.startCommand)}`,
+      getInstallCommand(packageManager),
+      ...(hasBuildScript ? [getBuildCommand(packageManager)] : []),
+      `ENTRYPOINT ${toDockerEntrypoint(
+        hasStartScript ? getStartCommand(packageManager) : runtimeInfo.startCommand,
+      )}`,
       "",
     ].join("\n");
   } else if (runtimeInfo.kind === "python") {
@@ -293,10 +416,12 @@ function imageNameFromUrl(url: string): string {
 async function prepareRepoImage(
   url: string,
   opts?: { signal?: AbortSignal; onStatus?: (message: string) => void },
+  beforeBuild?: (repoPath: string) => Promise<Record<string, string> | undefined>,
 ): Promise<{
   repoPath: string;
   imageName: string;
   runtimeInfo: RuntimeInfo;
+  env?: Record<string, string>;
 }> {
   const status = opts?.onStatus ?? console.log;
 
@@ -311,6 +436,8 @@ async function prepareRepoImage(
     throw new Error(`Unable to detect a supported runtime for ${url}`);
   }
 
+  const env = beforeBuild ? await beforeBuild(repoPath) : undefined;
+
   status("Generating Dockerfile...");
   generateDockerfile(repoPath, runtimeInfo);
 
@@ -318,7 +445,7 @@ async function prepareRepoImage(
   status("Building image...");
   await buildImage(repoPath, imageName, { signal: opts?.signal });
 
-  return { repoPath, imageName, runtimeInfo };
+  return { repoPath, imageName, runtimeInfo, env };
 }
 
 export async function runRepo(
@@ -340,6 +467,39 @@ export async function runRepo(
     if (repoPath) {
       await removeImage(imageName);
     }
+  }
+}
+
+export async function runRepoWithEnvCheck(
+  repoUrl: string,
+  args: string[],
+): Promise<RunResult> {
+  const context = getRepoToolContext();
+  const status = context?.onStatus ?? console.log;
+
+  const prepared = await prepareRepoImage(
+    repoUrl,
+    context,
+    async (repoPath) => {
+      const requirements = detectEnvRequirements(repoPath);
+      if (requirements.length === 0) {
+        return undefined;
+      }
+
+      status("Collecting environment variables...");
+      return promptForEnvValues(requirements);
+    },
+  );
+
+  try {
+    status("Running in sandbox...");
+    const result = await runContainer(prepared.imageName, args, {
+      signal: context?.signal,
+      env: prepared.env,
+    });
+    return result;
+  } finally {
+    await removeImage(prepared.imageName);
   }
 }
 
