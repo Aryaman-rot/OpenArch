@@ -1,0 +1,98 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 480" font-family="Menlo, Consolas, 'JetBrains Mono', monospace" font-size="13">
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#4a5568"/>
+    </marker>
+  </defs>
+
+  <!-- Background -->
+  <rect width="820" height="480" fill="#fafafa" rx="8"/>
+
+  <!-- ===== TITLE ===== -->
+  <text x="410" y="30" text-anchor="middle" fill="#2d3748" font-weight="bold" font-size="16">Sandbox Execution Pipeline</text>
+
+  <!-- ===== STEP 1: Repo URL ===== -->
+  <rect x="30" y="55" width="130" height="50" rx="8" fill="#ebf8ff" stroke="#3182ce" stroke-width="2"/>
+  <text x="95" y="72" text-anchor="middle" fill="#2b6cb0" font-weight="bold" font-size="11">STEP 1</text>
+  <text x="95" y="92" text-anchor="middle" fill="#2d3748" font-size="12">Repo URL</text>
+
+  <line x1="160" y1="80" x2="200" y2="80" stroke="#4a5568" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <!-- ===== STEP 2: Clone ===== -->
+  <rect x="200" y="55" width="130" height="50" rx="8" fill="#fff" stroke="#4a5568" stroke-width="2"/>
+  <text x="265" y="72" text-anchor="middle" fill="#718096" font-weight="bold" font-size="11">STEP 2</text>
+  <text x="265" y="92" text-anchor="middle" fill="#2d3748" font-size="12">git clone</text>
+
+  <line x1="330" y1="80" x2="370" y2="80" stroke="#4a5568" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <!-- ===== STEP 3: Runtime Detection ===== -->
+  <rect x="370" y="55" width="140" height="50" rx="8" fill="#fff" stroke="#4a5568" stroke-width="2"/>
+  <text x="440" y="72" text-anchor="middle" fill="#718096" font-weight="bold" font-size="11">STEP 3</text>
+  <text x="440" y="92" text-anchor="middle" fill="#2d3748" font-size="12">Runtime Detection</text>
+
+  <line x1="510" y1="80" x2="550" y2="80" stroke="#4a5568" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <!-- ===== STEP 4: Dockerfile Gen ===== -->
+  <rect x="550" y="55" width="130" height="50" rx="8" fill="#fff" stroke="#4a5568" stroke-width="2"/>
+  <text x="615" y="72" text-anchor="middle" fill="#718096" font-weight="bold" font-size="11">STEP 4</text>
+  <text x="615" y="92" text-anchor="middle" fill="#2d3748" font-size="12">Dockerfile Gen</text>
+
+  <line x1="680" y1="80" x2="720" y2="80" stroke="#4a5568" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <!-- ===== STEP 5: Image Build ===== -->
+  <rect x="720" y="55" width="80" height="50" rx="8" fill="#fff" stroke="#4a5568" stroke-width="2"/>
+  <text x="760" y="72" text-anchor="middle" fill="#718096" font-weight="bold" font-size="11">STEP 5</text>
+  <text x="760" y="92" text-anchor="middle" fill="#2d3748" font-size="12">Build</text>
+
+  <!-- Down arrow to container -->
+  <line x1="760" y1="105" x2="760" y2="145" stroke="#4a5568" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <!-- ===== ISOLATION BOUNDARY (dashed box) ===== -->
+  <rect x="55" y="145" width="710" height="220" rx="12" fill="none" stroke="#e53e3e" stroke-width="2.5" stroke-dasharray="8 4"/>
+  <rect x="55" y="132" width="180" height="26" rx="4" fill="#fff" stroke="#e53e3e" stroke-width="1.5"/>
+  <text x="145" y="150" text-anchor="middle" fill="#c53030" font-weight="bold" font-size="12">Isolation Boundary</text>
+
+  <!-- ===== SAFETY FLAGS (top right of isolation area) ===== -->
+  <rect x="500" y="132" width="265" height="26" rx="4" fill="#fed7d7" stroke="#e53e3e" stroke-width="1"/>
+  <text x="520" y="149" fill="#c53030" font-size="11" font-weight="bold">--network none</text>
+  <text x="620" y="149" fill="#c53030" font-size="11" font-weight="bold">| --memory=512m</text>
+  <text x="715" y="149" fill="#c53030" font-size="11" font-weight="bold">| --cpus=1</text>
+
+  <!-- ===== DOCKER CONTAINER (inside isolation) ===== -->
+  <rect x="200" y="180" width="420" height="160" rx="10" fill="#f0fff4" stroke="#38a169" stroke-width="2.5"/>
+  <text x="410" y="205" text-anchor="middle" fill="#276749" font-weight="bold" font-size="15">Docker Container</text>
+  <line x1="215" y1="215" x2="605" y2="215" stroke="#38a169" stroke-width="1"/>
+
+  <!-- Container internals -->
+  <text x="410" y="242" text-anchor="middle" fill="#4a5568" font-size="12">━ Runs the cloned repo inside a sandbox</text>
+  <text x="410" y="262" text-anchor="middle" fill="#4a5568" font-size="12">━ No outbound network (default)</text>
+  <text x="410" y="282" text-anchor="middle" fill="#4a5568" font-size="12">━ RAM capped at 512 MB, 1 CPU</text>
+  <text x="410" y="302" text-anchor="middle" fill="#4a5568" font-size="12">━ Auto-removed after exit (--rm)</text>
+  <text x="410" y="325" text-anchor="middle" fill="#718096" font-size="11">(service mode: -d, port-mapped, persistent)</text>
+
+  <!-- ===== OUTPUT (below isolation) ===== -->
+  <line x1="410" y1="365" x2="410" y2="400" stroke="#4a5568" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <rect x="310" y="400" width="200" height="46" rx="8" fill="#fefcbf" stroke="#d69e2e" stroke-width="2"/>
+  <text x="410" y="420" text-anchor="middle" fill="#744210" font-weight="bold" font-size="13">RunResult</text>
+  <text x="410" y="437" text-anchor="middle" fill="#744210" font-size="11">stdout / stderr / exitCode</text>
+
+  <!-- ===== ANNOTATION: RUNTIME DETECTION DETAIL ===== -->
+  <rect x="370" y="170" width="175" height="105" rx="4" fill="#edf2f7" stroke="#cbd5e0" stroke-width="1"/>
+  <text x="457" y="188" text-anchor="middle" fill="#718096" font-size="10" font-weight="bold">detectRuntime() checks:</text>
+  <text x="380" y="205" fill="#4a5568" font-size="10">• Dockerfile → dockerfile</text>
+  <text x="380" y="222" fill="#4a5568" font-size="10">• package.json → node</text>
+  <text x="380" y="239" fill="#4a5568" font-size="10">• requirements.txt → python</text>
+  <text x="380" y="256" fill="#4a5568" font-size="10">• pyproject.toml → python</text>
+  <text x="380" y="273" fill="#a0aec0" font-size="10">• or unknown</text>
+  <line x1="440" y1="105" x2="457" y2="170" stroke="#cbd5e0" stroke-width="1" stroke-dasharray="3 2"/>
+
+  <!-- ===== ANNOTATION: DOCKERFILE GEN DETAIL ===== -->
+  <rect x="595" y="170" width="165" height="85" rx="4" fill="#edf2f7" stroke="#cbd5e0" stroke-width="1"/>
+  <text x="677" y="188" text-anchor="middle" fill="#718096" font-size="10" font-weight="bold">generateDockerfile()</text>
+  <text x="605" y="205" fill="#4a5568" font-size="10">• node → node:20-slim</text>
+  <text x="605" y="222" fill="#4a5568" font-size="10">• python → python:3.11-slim</text>
+  <text x="605" y="239" fill="#4a5568" font-size="10">• yarn.lock → yarn install</text>
+  <text x="605" y="256" fill="#4a5568" font-size="10">• build script → RUN build</text>
+  <line x1="680" y1="105" x2="677" y2="170" stroke="#cbd5e0" stroke-width="1" stroke-dasharray="3 2"/>
+</svg>

@@ -1,9 +1,42 @@
 # OpenArch
 
+[![MIT License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+[![Bun](https://img.shields.io/badge/runtime-Bun-%23f9f1e1?logo=bun)](https://bun.sh)
+[![TypeScript](https://img.shields.io/badge/lang-TypeScript-%233178C6?logo=typescript)](https://www.typescriptlang.org)
+[![Docker](https://img.shields.io/badge/sandbox-Docker-%232496ED?logo=docker)](https://docker.com)
+
 CLI agent that wraps arbitrary GitHub repos in Docker sandboxes and lets an LLM
 generate their tool schema by reading `--help` output — so it can call
-`cowsay`, start an Express server, or run a Python script without you writing
-any integration glue.
+`cowsay`, run `markdownlint`, start an Express server, or query a weather API
+without you writing any integration glue.
+
+## Why
+
+An agent's usefulness is bottlenecked by the number of tools it has. Wiring up
+each CLI tool or repo by hand — writing a Zod schema, wrapping it in a Docker
+call, handling errors — doesn't scale.
+
+The idea here is: skip the integration step. Point the agent at a GitHub repo.
+It clones it, detects the runtime (Node / Python / existing Dockerfile),
+generates a Dockerfile if needed, builds the image, runs `--help` (or `-h`),
+sends the raw help text to an LLM with a structural prompt, and gets back a
+`ToolSchema` — `name`, `description`, `arguments[]` — ready to be fed into the
+agent's tool loop. The whole pipeline runs inside a resource-limited,
+network-isolated container.
+
+This means a new tool is one URL away, not one coding session away.
+
+## Architecture
+
+The entry point is `index.ts` which registers a single Commander command
+(`wakeup`). From there:
+
+<img src="docs/architecture-diagram.svg" alt="OpenArch architecture diagram" width="100%"/>
+
+*High-level request flow from user input through modes, tools, and sandbox isolation.*
+
+<details>
+<summary>Text-based architecture diagram (for quick reference)</summary>
 
 ```
 User ──→ Wakeup Menu ──→ CLI / Telegram
@@ -29,26 +62,7 @@ User ──→ Wakeup Menu ──→ CLI / Telegram
             fetch_url)
 ```
 
-## Why
-
-An agent's usefulness is bottlenecked by the number of tools it has. Wiring up
-each CLI tool or repo by hand — writing a Zod schema, wrapping it in a Docker
-call, handling errors — doesn't scale.
-
-The idea here is: skip the integration step. Point the agent at a GitHub repo.
-It clones it, detects the runtime (Node / Python / existing Dockerfile),
-generates a Dockerfile if needed, builds the image, runs `--help` (or `-h`),
-sends the raw help text to an LLM with a structural prompt, and gets back a
-`ToolSchema` — `name`, `description`, `arguments[]` — ready to be fed into the
-agent's tool loop. The whole pipeline runs inside a resource-limited,
-network-isolated container.
-
-This means a new tool is one URL away, not one coding session away.
-
-## Architecture
-
-The entry point is `index.ts` which registers a single Commander command
-(`wakeup`). From there:
+</details>
 
 ```
 bun index.ts
@@ -137,6 +151,10 @@ Any GitHub repo can be cloned and run inside a Docker container with:
 - `--rm` auto-cleanup on exit
 - Hard timeout on clone (30s) and process execution
 
+<img src="docs/sandbox-flow-diagram.svg" alt="Sandbox execution pipeline" width="100%"/>
+
+*Step-by-step flow: repo URL to isolated container to output, with safety boundaries and runtime-detection details.*
+
 Two modes:
 - **One-shot** — `docker run --rm <image> <args>`, returns stdout/stderr/exit
   code. Image is removed after run.
@@ -149,15 +167,17 @@ Runtime detection checks for: existing `Dockerfile`, `package.json` (Node),
 `node:20-slim`, Python on `python:3.11-slim`. If `yarn.lock` exists, yarn is
 used; otherwise npm.
 
-The three test files in `services/` exercise this against real repos:
+The test files in `services/` exercise this against real repos:
 
 | Test file | Repo | What it does |
 |---|---|---|
 | `test-runner.ts` | `piuccio/cowsay` | One-shot execution with `["Hello", "from", "OpenArch"]` |
 | `test-tool-generator.ts` | `piuccio/cowsay` | Full `wrapRepoAsTool` pipeline — clone → build → `--help` → LLM → schema |
 | `test-service-runner.ts` | `auchenberg/node-express-hello-world` | Start as service → `GET /` → stop |
+| — | `igorshubovych/markdownlint-cli` | `run_repo_once` — full sandbox pipeline, `--help` schema generation verified |
+| — | `jakubzitny/openweathermap-cli` | Pragmatist mode end-to-end: README env-var detection (no `.env.example`), masked `OPENWEATHERMAP_API_KEY` prompting, devDependency-aware Dockerfile (yarn install + build), opt-in network → live London weather |
 
-Run any of them with `bun run services/test-<name>.ts`.
+Run any of the numbered tests with `bun run services/test-<name>.ts`.
 
 ### Auto tool-schema generation from `--help`
 
@@ -205,6 +225,11 @@ mode asks "Does this repo need internet access? (y/N)". This makes accidental
 egress — sending your API keys to a third-party service — impossible without an
 explicit affirmative.
 
+This was verified with a real external API call: the `openweathermap-cli` repo
+returned live weather data for London when run with network access enabled, and
+failed with a clear connection error under the default isolated configuration —
+confirming both the isolation boundary and the opt-in override work as intended.
+
 ## Quickstart
 
 ### Prerequisites
@@ -218,8 +243,8 @@ explicit affirmative.
 
 ```bash
 # Clone and install
-git clone https://github.com/your-org/openarch-build
-cd openarch-build
+git clone https://github.com/Aryaman-rot/OpenArch.git
+cd OpenArch
 bun install
 
 # Required: AI provider
@@ -278,7 +303,8 @@ bun run services/test-service-runner.ts                            # Express hel
 ## Known Limitations
 
 **What works reliably today:**
-- Node.js repos with CLI interfaces (tested: `cowsay`, Express hello world)
+- Node.js repos with CLI interfaces (tested: `cowsay`, `markdownlint-cli`, Express hello world)
+- Pragmatist-mode end-to-end flow for repos with env requirements (tested: `openweathermap-cli` — README-only env detection, masked prompting, devDependency-aware Dockerfile, opt-in network access with live API call)
 - File read/create/modify/delete with staged approval
 - Multi-step plan generation and selective execution
 - Telegram bot with `/ask`, `/agent`, `/plan`, and diff approval
