@@ -31,7 +31,7 @@ This means a new tool is one URL away, not one coding session away.
 The entry point is `index.ts` which registers a single Commander command
 (`wakeup`). From there:
 
-<img src="docs/architecture-diagram.svg" alt="OpenArch architecture diagram" width="100%"/>
+<img src="images/Screenshot%202026-07-12%20232916.png" alt="OpenArch architecture diagram" width="100%"/>
 
 *High-level request flow from user input through modes, tools, and sandbox isolation.*
 
@@ -151,7 +151,7 @@ Any GitHub repo can be cloned and run inside a Docker container with:
 - `--rm` auto-cleanup on exit
 - Hard timeout on clone (30s) and process execution
 
-<img src="docs/sandbox-flow-diagram.svg" alt="Sandbox execution pipeline" width="100%"/>
+<img src="images/Screenshot%202026-07-12%20232840.png" alt="Sandbox execution pipeline" width="100%"/>
 
 *Step-by-step flow: repo URL to isolated container to output, with safety boundaries and runtime-detection details.*
 
