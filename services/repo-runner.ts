@@ -455,26 +455,25 @@ export async function runRepo(
   opts?: { signal?: AbortSignal; onStatus?: (message: string) => void; allowNetwork?: boolean },
 ): Promise<RunResult> {
   const imageName = imageNameFromUrl(url);
+  let repoPath = "";
+  let runtimeInfo: RuntimeInfo | undefined;
+  let usedCache = false;
 
   const cached = await tryUseCache(url);
   if (cached) {
+    usedCache = true;
     (opts?.onStatus ?? console.log)("Using cached image...");
-    return await runContainer(imageName, args, { signal: opts?.signal, allowNetwork: opts?.allowNetwork });
-  }
-
-  let repoPath = "";
-  let runtimeInfo: RuntimeInfo | undefined;
-
-  try {
+  } else {
     const prepared = await prepareRepoImage(url, opts);
     repoPath = prepared.repoPath;
     runtimeInfo = prepared.runtimeInfo;
-
     (opts?.onStatus ?? console.log)("Running in sandbox...");
-    const result = await runContainer(imageName, args, { signal: opts?.signal, allowNetwork: opts?.allowNetwork });
-    return result;
+  }
+
+  try {
+    return await runContainer(imageName, args, { signal: opts?.signal, allowNetwork: opts?.allowNetwork });
   } finally {
-    if (repoPath) {
+    if (repoPath && !usedCache) {
       saveRegistryEntry({ repoUrl: url, runtimeKind: runtimeInfo?.kind ?? "unknown", imageName }).catch(() => {});
       if (!process.env.DATABASE_URL) {
         await removeImage(imageName);
@@ -491,42 +490,48 @@ export async function runRepoWithEnvCheck(
   const context = getRepoToolContext();
   const status = context?.onStatus ?? console.log;
   const allowNetwork = opts?.allowNetwork ?? false;
+  let imageName = "";
+  let runtimeKind = "unknown";
+  let usedCache = false;
+  let env: Record<string, string> | undefined;
 
   const cached = await tryUseCache(repoUrl);
   if (cached) {
+    usedCache = true;
+    imageName = cached.imageName;
+    runtimeKind = cached.runtimeKind;
     status("Using cached image...");
-    return await runContainer(cached.imageName, args, {
-      signal: context?.signal,
-      allowNetwork,
-    });
+  } else {
+    const prepared = await prepareRepoImage(
+      repoUrl,
+      context,
+      async (repoPath) => {
+        const requirements = detectEnvRequirements(repoPath);
+        if (requirements.length === 0) {
+          return undefined;
+        }
+        status("Collecting environment variables...");
+        return promptForEnvValues(requirements);
+      },
+    );
+    imageName = prepared.imageName;
+    runtimeKind = prepared.runtimeInfo.kind;
+    env = prepared.env;
+    status("Running in sandbox...");
   }
 
-  const prepared = await prepareRepoImage(
-    repoUrl,
-    context,
-    async (repoPath) => {
-      const requirements = detectEnvRequirements(repoPath);
-      if (requirements.length === 0) {
-        return undefined;
-      }
-
-      status("Collecting environment variables...");
-      return promptForEnvValues(requirements);
-    },
-  );
-
   try {
-    status("Running in sandbox...");
-    const result = await runContainer(prepared.imageName, args, {
+    return await runContainer(imageName, args, {
       signal: context?.signal,
-      env: prepared.env,
+      env,
       allowNetwork,
     });
-    return result;
   } finally {
-    saveRegistryEntry({ repoUrl, runtimeKind: prepared.runtimeInfo.kind, imageName: prepared.imageName }).catch(() => {});
-    if (!process.env.DATABASE_URL) {
-      await removeImage(prepared.imageName);
+    if (!usedCache) {
+      saveRegistryEntry({ repoUrl, runtimeKind, imageName }).catch(() => {});
+      if (!process.env.DATABASE_URL) {
+        await removeImage(imageName);
+      }
     }
   }
 }
@@ -536,26 +541,36 @@ export async function runRepoAsService(
   containerPort: number,
   opts?: { signal?: AbortSignal; onStatus?: (message: string) => void; allowNetwork?: boolean },
 ): Promise<ServiceHandle> {
+  let imageName = "";
+  let runtimeKind = "unknown";
+  let usedCache = false;
+
   const cached = await tryUseCache(url);
   if (cached) {
+    usedCache = true;
+    imageName = cached.imageName;
+    runtimeKind = cached.runtimeKind;
     (opts?.onStatus ?? console.log)("Using cached image...");
-    return await startService(cached.imageName, containerPort, {
-      signal: opts?.signal,
-      allowNetwork: opts?.allowNetwork,
-    });
+  } else {
+    const prepared = await prepareRepoImage(url, opts);
+    imageName = prepared.imageName;
+    runtimeKind = prepared.runtimeInfo.kind;
+    (opts?.onStatus ?? console.log)("Starting service...");
   }
 
-  const prepared = await prepareRepoImage(url, opts);
   try {
-    (opts?.onStatus ?? console.log)("Starting service...");
-    const handle = await startService(prepared.imageName, containerPort, {
+    return await startService(imageName, containerPort, {
       signal: opts?.signal,
       allowNetwork: opts?.allowNetwork,
     });
-    saveRegistryEntry({ repoUrl: url, runtimeKind: prepared.runtimeInfo.kind, imageName: prepared.imageName }).catch(() => {});
-    return handle;
   } catch (error) {
-    await removeImage(prepared.imageName);
+    if (!usedCache) {
+      await removeImage(imageName);
+    }
     throw error;
+  } finally {
+    if (!usedCache) {
+      saveRegistryEntry({ repoUrl: url, runtimeKind, imageName }).catch(() => {});
+    }
   }
 }
