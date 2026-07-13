@@ -157,9 +157,6 @@ export async function runWithRepoProgress<T>(
     if (interactive && "setRawMode" in input) {
       input.setRawMode(rawModeWasEnabled);
     }
-    if (interactive) {
-      input.pause();
-    }
     setRepoToolContext(undefined);
   };
 

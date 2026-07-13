@@ -52,10 +52,22 @@ function runCommand(
 
     const interrupt = () => {
       aborted = true;
-      try {
-        child.kill("SIGTERM");
-      } catch {
-        // Best effort.
+      console.log(`[sandbox] Abort signal fired — killing ${command} (pid ${child.pid})`);
+      if (process.platform === "win32") {
+        try {
+          spawn("taskkill", ["/PID", String(child.pid), "/T", "/F"], {
+            shell: false,
+            stdio: "ignore",
+          });
+        } catch {
+          // Best effort.
+        }
+      } else {
+        try {
+          child.kill("SIGKILL");
+        } catch {
+          // Best effort.
+        }
       }
       if (timeout) {
         clearTimeout(timeout);
