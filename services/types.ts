@@ -39,3 +39,12 @@ export interface EnvRequirement {
   description: string;
   required: boolean;
 }
+
+export interface RegistryEntry {
+  repoUrl: string;
+  runtimeKind: string;
+  imageName: string;
+  toolSchema?: ToolSchema | null;
+  createdAt?: Date;
+  lastUsedAt?: Date;
+}

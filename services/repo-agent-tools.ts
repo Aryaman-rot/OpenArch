@@ -5,6 +5,7 @@ import { callService, stopService } from "./sandbox";
 import { runRepo, runRepoAsService, runRepoWithEnvCheck } from "./repo-runner";
 import { runWithRepoProgress } from "./repo-progress";
 import { wrapRepoAsTool } from "./tool-generator";
+import { listWrappedRepos } from "./registry";
 import type { ServiceHandle } from "./types";
 
 const activeServices = new Map<string, ServiceHandle>();
@@ -133,6 +134,16 @@ export function createRepoAgentTools() {
         runWithRepoProgress("wrap_repo_as_tool", async ({ signal, onStatus }) => {
           return wrapRepoAsTool(repoUrl, { signal, onStatus });
         }),
+    }),
+
+    list_wrapped_repos: tool({
+      description:
+        "List all previously wrapped/cached repos in the registry, with when they were last used.",
+      inputSchema: z.object({}),
+      execute: async () => {
+        const result = await listWrappedRepos();
+        return { result };
+      },
     }),
 
     run_repo_with_env: tool({

@@ -1,3 +1,5 @@
+import { createHash } from "node:crypto";
+import { spawn } from "node:child_process";
 import { createOpenRouter } from "@openrouter/ai-sdk-provider";
 import { generateText } from "ai";
 import { rm } from "node:fs/promises";
@@ -5,7 +7,8 @@ import { z } from "zod";
 
 import { buildImage, removeImage, runContainer } from "./sandbox";
 import { cloneRepo, detectRuntime, generateDockerfile } from "./repo-runner";
-import type { ToolSchema } from "./types";
+import { getRegistryEntry, saveRegistryEntry, touchLastUsed } from "./registry";
+import type { RuntimeInfo, ToolSchema } from "./types";
 
 function getToolGeneratorModel() {
   const provider = createOpenRouter({
@@ -22,7 +25,8 @@ function imageNameFromRepoUrl(url: string): string {
     .replace(/^-+|-+$/g, "")
     .toLowerCase();
 
-  return `openarch-tools-${slug.slice(0, 32)}-${Date.now().toString(36)}`;
+  const hash = createHash("sha256").update(url).digest("hex").slice(0, 8);
+  return `openarch-tools-${slug.slice(0, 32)}-${hash}`;
 }
 
 function toolNameFromRepoUrl(url: string): string {
@@ -141,13 +145,30 @@ export async function wrapRepoAsTool(
   opts?: { signal?: AbortSignal; onStatus?: (message: string) => void },
 ): Promise<ToolSchema> {
   const status = opts?.onStatus ?? (() => undefined);
-  status("Cloning repo...");
+
+  const entry = await getRegistryEntry(repoUrl);
+  if (entry?.toolSchema) {
+    const imageExists = await checkImageExistsLocal(entry.imageName);
+    if (imageExists) {
+      const dateStr = entry.lastUsedAt
+        ? new Date(entry.lastUsedAt).toLocaleString()
+        : "unknown date";
+      console.log(`[registry] Using cached image for ${repoUrl} (last built ${dateStr})`);
+      touchLastUsed(repoUrl).catch(() => {});
+      return entry.toolSchema;
+    }
+    console.warn(
+      `[registry] DB record found for ${repoUrl} but image ${entry.imageName} is missing locally. Rebuilding.`,
+    );
+  }
+
   const repoPath = await cloneRepo(repoUrl, { signal: opts?.signal });
   const imageName = imageNameFromRepoUrl(repoUrl);
   const toolName = toolNameFromRepoUrl(repoUrl);
+  let runtimeInfo: RuntimeInfo | undefined;
 
   try {
-    const runtimeInfo = detectRuntime(repoPath);
+    runtimeInfo = detectRuntime(repoPath);
     if (runtimeInfo.kind === "unknown") {
       throw new Error(`Unable to detect a supported runtime for ${repoUrl}`);
     }
@@ -159,12 +180,33 @@ export async function wrapRepoAsTool(
 
     status("Reading help output...");
     const helpText = await getHelpOutput(imageName, { signal: opts?.signal });
-    return await generateToolSchema(helpText, toolName, {
+    const schema = await generateToolSchema(helpText, toolName, {
       signal: opts?.signal,
       onStatus: opts?.onStatus,
     });
+
+    saveRegistryEntry({
+      repoUrl,
+      runtimeKind: runtimeInfo.kind,
+      imageName,
+      toolSchema: schema,
+    }).catch(() => {});
+
+    return schema;
   } finally {
-    await removeImage(imageName);
     await rm(repoPath, { recursive: true, force: true });
+    if (!process.env.DATABASE_URL) {
+      await removeImage(imageName);
+    }
   }
+}
+
+function checkImageExistsLocal(imageName: string): Promise<boolean> {
+  return new Promise((resolve) => {
+    const child = spawn("docker", ["image", "inspect", imageName], {
+      stdio: ["ignore", "pipe", "pipe"],
+    });
+    child.on("close", (code) => resolve(code === 0));
+    child.on("error", () => resolve(false));
+  });
 }
