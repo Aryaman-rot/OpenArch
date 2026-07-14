@@ -11,6 +11,7 @@ import { runApprovalFlow } from "./approval";
 
 export async function runAgentMode() {
     console.log(chalk.bold("Running in Agent Mode..."));
+    console.log(chalk.dim("Tip: ask me what tools I have available."));
 
     const goal = await text({
         message: "What would you like me to do?",

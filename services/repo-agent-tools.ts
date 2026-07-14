@@ -1,11 +1,21 @@
 import { tool } from "ai";
 import { z } from "zod";
 
-import { callService, stopService } from "./sandbox";
+import {
+  callService,
+  listOpenArchImages,
+  removeImages,
+  stopService,
+} from "./sandbox";
 import { runRepo, runRepoAsService, runRepoWithEnvCheck } from "./repo-runner";
 import { runWithRepoProgress } from "./repo-progress";
 import { wrapRepoAsTool } from "./tool-generator";
-import { listWrappedRepos } from "./registry";
+import {
+  deleteRegistryEntry,
+  getAllRegistryEntries,
+  getStaleEntries,
+  listWrappedRepos,
+} from "./registry";
 import type { ServiceHandle } from "./types";
 
 const activeServices = new Map<string, ServiceHandle>();
@@ -143,6 +153,97 @@ export function createRepoAgentTools() {
       execute: async () => {
         const result = await listWrappedRepos();
         return { result };
+      },
+    }),
+
+    list_sandboxes: tool({
+      description:
+        "List all Docker images built by OpenArch's sandbox system, including their size and when they were created.",
+      inputSchema: z.object({}),
+      execute: async () => {
+        const images = await listOpenArchImages();
+
+        if (images.length === 0) {
+          return { images: [], summary: "No OpenArch sandbox images found." };
+        }
+
+        return {
+          images: images.map((img) => ({
+            name: img.imageName,
+            id: img.imageId,
+            size: img.size,
+            created: img.createdAt,
+          })),
+          summary: `Found ${images.length} OpenArch sandbox image(s).`,
+        };
+      },
+    }),
+
+    cleanup_sandboxes: tool({
+      description:
+        "Remove OpenArch sandbox Docker images. Can target images not used in a given number of days, or remove all of them.",
+      inputSchema: z.object({
+        olderThanDays: z.number().int().positive().optional(),
+        all: z.boolean().optional(),
+      }),
+      execute: async ({ olderThanDays, all }) => {
+        if (!all && olderThanDays === undefined) {
+          return {
+            message:
+              "Specify either `olderThanDays` (number of days since last use) or `all: true` to remove all OpenArch sandbox images. Run list_sandboxes first to see what exists.",
+          };
+        }
+
+        let targetImages: string[] = [];
+        let registryEntriesToDelete: Array<{ repoUrl: string; imageName: string }> = [];
+
+        if (all) {
+          const dockerImages = await listOpenArchImages();
+          targetImages = dockerImages.map((img) => img.imageName);
+
+          const allEntries = await getAllRegistryEntries();
+          registryEntriesToDelete = allEntries.filter((e) =>
+            targetImages.includes(e.imageName),
+          );
+        } else if (olderThanDays !== undefined) {
+          const staleEntries = await getStaleEntries(olderThanDays);
+          targetImages = staleEntries.map((e) => e.imageName);
+          registryEntriesToDelete = staleEntries.map((e) => ({
+            repoUrl: e.repoUrl,
+            imageName: e.imageName,
+          }));
+        }
+
+        if (targetImages.length === 0) {
+          return {
+            removed: [],
+            failed: [],
+            registryCleaned: 0,
+            summary: "No images matched the cleanup criteria.",
+          };
+        }
+
+        const { removed, failed } = await removeImages(targetImages);
+
+        let registryCleaned = 0;
+        const removedSet = new Set(removed);
+        const toClean = registryEntriesToDelete.filter((e) =>
+          removedSet.has(e.imageName),
+        );
+        for (const entry of toClean) {
+          await deleteRegistryEntry(entry.repoUrl);
+          registryCleaned++;
+        }
+
+        return {
+          removed,
+          failed,
+          registryCleaned,
+          summary:
+            removed.length > 0
+              ? `Removed ${removed.length} image(s), cleaned ${registryCleaned} registry entr(ies). ${failed.length > 0 ? `${failed.length} image(s) failed to remove.` : ""}`
+              : "No images were removed.",
+        };
       },
     }),
 

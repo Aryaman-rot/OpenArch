@@ -287,6 +287,60 @@ export async function removeImage(imageName: string): Promise<void> {
   }
 }
 
+export async function listOpenArchImages(): Promise<
+  Array<{ imageName: string; imageId: string; size: string; createdAt: string }>
+> {
+  const result = await runCommand("docker", [
+    "images",
+    "--filter", "reference=openarch-*",
+    "--format", "{{.Repository}}:{{.Tag}}\t{{.ID}}\t{{.Size}}\t{{.CreatedAt}}",
+  ]);
+
+  if (result.exitCode !== 0) {
+    return [];
+  }
+
+  const lines = result.stdout.trim().split("\n").filter(Boolean);
+  if (lines.length === 0 || (lines.length === 1 && lines[0] === "")) {
+    return [];
+  }
+
+  return lines.map((line) => {
+    const parts = line.split("\t");
+    return {
+      imageName: parts[0] ?? "",
+      imageId: parts[1] ?? "",
+      size: parts[2] ?? "",
+      createdAt: parts.slice(3).join("\t"),
+    };
+  });
+}
+
+export async function removeImages(
+  imageNames: string[],
+): Promise<{ removed: string[]; failed: Array<{ name: string; error: string }> }> {
+  const removed: string[] = [];
+  const failed: Array<{ name: string; error: string }> = [];
+
+  for (const name of imageNames) {
+    try {
+      const result = await runCommand("docker", ["rmi", name]);
+      if (result.exitCode === 0) {
+        removed.push(name);
+      } else {
+        failed.push({ name, error: result.stderr.trim() || `exit code ${result.exitCode}` });
+      }
+    } catch (error) {
+      failed.push({
+        name,
+        error: error instanceof Error ? error.message : String(error),
+      });
+    }
+  }
+
+  return { removed, failed };
+}
+
 export async function startService(
   imageName: string,
   containerPort: number,

@@ -142,6 +142,72 @@ export async function tryUseCache(
   return { imageName: entry.imageName, runtimeKind: entry.runtimeKind };
 }
 
+export async function getStaleEntries(olderThanDays: number): Promise<RegistryEntry[]> {
+  const p = getPool();
+  if (!p) return [];
+
+  try {
+    const result = await p.query(
+      `SELECT repo_url, runtime_kind, image_name, tool_schema, created_at, last_used_at
+       FROM wrapped_repos
+       WHERE last_used_at < NOW() - ($1::int || ' days')::interval`,
+      [olderThanDays],
+    );
+
+    return result.rows.map((row) => ({
+      repoUrl: row.repo_url,
+      runtimeKind: row.runtime_kind,
+      imageName: row.image_name,
+      toolSchema: row.tool_schema ?? null,
+      createdAt: row.created_at,
+      lastUsedAt: row.last_used_at,
+    }));
+  } catch (error) {
+    console.warn(
+      `[registry] Failed to query stale entries: ${error instanceof Error ? error.message : String(error)}`,
+    );
+    return [];
+  }
+}
+
+export async function deleteRegistryEntry(repoUrl: string): Promise<void> {
+  const p = getPool();
+  if (!p) return;
+
+  try {
+    await p.query(`DELETE FROM wrapped_repos WHERE repo_url = $1`, [repoUrl]);
+  } catch (error) {
+    console.warn(
+      `[registry] Failed to delete entry for ${repoUrl}: ${error instanceof Error ? error.message : String(error)}`,
+    );
+  }
+}
+
+export async function getAllRegistryEntries(): Promise<RegistryEntry[]> {
+  const p = getPool();
+  if (!p) return [];
+
+  try {
+    const result = await p.query(
+      `SELECT repo_url, runtime_kind, image_name, tool_schema, created_at, last_used_at FROM wrapped_repos ORDER BY last_used_at DESC`,
+    );
+
+    return result.rows.map((row) => ({
+      repoUrl: row.repo_url,
+      runtimeKind: row.runtime_kind,
+      imageName: row.image_name,
+      toolSchema: row.tool_schema ?? null,
+      createdAt: row.created_at,
+      lastUsedAt: row.last_used_at,
+    }));
+  } catch (error) {
+    console.warn(
+      `[registry] Failed to query all entries: ${error instanceof Error ? error.message : String(error)}`,
+    );
+    return [];
+  }
+}
+
 export async function listWrappedRepos(): Promise<string> {
   const p = getPool();
   if (!p) return "Registry is not available (DATABASE_URL not set or Postgres unreachable).";

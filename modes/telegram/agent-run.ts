@@ -9,6 +9,7 @@ import { createWebTools } from "../plan/web-tools.ts";
 import type { Plan, PlanStep } from "../plan/types.ts";
 import { replyMd } from "./text.ts";
 import { finishOrApprove } from "./approval-session.ts";
+import { listAvailableTools } from "../../services/tool-context.ts";
 
 function readOnlyConfig(): AgentConfig {
   const c = defaultAgentConfig();
@@ -71,7 +72,19 @@ export async function runAsk(ctx:{reply:(t:string , o?:object)=>Promise<unknown>
      const config = readOnlyConfig();
   const tracker = new ActionTracker();
   const executor = new ToolExecutor(tracker, config);
-  const tools = { ...createReadOnlyTools(executor), ...extraWebTools(tracker) };
+  const askTools = createReadOnlyTools(executor);
+  const askWebTools = extraWebTools(tracker);
+  const tools = {
+    ...askTools,
+    ...askWebTools,
+    list_available_tools: tool({
+      description:
+        "List all available tools in the current mode with their descriptions.",
+      inputSchema: z.object({}),
+      execute: async () =>
+        listAvailableTools({ ...askTools, ...askWebTools } as Record<string, { description?: string }>),
+    }),
+  };
   const agent = new ToolLoopAgent({
     ...agentOptions(config, 20),
     tools,
@@ -85,7 +98,17 @@ export async function runAgent(ctx: { reply: (t: string, o?: object) => Promise<
   const config = defaultAgentConfig();
   const tracker = new ActionTracker();
   const executor = new ToolExecutor(tracker, config);
-  const tools = createAgentTools(executor);
+  const agentToolsSet = createAgentTools(executor);
+  const tools = {
+    ...agentToolsSet,
+    list_available_tools: tool({
+      description:
+        "List all available tools in the current mode with their descriptions.",
+      inputSchema: z.object({}),
+      execute: async () =>
+        listAvailableTools(agentToolsSet as Record<string, { description?: string }>),
+    }),
+  };
   const agent = new ToolLoopAgent({
     ...agentOptions(config, 40),
     tools,
@@ -104,7 +127,19 @@ export async function runPlanSteps(
   const config = defaultAgentConfig();
   const tracker = new ActionTracker();
   const executor = new ToolExecutor(tracker, config);
-  const tools = { ...createAgentTools(executor), ...extraWebTools(tracker) };
+  const planAgentTools = createAgentTools(executor);
+  const planWebTools = extraWebTools(tracker);
+  const tools = {
+    ...planAgentTools,
+    ...planWebTools,
+    list_available_tools: tool({
+      description:
+        "List all available tools in the current mode with their descriptions.",
+      inputSchema: z.object({}),
+      execute: async () =>
+        listAvailableTools({ ...planAgentTools, ...planWebTools } as Record<string, { description?: string }>),
+    }),
+  };
 
   for (const step of steps) {
     await ctx.reply(`🔧 Executing: *${step.title}*`, { parse_mode: 'Markdown' });

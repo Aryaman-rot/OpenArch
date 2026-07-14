@@ -9,6 +9,7 @@ import { defaultAgentConfig } from "../agent/types.ts";
 import { renderTerminalMarkdown } from "../../tui/terminal-md.ts";
 import { runApprovalFlow } from "../agent/approval.ts";
 import { createWebTools } from "../plan/web-tools.ts";
+import { listAvailableTools } from "../../services/tool-context.ts";
 
 
 function createAskTools(executor: ToolExecutor) {
@@ -78,7 +79,8 @@ function asMd(question: string, answer: string): string {
 }
 
 export async function runAskMode() {
-  console.log(chalk.bold("\n❓ Ask Mode\n"));
+  console.log(chalk.bold("\n❓ Ask Mode"));
+  console.log(chalk.dim("Tip: ask me what I can do."));
 
   const question = await text({ message: "What do you want to ask?" });
   if (isCancel(question) || !question.trim()) return;
@@ -93,9 +95,19 @@ export async function runAskMode() {
   const executor = new ToolExecutor(tracker, config);
 
 
+  const askTools = createAskTools(executor);
+  const webTools = createWebTools(tracker);
+  const allTools = { ...askTools, ...webTools };
+
   const tools = {
-    ...createAskTools(executor),
-    ...createWebTools(tracker)
+    ...allTools,
+    list_available_tools: tool({
+      description:
+        "List all available tools in the current mode with their descriptions.",
+      inputSchema: z.object({}),
+      execute: async () =>
+        listAvailableTools(allTools as Record<string, { description?: string }>),
+    }),
   };
 
   const agent = new ToolLoopAgent({

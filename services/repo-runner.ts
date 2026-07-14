@@ -1,5 +1,5 @@
 import { createHash, randomUUID } from "node:crypto";
-import { existsSync, readFileSync, writeFileSync } from "node:fs";
+import { existsSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
 import { spawn } from "node:child_process";
 import { mkdir } from "node:fs/promises";
 import os from "node:os";
@@ -323,6 +323,24 @@ export function detectRuntime(repoPath: string): RuntimeInfo {
     existsSync(path.join(repoPath, "requirements.txt")) ||
     existsSync(path.join(repoPath, "pyproject.toml"))
   ) {
+    return {
+      kind: "python",
+      startCommand: "python main.py",
+      hasDockerfile: false,
+    };
+  }
+
+  const pyFiles = readdirSync(repoPath).filter(
+    (f) => f.endsWith(".py") && f.split("/").length === 1 && f.split("\\").length === 1,
+  );
+  if (pyFiles.length === 1) {
+    return {
+      kind: "python",
+      startCommand: `python ${pyFiles[0]}`,
+      hasDockerfile: false,
+    };
+  }
+  if (pyFiles.length > 1 && pyFiles.includes("main.py")) {
     return {
       kind: "python",
       startCommand: "python main.py",

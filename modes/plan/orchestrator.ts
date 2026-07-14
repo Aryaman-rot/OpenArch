@@ -1,6 +1,7 @@
 import chalk from "chalk";
 import { confirm, isCancel, text } from "@clack/prompts";
-import { ToolLoopAgent, stepCountIs } from "ai";
+import { tool, ToolLoopAgent, stepCountIs } from "ai";
+import { z } from "zod";
 import { getAgentModel } from "../../ai/ai.config.ts";
 import { ActionTracker } from "../agent/action-tracker.ts";
 import { ToolExecutor } from "../agent/tool-executor.ts";
@@ -12,6 +13,7 @@ import { generatePlan } from "./planner.ts";
 import { printPlan, selectSteps } from "./selection.ts";
 import type { PlanStep } from "./types.ts";
 import { createWebTools } from "./web-tools.ts";
+import { listAvailableTools } from "../../services/tool-context.ts";
 
 
 function stepPrompt(goal: string, step: PlanStep): string {
@@ -20,7 +22,8 @@ function stepPrompt(goal: string, step: PlanStep): string {
 
 
 export async function runPlanMode(): Promise<void> {
-  console.log(chalk.bold("\n🧭 Plan Mode\n"));
+  console.log(chalk.bold("\n🧭 Plan Mode"));
+  console.log(chalk.dim("Tip: ask me what tools I have available."));
 
   const goal = await text({ message: "What is your goal?" });
   if (isCancel(goal) || !goal.trim()) return;
@@ -42,9 +45,18 @@ export async function runPlanMode(): Promise<void> {
   const executor = new ToolExecutor(tracker, config);
 
 
+  const agentTools = createAgentTools(executor);
+  const webTools = createWebTools(tracker);
+  const baseTools = { ...agentTools, ...webTools };
   const tools = {
-    ...createAgentTools(executor),
-    ...createWebTools(tracker)
+    ...baseTools,
+    list_available_tools: tool({
+      description:
+        "List all available tools in the current mode with their descriptions.",
+      inputSchema: z.object({}),
+      execute: async () =>
+        listAvailableTools(baseTools as Record<string, { description?: string }>),
+    }),
   };
 
   for (const step of selected) {

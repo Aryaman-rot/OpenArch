@@ -14,6 +14,7 @@ import { ToolExecutor } from "../agent/tool-executor.ts";
 import { defaultAgentConfig } from "../agent/types.ts";
 import type { Plan, PlanStep } from "./types.ts";
 import { createWebTools } from "./web-tools.ts";
+import { listAvailableTools } from "../../services/tool-context.ts";
 
 const planSchema = z.object({
   researchSummary: z.string().optional(),
@@ -31,7 +32,7 @@ const planSchema = z.object({
 });
 
 function readOnlyTools(executor: ToolExecutor) {
-  return {
+  const tools = {
     read_file: tool({
       description:
         "Read a text file from the workspace. Use a path relative to the project root.",
@@ -90,6 +91,17 @@ function readOnlyTools(executor: ToolExecutor) {
       execute: async ({ path: p }) => executor.readSkill(p),
     }),
   };
+
+  return {
+    ...tools,
+    list_available_tools: tool({
+      description:
+        "List all available tools in the current mode with their descriptions.",
+      inputSchema: z.object({}),
+      execute: async () =>
+        listAvailableTools(tools as Record<string, { description?: string }>),
+    }),
+  };
 }
 
 const PLAN_INSTRUCTIONS = (codebase: string, hasWeb: boolean) =>
@@ -117,7 +129,17 @@ export async function generatePlan(goal: string) {
   })
 
 
-  const tools = { ...readOnlyTools(executor) , ...(hasWeb ? createWebTools(tracker) : {}) };
+  const baseTools = { ...readOnlyTools(executor) , ...(hasWeb ? createWebTools(tracker) : {}) };
+  const tools = {
+    ...baseTools,
+    list_available_tools: tool({
+      description:
+        "List all available tools in the current mode with their descriptions.",
+      inputSchema: z.object({}),
+      execute: async () =>
+        listAvailableTools(baseTools as Record<string, { description?: string }>),
+    }),
+  };
 
   console.log(chalk.cyan("\n🔍 Researching & drafting a plan…\n"));
 
