@@ -21,22 +21,19 @@ function runCommand(
       stdio: ["ignore", "pipe", "pipe"],
     });
 
-    let stdout = "";
-    let stderr = "";
+    const stdoutChunks: Buffer[] = [];
+    const stderrChunks: Buffer[] = [];
     let timedOut = false;
     let aborted = false;
     let settled = false;
     let timeout: ReturnType<typeof setTimeout> | undefined;
 
-    child.stdout?.setEncoding("utf8");
-    child.stderr?.setEncoding("utf8");
-
-    child.stdout?.on("data", (chunk: string) => {
-      stdout += chunk;
+    child.stdout?.on("data", (chunk: Buffer) => {
+      stdoutChunks.push(chunk);
     });
 
-    child.stderr?.on("data", (chunk: string) => {
-      stderr += chunk;
+    child.stderr?.on("data", (chunk: Buffer) => {
+      stderrChunks.push(chunk);
     });
 
     const rejectIfOpen = (error: Error) => {
@@ -107,8 +104,8 @@ function runCommand(
       }
 
       resolve({
-        stdout,
-        stderr,
+        stdout: Buffer.concat(stdoutChunks).toString("utf8"),
+        stderr: Buffer.concat(stderrChunks).toString("utf8"),
         exitCode: timedOut ? 124 : exitCode ?? -1,
       });
     });
@@ -116,7 +113,7 @@ function runCommand(
     if (opts?.timeoutMs && opts.timeoutMs > 0) {
       timeout = setTimeout(() => {
         timedOut = true;
-        stderr += `\nProcess timed out after ${opts.timeoutMs}ms.\n`;
+        stderrChunks.push(Buffer.from(`\nProcess timed out after ${opts.timeoutMs}ms.\n`, "utf8"));
         child.kill("SIGKILL");
       }, opts.timeoutMs);
     }
