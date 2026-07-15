@@ -24,7 +24,7 @@ OpenArch replaces manual integration with automated containerization and documen
 
 The system entry point is `index.ts`, which runs the Commander-based `wakeup` TUI menu. From there, execution flows through interaction modes, tool executors, and the sandboxed container runtime.
 
-<img src="docs/images/architecture-diagram.png" alt="OpenArch architecture diagram" width="800">
+<img src="docs/images/architecture-diagram-updated.png" alt="OpenArch architecture diagram" width="800">
 
 *High-level request flow from user input through modes, tools, database caching, and sandbox isolation.*
 
@@ -134,7 +134,7 @@ File writes and modifications do not touch the host disk immediately.
 
 Repositories can be cloned and run safely under isolated container conditions:
 
-<img src="docs/images/sandbox-flow-diagram.png" alt="Sandbox execution pipeline diagram" width="800">
+<img src="docs/images/sandbox-diagram-updated.png" alt="Sandbox execution pipeline diagram" width="800">
 
 *The sandbox execution pipeline from repo URL ingestion to isolated container run.*
 
@@ -176,7 +176,7 @@ Containers run with isolated network stacks (`--network none`) by default. This 
 
 To prevent redundant build overhead, OpenArch implements a PostgreSQL-backed caching layer (`services/registry.ts`).
 
-<img src="docs/images/registry-cache-flow.png" alt="Registry caching flow diagram" width="800">
+<img src="docs/images/tool-registry-cache-updated.png" alt="Registry caching flow diagram" width="800">
 
 *The registry caching logic detailing fast-path execution and rebuild recovery flow.*
 
