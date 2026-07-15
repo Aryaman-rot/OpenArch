@@ -1,42 +1,35 @@
 # OpenArch
 
-[![MIT License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+[![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![Bun](https://img.shields.io/badge/runtime-Bun-%23f9f1e1?logo=bun)](https://bun.sh)
 [![TypeScript](https://img.shields.io/badge/lang-TypeScript-%233178C6?logo=typescript)](https://www.typescriptlang.org)
 [![Docker](https://img.shields.io/badge/sandbox-Docker-%232496ED?logo=docker)](https://docker.com)
+[![PostgreSQL](https://img.shields.io/badge/database-PostgreSQL-%234169E1?logo=postgresql)](https://www.postgresql.org)
 
-CLI agent that wraps arbitrary GitHub repos in Docker sandboxes and lets an LLM
-generate their tool schema by reading `--help` output — so it can call
-`cowsay`, run `markdownlint`, start an Express server, or query a weather API
-without you writing any integration glue.
+*Note: A LICENSE file was not found in the root of the repository; this project is assumed to be distributed under the MIT license.*
+
+OpenArch is a CLI agent that containerizes arbitrary GitHub repositories on the fly, executes their command-line interfaces inside isolated Docker sandboxes, and dynamically generates their tool schemas by reading their `--help` outputs using an LLM. By automatically translating CLI help documentation into structured tool schemas, OpenArch allows an agent to leverage third-party repositories—like running `cowsay`, performing static analysis with `markdownlint`, or executing network requests via custom APIs—without requiring any manual integration glue.
 
 ## Why
 
-An agent's usefulness is bottlenecked by the number of tools it has. Wiring up
-each CLI tool or repo by hand — writing a Zod schema, wrapping it in a Docker
-call, handling errors — doesn't scale.
+Traditional agent frameworks are bottlenecked by manual tool definitions. Integrating a new tool typically requires writing a custom interface wrapper (such as a Zod schema), setting up its execution environment, and handling runtime errors manually.
 
-The idea here is: skip the integration step. Point the agent at a GitHub repo.
-It clones it, detects the runtime (Node / Python / existing Dockerfile),
-generates a Dockerfile if needed, builds the image, runs `--help` (or `-h`),
-sends the raw help text to an LLM with a structural prompt, and gets back a
-`ToolSchema` — `name`, `description`, `arguments[]` — ready to be fed into the
-agent's tool loop. The whole pipeline runs inside a resource-limited,
-network-isolated container.
-
-This means a new tool is one URL away, not one coding session away.
+OpenArch replaces manual integration with automated containerization and documentation analysis:
+1. Point the agent to any public GitHub repository URL.
+2. The system clones the repository, detects its runtime environment, builds a Docker image, and runs it with the `--help` flag.
+3. The raw console help output is structured by an LLM into an exact JSON tool schema (containing argument names, descriptions, types, and requirements).
+4. The schema is loaded dynamically into the agent's tool loop, making the repository immediately executable inside a resource-constrained, isolated Docker container.
 
 ## Architecture
 
-The entry point is `index.ts` which registers a single Commander command
-(`wakeup`). From there:
+The system entry point is `index.ts`, which runs the Commander-based `wakeup` TUI menu. From there, execution flows through interaction modes, tool executors, and the sandboxed container runtime.
 
-<img src="docs/images/architecture-diagram.png" alt="OpenArch architecture diagram" width="800"/>
+<img src="docs/images/architecture-diagram.png" alt="OpenArch architecture diagram" width="800">
 
-*High-level request flow from user input through modes, tools, and sandbox isolation.*
+*High-level request flow from user input through modes, tools, database caching, and sandbox isolation.*
 
 <details>
-<summary>Text-based architecture diagram (for quick reference)</summary>
+<summary>Text-based architecture diagram</summary>
 
 ```
 User ──→ Wakeup Menu ──→ CLI / Telegram
@@ -49,11 +42,11 @@ User ──→ Wakeup Menu ──→ CLI / Telegram
                     │                │
                     │        ┌───────┴────────┐
                     │        │                │
-                    │   Staged File        Repo Sandbox
-                    │   Overlay +         (Docker, 512m,
-                    │   Diff Approval     --network none)
-                    │        │                │
-                    │        ├── apply ──→ Disk
+                    │   Staged File        Repo Sandbox (Docker, 512m, --network none)
+                    │   Overlay +                 ▲
+                    │   Diff Approval             │ Check Cache / Save
+                    │        │                    ▼
+                    │        ├── apply ──→ Disk   PostgreSQL Registry (wrapped_repos)
                     │        │
                     │        └── skip ──→ Clear
                     │
@@ -61,8 +54,6 @@ User ──→ Wakeup Menu ──→ CLI / Telegram
            (Firecrawl search,
             fetch_url)
 ```
-
-</details>
 
 ```
 bun index.ts
@@ -72,7 +63,8 @@ bun index.ts
          │    │    └─ ToolLoopAgent (max 67 steps)
          │    │         ├─ File tools (read/create/modify/delete/list/search/analyze)
          │    │         ├─ Shell execution (staged)
-         │    │         ├─ Repo sandbox tools (6 tools, see below)
+         │    │         ├─ Repo sandbox tools (list_sandboxes, cleanup_sandboxes, etc.)
+         │    │         ├─ PostgreSQL registry cache check
          │    │         └─ Approval flow → apply to disk
          │    ├─ Plan mode       [modes/plan/orchestrator.ts]
          │    │    ├─ LLM generates multi-step plan
@@ -88,295 +80,202 @@ bun index.ts
               └─ /plan — multi-step plan with inline keyboard
 ```
 
-**Sandbox layer** (`services/sandbox.ts`):
-- `runContainer(imageName, args)` → `docker run --rm --memory=512m --cpus=1 --network none <image> <args>`
-- `startService(imageName, port)` → `docker run -d ...` + port allocation
-- `callService(handle, path)` → HTTP to the running container
+</details>
 
-**Repo runner** (`services/repo-runner.ts`):
-- Clone → detect runtime (`node` | `python` | `dockerfile` | `unknown`) → generate Dockerfile → build → run/start
+- **Sandbox layer** (`services/sandbox.ts`): Orchestrates low-level Docker calls (spawning `docker run` with resource restrictions, network settings, and volume mounts) and manages service container lifecycles.
+- **Repo runner** (`services/repo-runner.ts`): Detects runtimes, generates appropriate Dockerfiles dynamically, and handles the cloning/building process.
+- **Tool generator** (`services/tool-generator.ts`): Invokes the container `--help` step and uses an LLM to build a validated Zod tool schema.
+- **Registry layer** (`services/registry.ts`): Interacts with PostgreSQL to cache built tool schemas and local image statuses.
 
-**Tool generator** (`services/tool-generator.ts`):
-- `wrapRepoAsTool(url)` → clone → detect → Dockerfile → build → read `--help` → LLM → `ToolSchema`
+---
 
-**Repo agent tools** (`services/repo-agent-tools.ts`):
-- `run_repo_once` — one-shot CLI execution in sandbox
-- `start_repo_service` — long-running REST service
-- `call_repo_service` — HTTP to running service
-- `stop_repo_service` — stop + cleanup
-- `wrap_repo_as_tool` — auto-generate schema from `--help`
-- `run_repo_with_env` — detect env vars + interactive prompt + run
+## Tech Stack
+
+| Layer | Component | Choice |
+|---|---|---|
+| **Runtime** | Execution Environment | Bun |
+| **Database** | Registry & Caching | PostgreSQL (`pg` / `node-postgres`) |
+| **AI SDK** | Core AI & Integration | Vercel AI SDK (`ai`) + `@openrouter/ai-sdk-provider` |
+| **CLI** | Framework | Commander |
+| **Terminal UI** | Visual Prompts & Banner | `@clack/prompts`, `chalk`, `figlet` |
+| **Markdown** | Terminal Text Rendering | `marked` + `marked-terminal` |
+| **Validation** | Schema Validation | `zod` |
+| **Diffing** | Patch Engine | `diff` |
+| **Sandbox** | Containerization | Docker CLI |
+| **Web Search** | Egress Data Retrieval | Firecrawl (`@mendable/firecrawl-js`) |
+| **Telegram** | Bot Interface | Telegraf |
+
+---
 
 ## Features
 
-### Multi-mode CLI + Telegram
+### Multi-Mode CLI & Telegram Bot
 
-Four interaction modes in the terminal, plus a Telegram bot for remote use.
+OpenArch provides four separate execution environments via CLI and a Telegram bot interface.
 
-| Mode | What it does | Tools | Step limit |
+| Mode | Purpose | Tool Access | Limit |
 |---|---|---|---|
-| **Agent** | Open-ended task: read, create, modify files, run shell commands, execute repos | Full file mutation + repo sandbox | 67 |
-| **Plan** | Generate a multi-step plan, select steps to execute | File mutation + web search | 30 per step |
-| **Ask** | Read-only Q&A about the codebase | Read-only file tools + web search | 20 |
-| **Pragmatist** | Clone a repo, detect env vars, prompt for values, run it | Repo lifecycle UI | N/A (direct) |
+| **Agent** | Codebase modifications and arbitrary execution | Full filesystem mutation, staged shell commands, repo sandbox tools | 67 steps |
+| **Plan** | Multi-step task decomposition and step-by-step review | File mutation + web search (interactive execution per-step) | 30 steps/step |
+| **Ask** | Read-only questions and codebase analysis | Read-only file tools + web search | 20 steps |
+| **Pragmatist** | Sandbox-only execution for foreign CLI tools | Directly collects env requirements and executes sandboxed commands | N/A (direct TUI) |
 
-Telegram supports `/ask`, `/agent`, and `/plan` with interactive inline
-keyboards for step selection and diff approval.
+The Telegram bot (`modes/telegram/`) implements `/ask`, `/agent`, and `/plan` using inline keyboards for interactive diff approvals and step selection.
 
-### Staged file mutation with diff approval
+### Staged File Mutation with Diff Approval
 
-All file mutations (`create_file`, `modify_file`, `delete_file`, `create_folder`,
-`execute_shell`) are written to an in-memory overlay map and logged as
-`ActionLog` entries with status `"pending"`. Nothing touches disk until the user
-approves.
+File writes and modifications do not touch the host disk immediately. 
+- All filesystem-mutating tools (`create_file`, `modify_file`, `delete_file`, `create_folder`, and `execute_shell`) write their outputs to an in-memory overlay map.
+- Changes are tracked as pending actions (`ActionLog`).
+- The user is presented with a diff approval prompt (`modes/agent/approval.ts`), allowing them to **approve all**, **review changes line-by-line** (using unified diffs generated by `diff`), or **cancel** (clearing the staging area entirely).
+- Path traversal outside the workspace is prevented by `resolveSafe()`.
 
-The approval flow (`modes/agent/approval.ts`) offers:
-- **Approve all** — apply everything at once
-- **Review one by one** — grouped by file path, each showing a unified diff
-  (`diff.createTwoFilesPatch`) with accept/reject per group
-- **Cancel** — clear the staging area
+### Sandboxed Repo Execution
 
-On approval, `ToolExecutor.applyApprovedFromTracker()` walks approved actions,
-creates directories, writes files, deletes files, and runs approved shell
-commands via `spawnSync`. Path traversal is blocked by `resolveSafe()`, and
-`.env*` files are excluded from reads.
+Repositories can be cloned and run safely under isolated container conditions:
 
-### Sandboxed repo execution
+<img src="docs/images/sandbox-flow-diagram.png" alt="Sandbox execution pipeline diagram" width="800">
 
-Any GitHub repo can be cloned and run inside a Docker container with:
+*The sandbox execution pipeline from repo URL ingestion to isolated container run.*
 
-- `--memory=512m` RAM cap
-- `--cpus=1` CPU limit
-- `--network none` by default (no egress)
-- `--rm` auto-cleanup on exit
-- Hard timeout on clone (30s) and process execution
+- **Resource Limits**: Every container is run with strict RAM caps (`--memory=512m`), CPU restrictions (`--cpus=1`), and a 30-second clone timeout.
+- **One-Shot Execution**: Runs a single command in an ephemeral container (`docker run --rm <image> <args>`) and returns stdout, stderr, and the exit code.
+- **Service Execution**: Starts long-running processes (e.g. backend web servers) by mapping container ports to host ports in the range `[30000, 40000]`. The agent interacts with the service using `call_repo_service` and terminates it via `stop_repo_service`.
+- **Runtime Detection**: Identifies Node.js applications (via `package.json` with npm/yarn support), Python scripts (using `requirements.txt`, `pyproject.toml`, or fallbacks to single root `.py`/`main.py` files), and existing `Dockerfile` configurations.
 
-<img src="docs/images/sandbox-flow-diagram.png" alt="Sandbox execution pipeline diagram" width="800"/>
+### Auto Tool-Schema Generation from `--help`
 
-*The five-stage sandbox pipeline, from repo URL to isolated execution.*
+By executing a repository image with standard `--help` arguments, OpenArch fetches documentation directly from the tool itself. The system sends this raw text to an LLM alongside a strict structural prompt. The parsed output is validated against a Zod schema to produce a clean tool definition containing argument parameters and flag configurations:
 
-Two modes:
-- **One-shot** — `docker run --rm <image> <args>`, returns stdout/stderr/exit
-  code. Image is removed after run.
-- **Service** — `docker run -d`, port mapped to a random free port in
-  [30000, 40000]. The agent gets a handle and can `call_repo_service()`
-  (HTTP) or `stop_repo_service()`. Image is kept for the session.
+```json
+{
+  "name": "cowsay",
+  "description": "cowsay generates an ASCII picture of a cow saying something.",
+  "arguments": [
+    { "name": "text", "description": "The message for the cow to say", "required": true }
+  ]
+}
+```
 
-Runtime detection checks for: existing `Dockerfile`, `package.json` (Node),
-`requirements.txt` / `pyproject.toml` (Python). Node images are based on
-`node:20-slim`, Python on `python:3.11-slim`. If `yarn.lock` exists, yarn is
-used; otherwise npm.
+### Environment Variable Detection & Secure Collection
 
-The test files in `services/` exercise this against real repos:
+When running under Pragmatist mode, the system scans the repository directory to detect configuration requirements:
+1. Parses `.env.example` or `.env.sample`.
+2. Inspects markdown sections inside the `README` for configuration keywords.
+3. Falls back to scanning the entire `README` text for uppercase environment variable patterns.
 
-| Test file | Repo | What it does |
-|---|---|---|
-| `test-runner.ts` | `piuccio/cowsay` | One-shot execution with `["Hello", "from", "OpenArch"]` |
-| `test-tool-generator.ts` | `piuccio/cowsay` | Full `wrapRepoAsTool` pipeline — clone → build → `--help` → LLM → schema |
-| `test-service-runner.ts` | `auchenberg/node-express-hello-world` | Start as service → `GET /` → stop |
-| — | `igorshubovych/markdownlint-cli` | `run_repo_once` — full sandbox pipeline, `--help` schema generation verified |
-| — | `jakubzitny/openweathermap-cli` | Pragmatist mode end-to-end: README env-var detection (no `.env.example`), masked `OPENWEATHERMAP_API_KEY` prompting, devDependency-aware Dockerfile (yarn install + build), opt-in network → live London weather |
+Detected variables are requested from the user in the terminal. Sensitive keys (matching strings like `KEY`, `SECRET`, `TOKEN`, or `PASSWORD`) mask user input with `*` as they are typed.
 
-Run any of the numbered tests with `bun run services/test-<name>.ts`.
+### Opt-in Network Access
 
-### Auto tool-schema generation from `--help`
+Containers run with isolated network stacks (`--network none`) by default. This makes it impossible for untrusted code to exfiltrate keys or make unauthorized external requests. 
+- For sandboxed repos requiring API connections, the agent tool `run_repo_once` accepts an explicit `allowNetwork` parameter.
+- Pragmatist mode prompts the user interactively before enabling external network access.
 
-The core loop in `services/tool-generator.ts`:
+### Persistent Tool Registry
 
-1. Build the Docker image
-2. Run it with `["--help"]`
-3. Capture stdout (or stderr if stdout is empty)
-4. Send the raw help text to `openrouter/free` with a system prompt that
-   demands a specific JSON shape:
-   ```json
-   { "name": "...", "description": "...", "arguments": [
-     { "name": "...", "description": "...", "required": true/false }
-   ]}
-   ```
-5. Parse and validate with Zod
-6. Clean up (remove image, delete clone directory)
+To prevent redundant build overhead, OpenArch implements a PostgreSQL-backed caching layer (`services/registry.ts`).
 
-The result is pure metadata — no generated code, no persisted registry. The
-schema is returned inline to the agent and used immediately.
+<img src="docs/images/registry-cache-flow.png" alt="Registry caching flow diagram" width="800">
 
-### Environment variable detection (Pragmatist)
+*The registry caching logic detailing fast-path execution and rebuild recovery flow.*
 
-`detectEnvRequirements()` in `services/pragmatist.ts` scans the cloned repo
-for env vars in order:
+- **Caching**: The `wrapped_repos` table records the `repo_url`, `runtime_kind`, local `image_name`, and the generated `tool_schema`.
+- **Fast-Path Check**: On repeat runs, OpenArch checks the registry. If a record is found and the Docker image still exists locally, the system skips cloning and rebuilding, launching the cached tool instantly.
+- **Graceful Fallback**: If a database entry exists but the corresponding local Docker image was pruned, OpenArch catches the error, deletes the stale registry entry, and rebuilds the tool automatically.
+- **Zero-Config Portability**: The database registry is optional. If `DATABASE_URL` is not set, OpenArch bypasses caching and runs in-memory without breaking.
 
-1. `.env.example` / `.env.sample` — parsed for `KEY=VALUE` patterns
-2. README sections matching "environment", "config", or "env vars" — regex for
-   `UPPER_CASE` identifiers
-3. Whole README fallback — same regex, minimum 4 characters
+### Sandbox Cleanup Tools
 
-`promptForEnvValues()` then prompts the user interactively. Values matching
-`KEY|SECRET|TOKEN|PASSWORD` are masked with `*`. Once collected, they're passed
-to the container via `-e KEY=VALUE`.
+OpenArch exposes `list_sandboxes` and `cleanup_sandboxes` tools to help prune Docker disk usage.
+- `list_sandboxes`: Queries the Docker CLI for all images referencing the `openarch-*` tag and returns their size and creation date.
+- `cleanup_sandboxes`: Prunes built images either by age (`olderThanDays`) or altogether (`all: true`). The tool rejects empty parameters to prevent accidental bulk deletions.
 
-The Pragmatist mode (`modes/pragmatist/orchestrator.ts`) is the direct user
-facing path: enter a repo URL, get prompted for detected env vars, watch it
-run.
+### Self-Documenting Tool Discovery
 
-### Opt-in network access
+Instead of dumping the entire toolset into the initial system prompt (which consumes token context), modes include a hint instructing the model to list tools as needed.
+- The `list_available_tools` tool returns a JSON description of all registered tools.
+- Output is mode-scoped (e.g. Ask Mode receives only read-only and web utilities, whereas Agent Mode receives full system tools).
 
-By default, sandboxed containers get `--network none`. The agent tool
-`run_repo_once` has a `allowNetwork` boolean (default `false`). The Pragmatist
-mode asks "Does this repo need internet access? (y/N)". This makes accidental
-egress — sending your API keys to a third-party service — impossible without an
-explicit affirmative.
-
-This was verified with a real external API call: the `openweathermap-cli` repo
-returned live weather data for London when run with network access enabled, and
-failed with a clear connection error under the default isolated configuration —
-confirming both the isolation boundary and the opt-in override work as intended.
-
-### PostgreSQL-backed tool registry
-
-OpenArch supports a PostgreSQL caching registry (`services/registry.ts`) that persists built tool details across runs. A `wrapped_repos` table caches metadata such as `repo_url`, `runtime_kind`, `image_name`, and `tool_schema`.
-- **Performance Optimization**: When wrapping or executing a repository, the system queries the database first. If the local Docker image is still present, OpenArch skips the cloning, runtime detection, and Docker build phases entirely.
-- **Robust Recovery**: If a record exists in the database but the local Docker image has been manually pruned or deleted, the system gracefully catches the mismatch and rebuilds the tool automatically.
-- **Graceful Fallback**: The registry is fully optional. If `DATABASE_URL` is not configured, OpenArch continues to work exactly as before, executing without caching.
-
-### Sandbox cleanup tools
-
-To manage disk and container overhead, OpenArch provides built-in tools for sandbox maintenance (`list_sandboxes` and `cleanup_sandboxes` in `services/sandbox.ts` and `services/repo-agent-tools.ts`).
-- **Inspection**: The `list_sandboxes` tool lists all built `openarch-*` Docker images along with their sizes and creation dates.
-- **Cleanup Control**: The `cleanup_sandboxes` tool allows targeted removal of images. Users or agents can remove images older than a specified number of days (`olderThanDays`) or prune all of them (`all: true`).
-- **Human-in-the-loop Safeguards**: Calling the cleanup tool without specifying either an age threshold or the `all` flag is rejected with an error message, preventing accidental bulk deletion.
-
-### Self-documenting tool discovery
-
-To help the agent self-navigate its environment without cluttering CLI startup, OpenArch includes a dynamic tool discovery mechanism (`list_available_tools`).
-- **Mode-Scoped Listing**: Invoking `list_available_tools` returns only the subset of tools active in the current execution mode (e.g., read-only and web search tools for Ask Mode; full filesystem mutation and sandbox controls for Agent Mode).
-- **On-Demand AI Invocation**: Instead of printing long tool catalogs automatically, the mode initialization prints a concise one-line hint. The LLM can then query `list_available_tools` dynamically as needed.
+---
 
 ## Quickstart
 
 ### Prerequisites
-
-- **Bun** (runtime)
-- **Docker** (for sandboxed repo execution)
-- **Git** (for cloning repos)
-- **OpenRouter API key** (for the AI model)
+- **Bun**: Install the runtime via `curl -fsSL https://bun.sh/install | bash`.
+- **Docker**: Must be installed and running locally.
+- **Git**: Installed and configured on your path.
+- **OpenRouter API Key**: A valid key for the model orchestrator.
 
 ### Setup
 
-```bash
-# Clone and install
-git clone https://github.com/Aryaman-rot/OpenArch.git
-cd OpenArch
-bun install
+1. Clone the repository and install project dependencies:
+   ```bash
+   git clone https://github.com/Aryaman-rot/OpenArch.git
+   cd OpenArch
+   bun install
+   ```
 
-# Required: AI provider
-export OPENROUTER_API_KEY="sk-or-..."
-export OPENROUTER_DEFAULT_MODEL="openrouter/free"
+2. Configure environment variables in your terminal:
+   ```bash
+   # Required: AI config
+   export OPENROUTER_API_KEY="sk-or-..."
+   export OPENROUTER_DEFAULT_MODEL="openrouter/free"
 
-# Optional: database registry for tool caching (falls back to no-cache if unset)
-export DATABASE_URL="postgres://user:password@localhost:5432/openarch"
+   # Optional: Database caching (registry fallback will disable caching if unset)
+   export DATABASE_URL="postgres://username:password@localhost:5432/openarch"
 
-# Optional: web search (used by Plan and Ask modes)
-export FIRECRAWL_API_KEY="fc-..."
+   # Optional: Web search integration
+   export FIRECRAWL_API_KEY="fc-..."
 
-# Optional: Telegram bot
-export TELEGRAM_BOT_TOKEN="..."
-export TELEGRAM_OWNER_ID="..."
-```
+   # Optional: Telegram bot credentials
+   export TELEGRAM_BOT_TOKEN="123456:ABC..."
+   export TELEGRAM_OWNER_ID="987654321"
+   ```
 
 ### Run
 
+Launch the interactive wakeup menu:
 ```bash
 bun index.ts
 ```
 
-This shows the banner and a picker: **CLI** or **Telegram** or **Exit**.
-
-Select **CLI** to get the mode menu:
-
+Alternatively, you can run standalone test scripts directly:
 ```bash
-? Choose mode
-  ❯ Agent mode     — Full codebase editing agent
-    Plan mode       — Multi-step plan execution
-    Ask mode        — Read-only Q&A
-    Pragmatist mode — Run a repo safely
+bun run services/test-runner.ts           # Runs cowsay sandbox test
+bun run services/test-tool-generator.ts   # Runs cowsay schema generation test
+bun run services/test-service-runner.ts   # Runs Express service test
 ```
 
-Or for one-off use of the sandbox runner:
+---
 
-```bash
-bun run services/test-runner.ts                                    # cowsay
-bun run services/test-tool-generator.ts                            # cowsay → schema
-bun run services/test-service-runner.ts                            # Express hello world
-```
+## Known Limitations & Roadmap
 
-## Tech Stack
+### What works reliably today:
+- **Node.js CLI Tools**: Tested end-to-end against `piuccio/cowsay`, `igorshubovych/markdownlint-cli`, and `auchenberg/node-express-hello-world`.
+- **Python CLI Tools**: Tested and verified on `alfredodeza/argparse-python-cli` (correctly falling back to single root-level py scripts without dependency files).
+- **Environment Variable Detection**: Scans `.env.example` and reads README files to detect secret requirements (tested against `jakubzitny/openweathermap-cli` to retrieve weather data using opt-in network overrides).
+- **Staged Approvals**: Unified diff previews and selective disk updates.
+- **Registry Caching**: Postgres-backed image mapping with automatic rebuild recovery.
 
-| Layer | Choice |
-|---|---|
-| Runtime | Bun |
-| Database / Registry | PostgreSQL (`node-postgres` / `pg`) |
-| AI SDK | Vercel AI SDK (`ai`) + `@openrouter/ai-sdk-provider` |
-| CLI framework | Commander |
-| Terminal UI | Clack prompts, Chalk, Figlet |
-| Markdown rendering | marked + marked-terminal |
-| Schema validation | Zod |
-| Diff engine | diff (`createTwoFilesPatch`) |
-| Sandbox | Docker CLI (spawn) |
-| Web search | Firecrawl |
-| Telegram | Telegraf |
+### Known Gaps:
+- **Single Provider Constraint**: Locked to OpenRouter. No direct configuration hooks for independent OpenAI, Anthropic, or local Ollama endpoints.
+- **Limited Runtime Ecosystems**: Only Node.js, Python, and existing `Dockerfile` repositories are automatically detected. No build generation for Go, Rust, or C++ CLIs.
+- **No Multi-Turn Agent Session State**: The agent has no memory of past runs; context restarts fresh with each CLI invocation.
+- **No web UI**: Interface is constrained to Terminal TUI and Telegram bot keyboards.
 
-## Known Limitations
-
-**What works reliably today:**
-- Node.js repos with CLI interfaces (tested: `cowsay`, `markdownlint-cli`, Express hello world)
-- Python repos (tested: `alfredodeza/argparse-python-cli` — dependency-free single-file Python script, correctly detected and run end-to-end)
-- PostgreSQL-backed tool registry with local image verification and optional/graceful fallback
-- Pragmatist-mode end-to-end flow for repos with env requirements (tested: `openweathermap-cli` — README-only env detection, masked prompting, devDependency-aware Dockerfile, opt-in network access with live API call)
-- File read/create/modify/delete with staged approval
-- Multi-step plan generation and selective execution
-- Telegram bot with `/ask`, `/agent`, `/plan`, and diff approval
-- Environment variable detection from `.env.example` and README
-
-**Known gaps:**
-- **Single AI provider** — only OpenRouter is wired. No support for direct
-  OpenAI, Anthropic, Ollama, or local models.
-- **No web UI** — terminal and Telegram only.
-- **No CI / test runner** — the three test files are standalone scripts, not
-  hooks in a framework.
-- **Go / Rust / other runtimes** — `detectRuntime` only handles Node, Python,
-  and existing Dockerfiles. No automatic containerization for other ecosystems.
-- **No multi-turn conversation state** — the agent doesn't remember past
-  sessions; each invocation is fresh.
-- **Telegram only supports slash commands** — no freeform chat, no natural
-  language parsing of arbitrary messages.
-
-**Engineering Hardening & Bug Fixes:**
-Recent stability and behavior updates include:
-- **Git Clone Hangs**: Fixed a promise rejection failure on git clone errors (such as invalid or private repository URLs); cloning errors now reject within seconds with a clear error instead of hanging indefinitely.
-- **Windows Process Cleanup**: Aborted Docker builds and commands on Windows now clean up their entire process tree using `taskkill /PID /T /F` rather than leaving orphans or silently ignoring SIGTERM.
+### Hardening & Resolved Issues:
+- **Git Clone Hangs**: Fixed a promise rejection failure where failed git clones (like invalid or unreachable URLs) would hang indefinitely; cloning now rejects with a clean error within 30 seconds.
+- **Windows Process Cleanup**: Aborted Docker builds and commands on Windows now clean up their entire process tree using `taskkill /PID /T /F` rather than leaving orphaned containers or ignoring SIGTERM.
 - **Terminal Input Freezes**: Resolved a stdin/readline stream conflict that caused terminal inputs to freeze when a mode was re-entered a second time in a single CLI session.
 - **Cached Output Decoding**: Corrected output decoding issues on cached sandboxes by buffering raw chunks and decoding once at the end, preventing multi-byte UTF-8 character corruption.
 - **Opt-in Network Isolation**: Sandboxed executions default strictly to network isolation, requiring explicit `allowNetwork` permissions to prevent unexpected data exfiltration.
 
+---
+
 ## Safety Design
 
-Three explicit safety boundaries:
-
-1. **Network isolation:** `--network none` by default. Containers cannot make
-   outbound connections unless the user (or agent with user approval) sets
-   `allowNetwork: true`. This prevents a compromised or malicious repo from
-   exfiltrating data or phoning home.
-
-2. **Resource limits:** Every container gets `--memory=512m --cpus=1`. A 30s
-   timeout on `git clone` and configurable timeouts on process execution
-   prevent runaway resource consumption.
-
-3. **Staged mutations + human approval:** No file write or shell command
-   reaches disk until the user runs the approval flow. Diffs are shown per-path
-   with accept/reject granularity. The staging area is purely in-memory and can
-   be cleared without side effects.
-
-4. **Path confinement:** `ToolExecutor.resolveSafe()` rejects any path that
-   escapes the workspace root via `..` traversal.
-
-These are not disclaimers — they're the actual implementation in
-`services/sandbox.ts:239-241` and `modes/agent/tool-executor.ts`.
+1. **Network Egress Boundaries**: Sandboxes use `--network none` by default. Egress must be explicitly enabled with `allowNetwork: true` per invocation (implemented in `services/sandbox.ts`).
+2. **Resource Constraints**: Docker limits CPU cores (`--cpus=1`) and memory (`--memory=512m`) to prevent infinite loops or memory leaks from freezing the host machine.
+3. **Staged Disk Mutations**: The orchestrator writes all updates to an in-memory overlay map. Real files are only modified after the user reviews unified diffs and confirms changes via the TUI approval flow (`modes/agent/approval.ts`).
+4. **Path Traversal Guards**: The tool executor uses `resolveSafe()` to block any paths containing parent directory pointers (`..`) from escaping the workspace directory.
