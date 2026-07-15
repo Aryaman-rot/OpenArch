@@ -230,6 +230,26 @@ returned live weather data for London when run with network access enabled, and
 failed with a clear connection error under the default isolated configuration —
 confirming both the isolation boundary and the opt-in override work as intended.
 
+### PostgreSQL-backed tool registry
+
+OpenArch supports a PostgreSQL caching registry (`services/registry.ts`) that persists built tool details across runs. A `wrapped_repos` table caches metadata such as `repo_url`, `runtime_kind`, `image_name`, and `tool_schema`.
+- **Performance Optimization**: When wrapping or executing a repository, the system queries the database first. If the local Docker image is still present, OpenArch skips the cloning, runtime detection, and Docker build phases entirely.
+- **Robust Recovery**: If a record exists in the database but the local Docker image has been manually pruned or deleted, the system gracefully catches the mismatch and rebuilds the tool automatically.
+- **Graceful Fallback**: The registry is fully optional. If `DATABASE_URL` is not configured, OpenArch continues to work exactly as before, executing without caching.
+
+### Sandbox cleanup tools
+
+To manage disk and container overhead, OpenArch provides built-in tools for sandbox maintenance (`list_sandboxes` and `cleanup_sandboxes` in `services/sandbox.ts` and `services/repo-agent-tools.ts`).
+- **Inspection**: The `list_sandboxes` tool lists all built `openarch-*` Docker images along with their sizes and creation dates.
+- **Cleanup Control**: The `cleanup_sandboxes` tool allows targeted removal of images. Users or agents can remove images older than a specified number of days (`olderThanDays`) or prune all of them (`all: true`).
+- **Human-in-the-loop Safeguards**: Calling the cleanup tool without specifying either an age threshold or the `all` flag is rejected with an error message, preventing accidental bulk deletion.
+
+### Self-documenting tool discovery
+
+To help the agent self-navigate its environment without cluttering CLI startup, OpenArch includes a dynamic tool discovery mechanism (`list_available_tools`).
+- **Mode-Scoped Listing**: Invoking `list_available_tools` returns only the subset of tools active in the current execution mode (e.g., read-only and web search tools for Ask Mode; full filesystem mutation and sandbox controls for Agent Mode).
+- **On-Demand AI Invocation**: Instead of printing long tool catalogs automatically, the mode initialization prints a concise one-line hint. The LLM can then query `list_available_tools` dynamically as needed.
+
 ## Quickstart
 
 ### Prerequisites
@@ -250,6 +270,9 @@ bun install
 # Required: AI provider
 export OPENROUTER_API_KEY="sk-or-..."
 export OPENROUTER_DEFAULT_MODEL="openrouter/free"
+
+# Optional: database registry for tool caching (falls back to no-cache if unset)
+export DATABASE_URL="postgres://user:password@localhost:5432/openarch"
 
 # Optional: web search (used by Plan and Ask modes)
 export FIRECRAWL_API_KEY="fc-..."
@@ -290,6 +313,7 @@ bun run services/test-service-runner.ts                            # Express hel
 | Layer | Choice |
 |---|---|
 | Runtime | Bun |
+| Database / Registry | PostgreSQL (`node-postgres` / `pg`) |
 | AI SDK | Vercel AI SDK (`ai`) + `@openrouter/ai-sdk-provider` |
 | CLI framework | Commander |
 | Terminal UI | Clack prompts, Chalk, Figlet |
@@ -304,6 +328,8 @@ bun run services/test-service-runner.ts                            # Express hel
 
 **What works reliably today:**
 - Node.js repos with CLI interfaces (tested: `cowsay`, `markdownlint-cli`, Express hello world)
+- Python repos (tested: `alfredodeza/argparse-python-cli` — dependency-free single-file Python script, correctly detected and run end-to-end)
+- PostgreSQL-backed tool registry with local image verification and optional/graceful fallback
 - Pragmatist-mode end-to-end flow for repos with env requirements (tested: `openweathermap-cli` — README-only env detection, masked prompting, devDependency-aware Dockerfile, opt-in network access with live API call)
 - File read/create/modify/delete with staged approval
 - Multi-step plan generation and selective execution
@@ -311,10 +337,6 @@ bun run services/test-service-runner.ts                            # Express hel
 - Environment variable detection from `.env.example` and README
 
 **Known gaps:**
-- **Python repos** — runtime detection and Dockerfile generation exist but
-  haven't been validated end-to-end with a real Python CLI tool.
-- **No persistent tool registry** — every `wrap_repo_as_tool` call rebuilds
-  the image and re-generates the schema. There's no cache or database.
 - **Single AI provider** — only OpenRouter is wired. No support for direct
   OpenAI, Anthropic, Ollama, or local models.
 - **No web UI** — terminal and Telegram only.
@@ -326,6 +348,14 @@ bun run services/test-service-runner.ts                            # Express hel
   sessions; each invocation is fresh.
 - **Telegram only supports slash commands** — no freeform chat, no natural
   language parsing of arbitrary messages.
+
+**Engineering Hardening & Bug Fixes:**
+Recent stability and behavior updates include:
+- **Git Clone Hangs**: Fixed a promise rejection failure on git clone errors (such as invalid or private repository URLs); cloning errors now reject within seconds with a clear error instead of hanging indefinitely.
+- **Windows Process Cleanup**: Aborted Docker builds and commands on Windows now clean up their entire process tree using `taskkill /PID /T /F` rather than leaving orphans or silently ignoring SIGTERM.
+- **Terminal Input Freezes**: Resolved a stdin/readline stream conflict that caused terminal inputs to freeze when a mode was re-entered a second time in a single CLI session.
+- **Cached Output Decoding**: Corrected output decoding issues on cached sandboxes by buffering raw chunks and decoding once at the end, preventing multi-byte UTF-8 character corruption.
+- **Opt-in Network Isolation**: Sandboxed executions default strictly to network isolation, requiring explicit `allowNetwork` permissions to prevent unexpected data exfiltration.
 
 ## Safety Design
 
