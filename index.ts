@@ -2,6 +2,7 @@
 
 import { Command } from "commander";
 import { runWakeup } from "./tui/wakeup";
+import { promptAndSaveModel } from "./tui/model-select";
 
 const program = new Command();
 
@@ -16,6 +17,13 @@ program
   .action(async () => {
         await runWakeup(); 
     });
+
+program
+  .command("config")
+  .description("Configure OpenArch settings (e.g. AI model)")
+  .action(async () => {
+    await promptAndSaveModel();
+  });
 
 await program.parseAsync(process.argv);
 

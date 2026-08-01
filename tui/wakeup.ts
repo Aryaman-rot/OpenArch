@@ -5,6 +5,8 @@ import figlet from "figlet";
 import { runCliMode } from "../modes/cli";
 import { runTelegramMode } from "../modes/telegram";
 
+import { promptAndSaveModel } from "./model-select";
+
 const BANNER_FONT = "ANSI Shadow";
 const SHADOW = chalk.hex("#b55fadd7");
 const FACE = chalk.hex("#d559bafc").bold;
@@ -37,12 +39,18 @@ export async function runWakeup() {
 
   printBannerWithShadow(ascii);
 
+  if (!process.env.MODEL && !process.env.OPENROUTER_DEFAULT_MODEL) {
+    console.log(chalk.cyan("First-run setup: Please choose your preferred AI model.\n"));
+    await promptAndSaveModel();
+  }
+
   while (true) {
     const mode = await select({
       message: "Choose your mode",
       options: [
         { value: "cli", label: "CLI" },
         { value: "telegram", label: "Telegram" },
+        { value: "model", label: "Change AI Model" },
         { value: "exit", label: "Exit" },
       ],
     });
@@ -61,6 +69,8 @@ export async function runWakeup() {
       console.log(chalk.dim("You chose Telegram mode!"));
       console.log(chalk.dim("Starting Telegram Bot..."));
       await runTelegramMode();
+    } else if (mode === "model") {
+      await promptAndSaveModel();
     }
   }
 }
