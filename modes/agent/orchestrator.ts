@@ -5,7 +5,7 @@ import { ActionTracker } from "./action-tracker";
 import { ToolExecutor } from "./tool-executor";
 import { createAgentTools } from "./agent-tools";
 import { modelMessageSchema, stepCountIs, ToolLoopAgent } from "ai";
-import { getAgentModel } from "../../ai";
+import { getAgentModel, handleAgentModelError } from "../../ai";
 import { renderTerminalMarkdown } from "../../tui/terminal-md";
 import { runApprovalFlow } from "./approval";
 
@@ -35,19 +35,25 @@ export async function runAgentMode() {
         tools, 
     });
 
-    const result = await agent.generate({
-    prompt: goal.trim(),
-    onStepFinish: ({ toolCalls }) => {
-      for (const tc of toolCalls) {
-        const preview = JSON.stringify(tc.input).slice(0, 160);
-        console.log(
-          chalk.green("  ✓"),
-          chalk.bold(String(tc.toolName)),
-          chalk.dim(preview + (preview.length >= 160 ? "..." : "")),
-        );
-      }
-    },
-  });
+  let result: Awaited<ReturnType<typeof agent.generate>>;
+  try {
+    result = await agent.generate({
+      prompt: goal.trim(),
+      onStepFinish: ({ toolCalls }) => {
+        for (const tc of toolCalls) {
+          const preview = JSON.stringify(tc.input).slice(0, 160);
+          console.log(
+            chalk.green("  ✓"),
+            chalk.bold(String(tc.toolName)),
+            chalk.dim(preview + (preview.length >= 160 ? "..." : "")),
+          );
+        }
+      },
+    });
+  } catch (err) {
+    if (handleAgentModelError(err)) return;
+    throw err;
+  }
 
   if (result.text?.trim()) console.log(renderTerminalMarkdown(result.text))
     

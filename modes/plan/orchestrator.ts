@@ -2,7 +2,7 @@ import chalk from "chalk";
 import { confirm, isCancel, text } from "@clack/prompts";
 import { tool, ToolLoopAgent, stepCountIs } from "ai";
 import { z } from "zod";
-import { getAgentModel } from "../../ai/ai.config.ts";
+import { getAgentModel, handleAgentModelError } from "../../ai/ai.config.ts";
 import { ActionTracker } from "../agent/action-tracker.ts";
 import { ToolExecutor } from "../agent/tool-executor.ts";
 import { createAgentTools } from "../agent/agent-tools.ts";
@@ -68,9 +68,15 @@ export async function runPlanMode(): Promise<void> {
       tools
     });
 
-    const r = await agent.generate({prompt:stepPrompt(plan.goal , step)})
+    let r: Awaited<ReturnType<typeof agent.generate>>;
+    try {
+      r = await agent.generate({ prompt: stepPrompt(plan.goal, step) });
+    } catch (err) {
+      if (handleAgentModelError(err)) return;
+      throw err;
+    }
 
-    if(r.text) return console.log(renderTerminalMarkdown(r.text))
+    if (r.text) return console.log(renderTerminalMarkdown(r.text))
 
   }
 

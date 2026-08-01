@@ -2,7 +2,7 @@ import chalk from "chalk";
 import { confirm, isCancel, text } from "@clack/prompts";
 import { ToolLoopAgent, stepCountIs, tool } from "ai";
 import { z } from "zod";
-import { getAgentModel } from "../../ai/ai.config.ts";
+import { getAgentModel, handleAgentModelError } from "../../ai/ai.config.ts";
 import { ActionTracker } from "../agent/action-tracker.ts";
 import { ToolExecutor } from "../agent/tool-executor.ts";
 import { defaultAgentConfig } from "../agent/types.ts";
@@ -116,7 +116,13 @@ export async function runAskMode() {
     tools,
   });
 
-  const result = await agent.generate({ prompt: question.trim() });
+  let result: Awaited<ReturnType<typeof agent.generate>>;
+  try {
+    result = await agent.generate({ prompt: question.trim() });
+  } catch (err) {
+    if (handleAgentModelError(err)) return;
+    throw err;
+  }
   const answer = result.text?.trim() || "(no answer)";
   console.log("\n" + renderTerminalMarkdown(answer) + "\n");
 

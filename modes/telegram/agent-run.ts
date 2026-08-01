@@ -1,6 +1,6 @@
 import { tool, ToolLoopAgent, stepCountIs } from "ai";
 import { z } from "zod";
-import { getAgentModel } from "../../ai/ai.config.ts";
+import { getAgentModel, handleAgentModelError } from "../../ai/ai.config.ts";
 import { ActionTracker } from "../agent/action-tracker.ts";
 import { ToolExecutor } from "../agent/tool-executor.ts";
 import { createAgentTools } from "../agent/agent-tools.ts";
@@ -90,8 +90,20 @@ export async function runAsk(ctx:{reply:(t:string , o?:object)=>Promise<unknown>
     tools,
   });
 
-  const {text} = await agent.generate({prompt:question});
-  await replyMd(ctx , text || ("no answer"))
+  try {
+    const { text } = await agent.generate({ prompt: question });
+    await replyMd(ctx, text || "no answer");
+  } catch (err) {
+    const modelId = process.env.MODEL ?? process.env.OPENROUTER_DEFAULT_MODEL ?? "unknown";
+    if (handleAgentModelError(err)) {
+      await ctx.reply(
+        `❌ Model unavailable or API error for \`${modelId}\`.\nUse \`/config\` to change the model, or check https://openrouter.ai/models`,
+        { parse_mode: "Markdown" }
+      );
+      return;
+    }
+    throw err;
+  }
 }
 
 export async function runAgent(ctx: { reply: (t: string, o?: object) => Promise<unknown> }, chatId: number, goal: string) {
@@ -113,8 +125,20 @@ export async function runAgent(ctx: { reply: (t: string, o?: object) => Promise<
     ...agentOptions(config, 40),
     tools,
   });
-  const { text } = await agent.generate({ prompt: goal });
-  if (text?.trim()) await replyMd(ctx, text.trim());
+  try {
+    const { text } = await agent.generate({ prompt: goal });
+    if (text?.trim()) await replyMd(ctx, text.trim());
+  } catch (err) {
+    const modelId = process.env.MODEL ?? process.env.OPENROUTER_DEFAULT_MODEL ?? "unknown";
+    if (handleAgentModelError(err)) {
+      await ctx.reply(
+        `❌ Model unavailable or API error for \`${modelId}\`.\nUse \`/config\` to change the model, or check https://openrouter.ai/models`,
+        { parse_mode: "Markdown" }
+      );
+      return;
+    }
+    throw err;
+  }
  await finishOrApprove(ctx, chatId, tracker, executor, '✅ Done. No file changes were needed.');
 }
 
@@ -148,8 +172,22 @@ export async function runPlanSteps(
       ...agentOptions(config, 30),
       tools,
     });
-    const { text } = await agent.generate({ prompt });
-    if (text?.trim()) await replyMd(ctx, text.trim());
+    let stepText: string | undefined;
+    try {
+      const { text } = await agent.generate({ prompt });
+      stepText = text;
+    } catch (err) {
+      const modelId = process.env.MODEL ?? process.env.OPENROUTER_DEFAULT_MODEL ?? "unknown";
+      if (handleAgentModelError(err)) {
+        await ctx.reply(
+          `❌ Model unavailable or API error for \`${modelId}\`.\nUse \`/config\` to change the model, or check https://openrouter.ai/models`,
+          { parse_mode: "Markdown" }
+        );
+        return;
+      }
+      throw err;
+    }
+    if (stepText?.trim()) await replyMd(ctx, stepText.trim());
   }
 
  await finishOrApprove(ctx, chatId, tracker, executor, '✅ All steps done. No file changes needed.');
