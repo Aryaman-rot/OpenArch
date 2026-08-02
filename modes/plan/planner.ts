@@ -116,7 +116,12 @@ const PLAN_INSTRUCTIONS = (codebase: string, hasWeb: boolean) =>
     "Keep it short: 1–15 steps.",
   ].join("\n");
 
-export async function generatePlan(goal: string) {
+function isStructuredOutputError(err: unknown): boolean {
+  const message = err instanceof Error ? err.message : String(err);
+  return /structured output/i.test(message);
+}
+
+export async function generatePlan(goal: string): Promise<Plan | null> {
   const config = defaultAgentConfig();
   const tracker = new ActionTracker();
   const executor = new ToolExecutor(tracker, config);
@@ -156,21 +161,38 @@ export async function generatePlan(goal: string) {
     });
   } catch (err) {
     if (handleAgentModelError(err)) {
-      // Return a minimal empty plan so callers don't crash on undefined
-      return { goal, researchSummary: undefined, steps: [] };
+      if (isStructuredOutputError(err)) {
+        console.log(
+          chalk.yellow(
+            "\nPlan Mode requires a model that supports structured outputs, which this model doesn't provide.",
+          ) +
+            chalk.dim(
+              " Switch models with `bun index.ts config` and try again.\n",
+            ),
+        );
+      }
+      return null;
     }
     throw err;
   }
 
-  const validated = planSchema.parse(result.output);
+  let validated;
+  try {
+    validated = planSchema.parse(result.output);
+  } catch (err) {
+    console.log(
+      chalk.red("\n✖ Plan generation returned an unparseable result.\n"),
+    );
+    return null;
+  }
 
-  const steps:PlanStep[] = validated.steps.map((s , i)=>({
-    id:`step-${i+1}`,
-    title:s.title,
-    description:s.description,
-    hints:s.hints,
-    complexity:s.complexity
+  const steps: PlanStep[] = validated.steps.map((s, i) => ({
+    id: `step-${i + 1}`,
+    title: s.title,
+    description: s.description,
+    hints: s.hints,
+    complexity: s.complexity,
   }));
 
-  return {goal , researchSummary:validated.researchSummary , steps}
+  return { goal, researchSummary: validated.researchSummary, steps };
 }

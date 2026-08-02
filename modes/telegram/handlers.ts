@@ -49,6 +49,11 @@ export function registerHandlers(bot: Telegraf) {
 
     void (async ()=>{
         const plan = await generatePlan(goal)
+        if (!plan) {
+          return ctx.reply(
+            "❌ Plan generation failed (Plan Mode requires a model that supports structured outputs)."
+          );
+        }
         const session:PlanSession = {plan , selected:new Set(plan.steps.map((s)=>s.id))}
         await ctx.reply(planMessage(session) , {parse_mode:"Markdown", ...planKeyboard(session)});
          planSessions.set(ctx.chat.id, session);

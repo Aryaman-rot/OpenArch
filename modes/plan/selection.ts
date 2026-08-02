@@ -12,12 +12,21 @@ const COMPLEXITY_COLOR: Record<NonNullable<PlanStep['complexity']>, string> = {
 
 
 export function printPlan(plan: Plan): void {
+  const steps = plan?.steps?.filter(
+    (s) => s && typeof s.title === "string" && s.title.trim(),
+  ) ?? [];
+
+  if (steps.length === 0) {
+    console.log(chalk.yellow("\n⚠ No valid plan steps were generated.\n"));
+    return;
+  }
+
   if (plan.researchSummary?.trim()) {
     console.log(chalk.bold('\n🔍 Research summary'));
     console.log(renderTerminalMarkdown(plan.researchSummary));
   }
   console.log(chalk.bold('\n📋 Generated Plan\n'));
-  for (const [i, s] of plan.steps.entries()) {
+  for (const [i, s] of steps.entries()) {
     const tag = s.complexity ? `[${COMPLEXITY_COLOR[s.complexity]}]` : '';
     console.log(`  ${chalk.cyan(`Step ${String(i + 1).padStart(2)}`)}. ${chalk.bold(s.title)} ${tag}`);
   }
@@ -26,7 +35,20 @@ export function printPlan(plan: Plan): void {
 
 
 export async function selectSteps(plan: Plan): Promise<PlanStep[]> {
-  const options = plan.steps.map((s) => ({
+  const steps = plan?.steps?.filter(
+    (s) =>
+      s &&
+      typeof s.id === "string" &&
+      typeof s.title === "string" &&
+      s.title.trim(),
+  ) ?? [];
+
+  if (steps.length === 0) {
+    console.log(chalk.yellow("\n⚠ No valid plan steps to select from.\n"));
+    return [];
+  }
+
+  const options = steps.map((s) => ({
     value: s.id,
     label: s.title,
     hint: s.complexity ?? '',
@@ -35,11 +57,11 @@ export async function selectSteps(plan: Plan): Promise<PlanStep[]> {
   const picked = await multiselect<string>({
     message: 'Select steps to execute (space toggles, enter confirms)',
     options,
-    initialValues: plan.steps.map((s) => s.id),
+    initialValues: steps.map((s) => s.id),
     required: false,
   });
 
   if (isCancel(picked)) return [];
   const set = new Set<string>(picked);
-  return plan.steps.filter((s) => set.has(s.id));
+  return steps.filter((s) => set.has(s.id));
 }

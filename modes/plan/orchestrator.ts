@@ -30,6 +30,7 @@ export async function runPlanMode(): Promise<void> {
   if (isCancel(goal) || !goal.trim()) return;
 
   const plan = await generatePlan(goal);
+  if (!plan) return;
 
   printPlan(plan);
 
