@@ -153,15 +153,7 @@ export async function runWithRepoProgress<T>(
 
   setRepoToolContext({ signal: controller.signal, onStatus });
 
-  const cleanup = () => {
-    stopTimer();
-    input.off("keypress", onKeypress);
-    if (interactive && "setRawMode" in input) {
-      input.setRawMode(rawModeWasEnabled);
-    }
-    setRepoToolContext(undefined);
-  };
-
+  let outcome: T | { error: string };
   try {
     const result = await work({
       signal: controller.signal,
@@ -169,31 +161,33 @@ export async function runWithRepoProgress<T>(
     });
 
     if (interrupted || controller.signal.aborted) {
-      cleanup();
-      return { error: "Interrupted" };
-    }
-
-    if (isErrorResult(result)) {
-      cleanup();
+      outcome = { error: "Interrupted" };
+    } else if (isErrorResult(result)) {
       finishLine(chalk.red(`✗ ${result.error}`));
-      return result;
+      outcome = result;
+    } else {
+      finishLine(chalk.green(`✓ ${toolLabel} complete`));
+      outcome = result;
     }
-
-    cleanup();
-    finishLine(chalk.green(`✓ ${toolLabel} complete`));
-    return result;
   } catch (error) {
-    cleanup();
-
     if (interrupted || controller.signal.aborted) {
-      return { error: "Interrupted" };
+      outcome = { error: "Interrupted" };
+    } else {
+      const message =
+        error instanceof Error ? error.message : String(error || "Unknown error");
+      finishLine(chalk.red(`✗ ${message}`));
+      outcome = { error: message };
     }
-
-    const message =
-      error instanceof Error ? error.message : String(error || "Unknown error");
-    finishLine(chalk.red(`✗ ${message}`));
-    return { error: message };
+  } finally {
+    stopTimer();
+    input.off("keypress", onKeypress);
+    if (interactive && "setRawMode" in input) {
+      input.setRawMode(rawModeWasEnabled);
+    }
+    setRepoToolContext(undefined);
   }
+
+  return outcome;
 }
 
 /**

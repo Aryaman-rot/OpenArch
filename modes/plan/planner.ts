@@ -1,4 +1,5 @@
 import {
+  AISDKError,
   Output,
   extractJsonMiddleware,
   generateText,
@@ -8,7 +9,7 @@ import {
 } from "ai";
 import { z } from "zod";
 import chalk from "chalk";
-import { getAgentModel, handleAgentModelError } from "../../ai/ai.config.ts";
+import { getAgentModel } from "../../ai/ai.config.ts";
 import { ActionTracker } from "../agent/action-tracker.ts";
 import { ToolExecutor } from "../agent/tool-executor.ts";
 import { defaultAgentConfig } from "../agent/types.ts";
@@ -116,9 +117,13 @@ const PLAN_INSTRUCTIONS = (codebase: string, hasWeb: boolean) =>
     "Keep it short: 1–15 steps.",
   ].join("\n");
 
-function isStructuredOutputError(err: unknown): boolean {
-  const message = err instanceof Error ? err.message : String(err);
-  return /structured output/i.test(message);
+function isAISDKError(err: unknown): boolean {
+  if (err instanceof AISDKError) return true;
+  if (typeof err === "object" && err !== null) {
+    const name = (err as { name?: unknown }).name;
+    return typeof name === "string" && name.startsWith("AI_");
+  }
+  return false;
 }
 
 export async function generatePlan(goal: string): Promise<Plan | null> {
@@ -160,17 +165,20 @@ export async function generatePlan(goal: string): Promise<Plan | null> {
       output: Output.object({ schema: planSchema }),
     });
   } catch (err) {
-    if (handleAgentModelError(err)) {
-      if (isStructuredOutputError(err)) {
-        console.log(
+    if (isAISDKError(err)) {
+      console.log(
+        chalk.red("\n✖  Plan generation failed.\n") +
           chalk.yellow(
-            "\nPlan Mode requires a model that supports structured outputs, which this model doesn't provide.",
+            "   The selected model may not reliably support structured output generation.\n",
           ) +
-            chalk.dim(
-              " Switch models with `bun index.ts config` and try again.\n",
-            ),
-        );
-      }
+          chalk.dim(
+            `   Try a different model with ${chalk.cyan("bun index.ts config")}.\n`,
+          ) +
+          chalk.dim(
+            "   Models from major providers like Anthropic, OpenAI, or Google generally\n" +
+              "   work well; some smaller free-tier models do not.\n",
+          ),
+      );
       return null;
     }
     throw err;

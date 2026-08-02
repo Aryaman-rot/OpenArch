@@ -1,9 +1,38 @@
 import chalk from "chalk";
 import { select, isCancel } from "@clack/prompts";
+import { stdin } from "node:process";
 import { runAgentMode } from "./agent/orchestrator";
 import { runAskMode } from "./ask/orchestrator";
 import { runPlanMode } from "./plan/orchestrator";
 import { runPragmatistMode } from "./pragmatist/orchestrator";
+import { handleAgentModelError } from "../ai";
+
+function restoreStdinState(): void {
+  try {
+    const stream = stdin as NodeJS.ReadStream & {
+      setRawMode?: (mode: boolean) => void;
+      isRaw?: boolean;
+    };
+    if (typeof stream.setRawMode === "function" && stream.isRaw) {
+      stream.setRawMode(false);
+    }
+    stream.resume();
+  } catch {
+    // best-effort terminal restore
+  }
+}
+
+async function runModeSafely(label: string, run: () => Promise<void>): Promise<void> {
+    try {
+        await run();
+    } catch (err) {
+        restoreStdinState();
+        if (!handleAgentModelError(err)) {
+            const message = err instanceof Error ? err.message : String(err);
+            console.log(chalk.red(`\n✖  ${label} failed: ${message}\n`));
+        }
+    }
+}
 
 export async function runCliMode() {
     while (true) {
@@ -21,16 +50,16 @@ export async function runCliMode() {
         if (isCancel(mode) || mode === "back") return;
 
         if (mode === "agent") {
-            await runAgentMode();
+            await runModeSafely("Agent Mode", runAgentMode);
         }
         if (mode === "plan") {
-            await runPlanMode();
+            await runModeSafely("Plan Mode", runPlanMode);
         }
         if (mode === "ask") {
-            await runAskMode();
+            await runModeSafely("Ask Mode", runAskMode);
         }
         if (mode === "pragmatist") {
-            await runPragmatistMode();
+            await runModeSafely("Pragmatist Mode", runPragmatistMode);
         }
 
         if (mode !== "agent" && mode !== "plan" && mode !== "ask" && mode !== "pragmatist") {
