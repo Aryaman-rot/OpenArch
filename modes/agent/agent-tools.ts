@@ -2,10 +2,16 @@ import { tool } from "ai";
 import type { ToolExecutor } from "./tool-executor";
 import { z } from "zod";
 import { createRepoAgentTools } from "../../services/repo-agent-tools";
+import { wrapToolsWithStatus } from "../../services/repo-progress";
 import { listAvailableTools } from "../../services/tool-context";
 
-export function createAgentTools(executor: ToolExecutor) {
-  const tools = {
+export function createAgentTools(
+  executor: ToolExecutor,
+  options: { showProgress?: boolean } = {},
+) {
+  const { showProgress = false } = options;
+
+  const localTools = {
     read_file: tool({
       description:
         "Read a text file from the workspace. Use a path relative to the project root.",
@@ -109,7 +115,10 @@ export function createAgentTools(executor: ToolExecutor) {
       }),
       execute: async ({ path: p }) => executor.readSkill(p),
     }),
+  };
 
+  const tools = {
+    ...(showProgress ? wrapToolsWithStatus(localTools) : localTools),
     ...createRepoAgentTools(),
   };
 

@@ -1,6 +1,6 @@
 import chalk from "chalk";
 import { confirm, isCancel, text } from "@clack/prompts";
-import { ToolLoopAgent, stepCountIs, tool } from "ai";
+import { ToolLoopAgent, stepCountIs, tool, type ModelMessage } from "ai";
 import { z } from "zod";
 import { getAgentModel, handleAgentModelError } from "../../ai/ai.config.ts";
 import { ActionTracker } from "../agent/action-tracker.ts";
@@ -9,6 +9,7 @@ import { defaultAgentConfig } from "../agent/types.ts";
 import { renderTerminalMarkdown } from "../../tui/terminal-md.ts";
 import { runApprovalFlow } from "../agent/approval.ts";
 import { createWebTools } from "../plan/web-tools.ts";
+import { wrapToolsWithStatus } from "../../services/repo-progress.ts";
 import { listAvailableTools } from "../../services/tool-context.ts";
 
 
@@ -78,12 +79,12 @@ function asMd(question: string, answer: string): string {
   return `# Ask Mode\n\n## Question\n\n${question.trim()}\n\n## Answer\n\n${answer.trim()}\n`;
 }
 
+const EXIT_PATTERN = /^(exit|back|quit)$/i;
+
 export async function runAskMode() {
   console.log(chalk.bold("\n❓ Ask Mode"));
   console.log(chalk.dim("Tip: ask me what I can do."));
-
-  const question = await text({ message: "What do you want to ask?" });
-  if (isCancel(question) || !question.trim()) return;
+  console.log(chalk.dim("Type 'exit', 'back', or 'quit' (or press Esc) to return to the mode menu."));
 
   const config = defaultAgentConfig();
   config.tools.allowFileCreation = true;
@@ -94,13 +95,12 @@ export async function runAskMode() {
   const tracker = new ActionTracker();
   const executor = new ToolExecutor(tracker, config);
 
-
   const askTools = createAskTools(executor);
   const webTools = createWebTools(tracker);
   const allTools = { ...askTools, ...webTools };
 
   const tools = {
-    ...allTools,
+    ...wrapToolsWithStatus(allTools),
     list_available_tools: tool({
       description:
         "List all available tools in the current mode with their descriptions.",
@@ -116,39 +116,60 @@ export async function runAskMode() {
     tools,
   });
 
-  let result: Awaited<ReturnType<typeof agent.generate>>;
-  try {
-    result = await agent.generate({ prompt: question.trim() });
-  } catch (err) {
-    if (handleAgentModelError(err)) return;
-    throw err;
+  let history: ModelMessage[] = [];
+
+  while (true) {
+    const question = await text({ message: "What do you want to ask?" });
+    if (isCancel(question)) return;
+
+    const trimmed = question.trim();
+    if (!trimmed || EXIT_PATTERN.test(trimmed)) {
+      console.log(chalk.dim("\nReturning to mode selection..."));
+      return;
+    }
+
+    let result: Awaited<ReturnType<typeof agent.generate>>;
+    try {
+      result = await agent.generate({
+        messages: [...history, { role: "user", content: trimmed }],
+      });
+    } catch (err) {
+      if (handleAgentModelError(err)) return;
+      throw err;
+    }
+
+    history = result.response.messages;
+
+    const answer = result.text?.trim() || "(no answer)";
+    console.log("\n" + renderTerminalMarkdown(answer) + "\n");
+
+    const wantsSave = await confirm({
+      message: "Save this answer to a .md file in the current directory?",
+      initialValue: false,
+    });
+    if (isCancel(wantsSave) || !wantsSave) continue;
+
+    const filename = await text({
+      message: "Filename",
+      initialValue: "ask.md",
+      validate: (v) => {
+        const s = (v ?? '').trim();
+        if (!s) return 'Required';
+        if (s.includes('..') || s.includes('/') || s.includes('\\')) return 'No paths';
+        if (!s.toLowerCase().endsWith('.md')) return 'Must end with .md';
+      },
+    });
+
+    if (isCancel(filename)) continue;
+
+    executor.createFile(filename, asMd(trimmed, answer));
+    const ok = await runApprovalFlow(tracker);
+    if (!ok) {
+      executor.clearStaging();
+      continue;
+    }
+
+    executor.applyApprovedFromTracker();
+    executor.clearStaging();
   }
-  const answer = result.text?.trim() || "(no answer)";
-  console.log("\n" + renderTerminalMarkdown(answer) + "\n");
-
-  const wantsSave = await confirm({
-    message:"Save this answer to a .md file in the current directory?",
-    initialValue:false,
-  });
-  if (isCancel(wantsSave) || !wantsSave) return;
-
-  const filename = await text({
-    message:"Filename",
-    initialValue:"ask.md",
-     validate: (v) => {
-      const s = (v ?? '').trim();
-      if (!s) return 'Required';
-      if (s.includes('..') || s.includes('/') || s.includes('\\')) return 'No paths';
-      if (!s.toLowerCase().endsWith('.md')) return 'Must end with .md';
-    },
-  })
-
-  if(isCancel(filename)) return;
-
-  executor.createFile(filename , asMd(question , answer));
-  const ok = await runApprovalFlow(tracker);
-  if(!ok) return executor.clearStaging();
-
-  executor.applyApprovedFromTracker();
-  executor.clearStaging();
 }

@@ -13,6 +13,7 @@ import { generatePlan } from "./planner.ts";
 import { printPlan, selectSteps } from "./selection.ts";
 import type { PlanStep } from "./types.ts";
 import { createWebTools } from "./web-tools.ts";
+import { wrapToolsWithStatus } from "../../services/repo-progress.ts";
 import { listAvailableTools } from "../../services/tool-context.ts";
 
 
@@ -45,9 +46,9 @@ export async function runPlanMode(): Promise<void> {
   const executor = new ToolExecutor(tracker, config);
 
 
-  const agentTools = createAgentTools(executor);
+  const agentTools = createAgentTools(executor, { showProgress: true });
   const webTools = createWebTools(tracker);
-  const baseTools = { ...agentTools, ...webTools };
+  const baseTools = { ...agentTools, ...wrapToolsWithStatus(webTools) };
   const tools = {
     ...baseTools,
     list_available_tools: tool({
@@ -59,13 +60,14 @@ export async function runPlanMode(): Promise<void> {
     }),
   };
 
-  for (const step of selected) {
-    console.log(chalk.bold(`\n🔧 ${step.title}\n`));
+  let executedCount = 0;
+  for (const [index, step] of selected.entries()) {
+    console.log(chalk.bold(`\n🔧 Step ${index + 1}/${selected.length}: ${step.title}\n`));
 
     const agent = new ToolLoopAgent({
-      model:getAgentModel(),
-      stopWhen:stepCountIs(30),
-      tools
+      model: getAgentModel(),
+      stopWhen: stepCountIs(30),
+      tools,
     });
 
     let r: Awaited<ReturnType<typeof agent.generate>>;
@@ -76,9 +78,13 @@ export async function runPlanMode(): Promise<void> {
       throw err;
     }
 
-    if (r.text) return console.log(renderTerminalMarkdown(r.text))
-
+    if (r.text) {
+      console.log(renderTerminalMarkdown(r.text));
+    }
+    executedCount++;
   }
+
+  console.log(chalk.green(`\n✓ Executed ${executedCount}/${selected.length} selected step(s).\n`));
 
   const ok = await runApprovalFlow(tracker);
 

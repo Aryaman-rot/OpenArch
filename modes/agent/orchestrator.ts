@@ -4,72 +4,88 @@ import { defaultAgentConfig } from "./types";
 import { ActionTracker } from "./action-tracker";
 import { ToolExecutor } from "./tool-executor";
 import { createAgentTools } from "./agent-tools";
-import { modelMessageSchema, stepCountIs, ToolLoopAgent } from "ai";
+import { stepCountIs, ToolLoopAgent, type ModelMessage } from "ai";
 import { getAgentModel, handleAgentModelError } from "../../ai";
 import { renderTerminalMarkdown } from "../../tui/terminal-md";
 import { runApprovalFlow } from "./approval";
 
+const EXIT_PATTERN = /^(exit|back|quit)$/i;
+
 export async function runAgentMode() {
     console.log(chalk.bold("Running in Agent Mode..."));
     console.log(chalk.dim("Tip: ask me what tools I have available."));
-
-    const goal = await text({
-        message: "What would you like me to do?",
-        placeholder: "Concreat task for this codebase",
-    });
-
-    if(isCancel(goal) || !goal.trim()) return;
+    console.log(chalk.dim("Type 'exit', 'back', or 'quit' (or press Esc) to return to the mode menu."));
 
     const config = defaultAgentConfig();
     const tracker = new ActionTracker();
     const executor = new ToolExecutor(tracker, config);
-    const tools = createAgentTools(executor);
+    const tools = createAgentTools(executor, { showProgress: true });
 
     const agent = new ToolLoopAgent({
         model: getAgentModel(),
         stopWhen: stepCountIs(67),
         instructions: [
-            'Workspace root: ${config.codebasePath}',
+            `Workspace root: ${config.codebasePath}`,
             "All mutations are staged until approval.",
         ].join("\n"),
-        tools, 
+        tools,
     });
 
-  let result: Awaited<ReturnType<typeof agent.generate>>;
-  try {
-    result = await agent.generate({
-      prompt: goal.trim(),
-      onStepFinish: ({ toolCalls }) => {
-        for (const tc of toolCalls) {
-          const preview = JSON.stringify(tc.input).slice(0, 160);
-          console.log(
-            chalk.green("  ✓"),
-            chalk.bold(String(tc.toolName)),
-            chalk.dim(preview + (preview.length >= 160 ? "..." : "")),
-          );
+    let history: ModelMessage[] = [];
+
+    while (true) {
+        const goal = await text({
+            message: "What would you like me to do?",
+            placeholder: "Concrete task for this codebase",
+        });
+
+        if (isCancel(goal)) return;
+
+        const trimmed = goal.trim();
+        if (!trimmed || EXIT_PATTERN.test(trimmed)) {
+            console.log(chalk.dim("\nReturning to mode selection..."));
+            return;
         }
-      },
-    });
-  } catch (err) {
-    if (handleAgentModelError(err)) return;
-    throw err;
-  }
 
-  if (result.text?.trim()) console.log(renderTerminalMarkdown(result.text))
-    
-  const ok = await runApprovalFlow(tracker);
-  if(!ok) return executor.clearStaging();
+        let result: Awaited<ReturnType<typeof agent.generate>>;
+        try {
+            result = await agent.generate({
+                messages: [...history, { role: "user", content: trimmed }],
+                onStepFinish: ({ toolCalls }) => {
+                    for (const tc of toolCalls) {
+                        const preview = JSON.stringify(tc.input).slice(0, 160);
+                        console.log(
+                            chalk.green("  ✓"),
+                            chalk.bold(String(tc.toolName)),
+                            chalk.dim(preview + (preview.length >= 160 ? "..." : "")),
+                        );
+                    }
+                },
+            });
+        } catch (err) {
+            if (handleAgentModelError(err)) return;
+            throw err;
+        }
 
-  const { errors } = executor.applyApprovedFromTracker();
+        history = result.response.messages;
 
-  if (errors.length) {
-    console.log(chalk.red("\nSome actions failed to apply:\n"));
-    for (const e of errors) console.log(chalk.red(`  - ${e}`));
-  }  
-  else{
-   console.log(chalk.green('\n✓ Applied.\n'));
-  }
+        if (result.text?.trim()) console.log(renderTerminalMarkdown(result.text));
 
-  executor.clearStaging();
+        const ok = await runApprovalFlow(tracker);
+        if (!ok) {
+            executor.clearStaging();
+            continue;
+        }
 
+        const { errors } = executor.applyApprovedFromTracker();
+
+        if (errors.length) {
+            console.log(chalk.red("\nSome actions failed to apply:\n"));
+            for (const e of errors) console.log(chalk.red(`  - ${e}`));
+        } else {
+            console.log(chalk.green('\n✓ Applied.\n'));
+        }
+
+        executor.clearStaging();
+    }
 }

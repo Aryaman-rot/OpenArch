@@ -2,6 +2,8 @@ import chalk from "chalk";
 import { stdin as input, stdout as output } from "node:process";
 import readline from "node:readline";
 
+import type { Tool, ToolExecutionOptions } from "ai";
+
 import { setRepoToolContext } from "./tool-context";
 
 export type RepoProgressWork<T> = (ctx: {
@@ -192,4 +194,77 @@ export async function runWithRepoProgress<T>(
     finishLine(chalk.red(`✗ ${message}`));
     return { error: message };
   }
+}
+
+/**
+ * Lightweight in-progress status for a single tool call. Reuses the same
+ * visual language as `runWithRepoProgress` (cyan text + loading bar) but
+ * with no animation, interrupt handling, or abort signal — fast tools just
+ * flash the status before the step-finish checkmark replaces it.
+ *
+ * Only renders when stdin/stdout are interactive; otherwise it is a no-op
+ * pass-through so non-interactive callers (e.g. the Telegram bot) are not
+ * spammed with per-tool status lines.
+ */
+export async function runWithToolStatus<T>(
+  toolName: string,
+  work: () => Promise<T>,
+): Promise<T> {
+  const interactive = isInteractiveTerminal();
+  const status = `Running ${toolName}...`;
+
+  const render = () => {
+    if (!interactive) return;
+    readline.clearLine(output, 0);
+    readline.cursorTo(output, 0);
+    output.write(`${chalk.cyan(status)} ${chalk.cyan(buildLoadingBar(0))}`);
+  };
+
+  const clear = () => {
+    if (!interactive) return;
+    readline.clearLine(output, 0);
+    readline.cursorTo(output, 0);
+  };
+
+  render();
+  try {
+    const result = await work();
+    clear();
+    return result;
+  } catch (error) {
+    clear();
+    throw error;
+  }
+}
+
+/**
+ * Wraps a single tool's `execute` so an in-progress status line is shown
+ * while the underlying tool work is pending.
+ */
+export function wrapToolWithStatus(toolName: string, toolDef: Tool): Tool {
+  const execute = toolDef.execute;
+  if (typeof execute !== "function") return toolDef;
+
+  return {
+    ...toolDef,
+    execute: (input: unknown, options: ToolExecutionOptions) =>
+      runWithToolStatus(toolName, async () => {
+        const result = execute(input, options);
+        return result instanceof Promise ? await result : result;
+      }),
+  };
+}
+
+/**
+ * Applies `wrapToolWithStatus` to every tool in a tool map, keyed by the
+ * tool's name. Useful for generic, non-sandbox tool calls.
+ */
+export function wrapToolsWithStatus<T extends Record<string, Tool>>(
+  tools: T,
+): T {
+  const wrapped: Record<string, Tool> = {};
+  for (const [name, toolDef] of Object.entries(tools)) {
+    wrapped[name] = wrapToolWithStatus(name, toolDef);
+  }
+  return wrapped as T;
 }
