@@ -279,3 +279,11 @@ bun run services/test-service-runner.ts   # Runs Express service test
 2. **Resource Constraints**: Docker limits CPU cores (`--cpus=1`) and memory (`--memory=512m`) to prevent infinite loops or memory leaks from freezing the host machine.
 3. **Staged Disk Mutations**: The orchestrator writes all updates to an in-memory overlay map. Real files are only modified after the user reviews unified diffs and confirms changes via the TUI approval flow (`modes/agent/approval.ts`).
 4. **Path Traversal Guards**: The tool executor uses `resolveSafe()` to block any paths containing parent directory pointers (`..`) from escaping the workspace directory.
+
+---
+
+## License
+
+This project is licensed under the **MIT License** — see the [LICENSE](./LICENSE) file for details.
+
+Copyright (c) 2026 [Aryaman-rot](https://github.com/Aryaman-rot)
