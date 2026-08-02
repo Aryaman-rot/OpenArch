@@ -9,6 +9,58 @@ type SpawnResult = {
   exitCode: number;
 };
 
+export const DOCKER_REQUIREMENT_MESSAGE =
+  "Docker is required for sandboxed repo execution but isn't running or installed. Install Docker from https://docker.com/get-started and make sure Docker Desktop is running before using repo tools.";
+
+export function isDockerUnavailableError(err: unknown): boolean {
+  const text = err instanceof Error ? err.message : String(err ?? "");
+  const patterns = [
+    /ENOENT/i,
+    /failed to start docker/i,
+    /command not found/i,
+    /'docker' is not recognized/i,
+    /failed to connect to the docker API/i,
+    /is the docker daemon running\?/i,
+    /cannot connect to the docker daemon/i,
+    /dockerDesktopLinuxEngine/i,
+    /docker\.sock/i,
+    /npipe:\/\//i,
+  ];
+  return patterns.some((p) => p.test(text));
+}
+
+let cachedDockerStatus: { available: boolean; timestamp: number } | undefined;
+const CACHE_TTL_MS = 5000;
+
+export async function checkDockerStatus(): Promise<{ available: boolean; message?: string }> {
+  const now = Date.now();
+  if (cachedDockerStatus && now - cachedDockerStatus.timestamp < CACHE_TTL_MS) {
+    return cachedDockerStatus.available
+      ? { available: true }
+      : { available: false, message: DOCKER_REQUIREMENT_MESSAGE };
+  }
+
+  try {
+    const result = await runCommand("docker", ["info"]);
+    const available = result.exitCode === 0 && !isDockerUnavailableError(result.stderr);
+    cachedDockerStatus = { available, timestamp: now };
+    if (available) {
+      return { available: true };
+    }
+    return { available: false, message: DOCKER_REQUIREMENT_MESSAGE };
+  } catch (_err) {
+    cachedDockerStatus = { available: false, timestamp: now };
+    return { available: false, message: DOCKER_REQUIREMENT_MESSAGE };
+  }
+}
+
+export async function ensureDockerAvailable(): Promise<void> {
+  const status = await checkDockerStatus();
+  if (!status.available) {
+    throw new Error(DOCKER_REQUIREMENT_MESSAGE);
+  }
+}
+
 function runCommand(
   command: string,
   args: string[],
@@ -82,6 +134,10 @@ function runCommand(
     }
 
     child.on("error", (error) => {
+      if (command === "docker" && isDockerUnavailableError(error)) {
+        rejectIfOpen(new Error(DOCKER_REQUIREMENT_MESSAGE));
+        return;
+      }
       rejectIfOpen(
         new Error(
           `Failed to start ${command}: ${error instanceof Error ? error.message : String(error)}`,
@@ -125,6 +181,10 @@ function formatCommandError(
   args: string[],
   result: SpawnResult,
 ): Error {
+  if (command === "docker" && isDockerUnavailableError(result.stderr || result.stdout)) {
+    return new Error(DOCKER_REQUIREMENT_MESSAGE);
+  }
+
   const details = [
     `Command failed: ${command} ${args.join(" ")}`,
     `Exit code: ${result.exitCode}`,
@@ -224,6 +284,7 @@ export async function buildImage(
   imageName: string,
   opts?: { signal?: AbortSignal },
 ): Promise<void> {
+  await ensureDockerAvailable();
   const result = await runCommand("docker", ["build", "-t", imageName, repoPath], {
     signal: opts?.signal,
   });
@@ -238,6 +299,7 @@ export async function runContainer(
   args: string[],
   opts?: { timeoutMs?: number; signal?: AbortSignal; env?: Record<string, string>; allowNetwork?: boolean },
 ): Promise<RunResult> {
+  await ensureDockerAvailable();
   const dockerArgs = [
     "run",
     "--rm",
@@ -346,6 +408,7 @@ export async function startService(
   containerPort: number,
   opts?: { signal?: AbortSignal; env?: Record<string, string>; allowNetwork?: boolean },
 ): Promise<ServiceHandle> {
+  await ensureDockerAvailable();
   const hostPort = await findFreePort();
   const containerName = `openarch-service-${sanitizeNameSegment(imageName)}-${Math.random()
     .toString(36)

@@ -6,6 +6,7 @@ import { runCliMode } from "../modes/cli";
 import { runTelegramMode } from "../modes/telegram";
 
 import { promptAndSaveModel } from "./model-select";
+import { checkDockerStatus } from "../services/sandbox";
 
 const BANNER_FONT = "ANSI Shadow";
 const SHADOW = chalk.hex("#b55fadd7");
@@ -42,6 +43,11 @@ export async function runWakeup() {
   if (!process.env.MODEL && !process.env.OPENROUTER_DEFAULT_MODEL) {
     console.log(chalk.cyan("First-run setup: Please choose your preferred AI model.\n"));
     await promptAndSaveModel();
+  }
+
+  const dockerStatus = await checkDockerStatus();
+  if (!dockerStatus.available) {
+    console.log(chalk.yellow("  Note: Docker is not currently running. Sandboxed repo features will require Docker Desktop.\n"));
   }
 
   while (true) {
