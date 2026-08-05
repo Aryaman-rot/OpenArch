@@ -5,9 +5,6 @@
 [![TypeScript](https://img.shields.io/badge/lang-TypeScript-%233178C6?logo=typescript)](https://www.typescriptlang.org)
 [![Docker](https://img.shields.io/badge/sandbox-Docker-%232496ED?logo=docker)](https://docker.com)
 [![PostgreSQL](https://img.shields.io/badge/database-PostgreSQL-%234169E1?logo=postgresql)](https://www.postgresql.org)
-
-*Note: A LICENSE file was not found in the root of the repository; this project is assumed to be distributed under the MIT license.*
-
 OpenArch is a CLI agent that containerizes arbitrary GitHub repositories on the fly, executes their command-line interfaces inside isolated Docker sandboxes, and dynamically generates their tool schemas by reading their `--help` outputs using an LLM. By automatically translating CLI help documentation into structured tool schemas, OpenArch allows an agent to leverage third-party repositories—like running `cowsay`, performing static analysis with `markdownlint`, or executing network requests via custom APIs—without requiring any manual integration glue.
 
 ## Why
@@ -122,6 +119,31 @@ OpenArch provides four separate execution environments via CLI and a Telegram bo
 
 The Telegram bot (`modes/telegram/`) implements `/ask`, `/agent`, and `/plan` using inline keyboards for interactive diff approvals and step selection.
 
+### Multi-Turn Conversation with Persistent History
+
+Agent Mode and Ask Mode stay active across follow-up questions within a single session instead of returning to the mode menu after each answer. Conversation history is carried forward across turns so the model retains context from earlier in the session. Type `exit`, `back`, or `quit` (or press Esc) to return to the mode selection menu.
+
+### User-Configurable AI Model
+
+The AI model used across all modes is selected at runtime from the `MODEL` environment variable, falling back to `OPENROUTER_DEFAULT_MODEL`, then `openrouter/free`. Users can pick or change models at any time via:
+- The first-run setup prompt on initial launch (if no model is configured).
+- The **Change AI Model** option in the wakeup menu.
+- `bun index.ts config` from the command line.
+
+The model picker fetches the current catalog live from OpenRouter's public `/api/v1/models` endpoint, displaying real model names with input/output pricing per million tokens. If the fetch fails, a small offline fallback list is shown. Custom model IDs (any OpenRouter-compatible string) can also be entered manually.
+
+### Friendly AI API Error Handling
+
+All AI API errors across Agent, Ask, Plan, and Telegram modes are caught and classified by `ai/ai-error.ts` into specific, actionable messages rather than raw stack traces:
+- **404 / Model unavailable**: Names the selected model and links to `bun index.ts config`.
+- **402 / Insufficient credits**: Directs to OpenRouter's credit top-up page or suggests switching to a free model.
+- **401 / Invalid API key**: Points to `OPENROUTER_API_KEY` in `.env` and the OpenRouter key management page.
+- **Other API errors**: Shows the status code and a suggestion to switch models.
+
+### Generic Tool-Call Progress Indicators
+
+All tool calls — including regular file and workspace tools (`read_file`, `search_files`, `list_files`, etc.) — display a lightweight `Running <tool_name>…` status line while executing, using the same animated progress bar already used for sandbox tools (`services/repo-progress.ts`). Fast tools produce a brief flash; the indicator is consistent regardless of tool duration.
+
 ### Staged File Mutation with Diff Approval
 
 File writes and modifications do not touch the host disk immediately. 
@@ -216,22 +238,28 @@ Instead of dumping the entire toolset into the initial system prompt (which cons
    bun install
    ```
 
-2. Configure environment variables in your terminal:
+2. Configure environment variables in your terminal (or a `.env` file — `.env` is gitignored):
    ```bash
-   # Required: AI config
-   export OPENROUTER_API_KEY="sk-or-..."
-   export OPENROUTER_DEFAULT_MODEL="openrouter/free"
+   # Required: OpenRouter API key
+   OPENROUTER_API_KEY="sk-or-..."
+
+   # Optional: preferred AI model (any OpenRouter model ID).
+   # If unset, you'll be prompted to choose on first run.
+   # Falls back to OPENROUTER_DEFAULT_MODEL, then "openrouter/free".
+   MODEL="openai/gpt-4o"
 
    # Optional: Database caching (registry fallback will disable caching if unset)
-   export DATABASE_URL="postgres://username:password@localhost:5432/openarch"
+   DATABASE_URL="postgres://username:password@localhost:5432/openarch"
 
    # Optional: Web search integration
-   export FIRECRAWL_API_KEY="fc-..."
+   FIRECRAWL_API_KEY="fc-..."
 
    # Optional: Telegram bot credentials
-   export TELEGRAM_BOT_TOKEN="123456:ABC..."
-   export TELEGRAM_OWNER_ID="987654321"
+   TELEGRAM_BOT_TOKEN="123456:ABC..."
+   TELEGRAM_OWNER_ID="987654321"
    ```
+
+   Run `bun index.ts config` at any time to interactively update the model from the live OpenRouter catalog.
 
 ### Run
 
@@ -257,19 +285,22 @@ bun run services/test-service-runner.ts   # Runs Express service test
 - **Environment Variable Detection**: Scans `.env.example` and reads README files to detect secret requirements (tested against `jakubzitny/openweathermap-cli` to retrieve weather data using opt-in network overrides).
 - **Staged Approvals**: Unified diff previews and selective disk updates.
 - **Registry Caching**: Postgres-backed image mapping with automatic rebuild recovery.
+- **Multi-turn Agent & Ask sessions**: Both modes maintain conversation history across follow-up questions within a session.
+- **Model switching**: Live model catalog fetched from OpenRouter; model switchable at any time via `bun index.ts config` or the wakeup menu.
 
 ### Known Gaps:
+- **Plan Mode requires structured-output support**: Plan generation relies on the model producing valid structured JSON output. Free-tier models tested on OpenRouter (including `inclusionai/ling-3.0-flash:free`, `poolside/laguna-s-2.1:free`, and Cohere's free tier) failed to do so reliably — returning 400 errors or unparseable responses. Models from major providers (Anthropic, OpenAI, Google) are expected to work based on their documented structured-output capabilities, but this has not been confirmed end-to-end due to credit unavailability during testing. **If Plan Mode returns an error immediately after generating the plan, switching to a non-free model is the recommended fix.**
 - **Single Provider Constraint**: Locked to OpenRouter. No direct configuration hooks for independent OpenAI, Anthropic, or local Ollama endpoints.
 - **Limited Runtime Ecosystems**: Only Node.js, Python, and existing `Dockerfile` repositories are automatically detected. No build generation for Go, Rust, or C++ CLIs.
-- **No Multi-Turn Agent Session State**: The agent has no memory of past runs; context restarts fresh with each CLI invocation.
+- **No persistent cross-session memory**: Agent history is maintained within a single session but does not persist across separate CLI invocations.
 - **No web UI**: Interface is constrained to Terminal TUI and Telegram bot keyboards.
 
-### Hardening & Resolved Issues:
-- **Git Clone Hangs**: Fixed a promise rejection failure where failed git clones (like invalid or unreachable URLs) would hang indefinitely; cloning now rejects with a clean error within 30 seconds.
-- **Windows Process Cleanup**: Aborted Docker builds and commands on Windows now clean up their entire process tree using `taskkill /PID /T /F` rather than leaving orphaned containers or ignoring SIGTERM.
-- **Terminal Input Freezes**: Resolved a stdin/readline stream conflict that caused terminal inputs to freeze when a mode was re-entered a second time in a single CLI session.
-- **Cached Output Decoding**: Corrected output decoding issues on cached sandboxes by buffering raw chunks and decoding once at the end, preventing multi-byte UTF-8 character corruption.
-- **Opt-in Network Isolation**: Sandboxed executions default strictly to network isolation, requiring explicit `allowNetwork` permissions to prevent unexpected data exfiltration.
+### Reliability & Error Handling:
+- **Docker unavailability**: If Docker is not running or not installed, a non-blocking warning is shown at startup and any sandbox tool invocation surfaces a clear install/start message instead of a raw connection error — non-sandbox features (Ask Mode, Agent Mode for file work) remain fully usable without Docker.
+- **Terminal input stability**: All CLI mode transitions now perform cleanup (raw mode restoration, keypress listener teardown) in `try/finally` blocks, so a crash in any mode returns cleanly to the menu with working input rather than freezing the terminal.
+- **Git Clone Hangs**: Failed clones (invalid or unreachable URLs) reject with a clean error within 30 seconds instead of hanging indefinitely.
+- **Windows Process Cleanup**: Aborted Docker builds and commands on Windows clean up their entire process tree using `taskkill /PID /T /F`.
+- **Cached Output Decoding**: Raw byte chunks are buffered and decoded once at the end, preventing multi-byte UTF-8 character corruption in cached sandbox output.
 
 ---
 
