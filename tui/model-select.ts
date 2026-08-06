@@ -155,8 +155,10 @@ async function fetchOpenRouterModels(): Promise<SelectOption[]> {
 // .env writer
 // ---------------------------------------------------------------------------
 
+import { getEnvWritePath } from "../services/env-config";
+
 export function saveModelToEnv(modelId: string): void {
-  const envPath = path.resolve(process.cwd(), ".env");
+  const envPath = getEnvWritePath();
   let envContent = "";
 
   if (fs.existsSync(envPath)) {
@@ -239,7 +241,7 @@ export async function promptAndSaveModel(): Promise<string | undefined> {
   saveModelToEnv(finalModel);
 
   note(
-    `AI Model configured to: ${chalk.bold.green(finalModel)}\nSaved to .env`,
+    `AI Model configured to: ${chalk.bold.green(finalModel)}\nSaved to ${getEnvWritePath()}`,
     "Model Configuration"
   );
 
