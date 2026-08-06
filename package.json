@@ -2,32 +2,22 @@
   "name": "openarch",
   "version": "1.0.0",
   "description": "CLI agent that containerizes GitHub repos on the fly, runs them in isolated Docker sandboxes, and exposes their CLIs as dynamic LLM tools.",
-  "module": "index.ts",
-  "main": "index.ts",
+  "module": "dist/index.js",
+  "main": "dist/index.js",
   "type": "module",
   "license": "MIT",
   "bin": {
-    "openarch": "./index.ts"
+    "openarch": "./dist/index.js"
   },
   "files": [
-    "index.ts",
-    "ai/",
-    "modes/",
-    "services/pragmatist.ts",
-    "services/registry.ts",
-    "services/repo-agent-tools.ts",
-    "services/repo-progress.ts",
-    "services/repo-runner.ts",
-    "services/sandbox.ts",
-    "services/tool-context.ts",
-    "services/tool-generator.ts",
-    "services/types.ts",
-    "tui/",
-    "tsconfig.json",
-    ".env.example",
+    "dist/",
     "LICENSE",
     "README.md"
   ],
+  "scripts": {
+    "build": "bun build ./index.ts --outfile ./dist/index.js --target node",
+    "prepublishOnly": "bun run build"
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/Aryaman-rot/OpenArch.git"
