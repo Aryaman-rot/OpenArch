@@ -2,11 +2,20 @@ import {select , isCancel} from "@clack/prompts";
 import chalk from "chalk";
 import { error } from "console";
 import figlet from "figlet";
+// @ts-ignore - figlet importable fonts don't have built-in d.ts types
+import ansiShadowFont from "figlet/importable-fonts/ANSI Shadow.js";
+// @ts-ignore
+import standardFont from "figlet/importable-fonts/Standard.js";
+
 import { runCliMode } from "../modes/cli";
 import { runTelegramMode } from "../modes/telegram";
 
 import { promptAndSaveModel } from "./model-select";
 import { checkDockerStatus } from "../services/sandbox";
+
+// Register fonts in memory so figlet doesn't require font files on disk at runtime
+figlet.parseFont("ANSI Shadow", ansiShadowFont);
+figlet.parseFont("Standard", standardFont);
 
 const BANNER_FONT = "ANSI Shadow";
 const SHADOW = chalk.hex("#b55fadd7");
