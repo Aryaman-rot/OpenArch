@@ -76,19 +76,19 @@ function parseEnvFile(filePath: string): void {
 
 /**
  * Loads environment configuration into process.env at application startup.
- * 1. Reads ~/.openarch/.env first (if present).
- * 2. Reads ./.env second, allowing local variables to override global defaults.
+ * 1. Reads local ./.env first (if exists in cwd) so project-specific settings take precedence.
+ * 2. Reads ~/.openarch/.env second to fill in any missing global fallback defaults.
  */
 export function loadEnvConfig(): void {
-  // Load global .env first
-  const globalPath = path.join(os.homedir(), ".openarch", ".env");
-  if (fs.existsSync(globalPath)) {
-    parseEnvFile(globalPath);
-  }
-
-  // Load local .env second (if exists in cwd)
+  // Load local .env first (if exists in cwd)
   const localPath = getLocalEnvPath();
   if (fs.existsSync(localPath)) {
     parseEnvFile(localPath);
+  }
+
+  // Load global .env second (fills in missing defaults without overwriting local)
+  const globalPath = path.join(os.homedir(), ".openarch", ".env");
+  if (fs.existsSync(globalPath)) {
+    parseEnvFile(globalPath);
   }
 }
