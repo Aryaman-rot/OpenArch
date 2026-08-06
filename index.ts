@@ -7,9 +7,9 @@ import { promptAndSaveModel } from "./tui/model-select";
 const program = new Command();
 
 program
-  .name("openarch-build")
-  .description("A fancy CLI tool")
-  .version("0.0.1");
+  .name("openarch")
+  .description("CLI agent that containerizes GitHub repos on the fly, runs them in isolated Docker sandboxes, and exposes their CLIs as dynamic LLM tools.")
+  .version("1.0.0");
 
 program
   .command("wakeup")

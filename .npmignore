@@ -1,0 +1,17 @@
+# Exclude test/dev-only files from the published package
+services/test-runner.ts
+services/test-service-runner.ts
+services/test-tool-generator.ts
+
+# Exclude local SQL files
+*.sql
+
+# Exclude scratch/dev artifacts
+implementation.md
+test.md
+md files/
+docs/
+.graphify/
+.agents/
+.vscode/
+bun.lock
