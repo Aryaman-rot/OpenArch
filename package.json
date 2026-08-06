@@ -1,13 +1,13 @@
 {
   "name": "openarch",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "CLI agent that containerizes GitHub repos on the fly, runs them in isolated Docker sandboxes, and exposes their CLIs as dynamic LLM tools.",
   "module": "dist/index.js",
   "main": "dist/index.js",
   "type": "module",
   "license": "MIT",
   "bin": {
-    "openarch": "./dist/index.js"
+    "openarch": "dist/index.js"
   },
   "files": [
     "dist/",
@@ -15,12 +15,13 @@
     "README.md"
   ],
   "scripts": {
-    "build": "bun build ./index.ts --outfile ./dist/index.js --target node",
+    "build": "bun build ./index.ts --outfile ./dist/index.js --target node && bun run postbuild",
+    "postbuild": "node -e \"const fs = require('fs'); const file = 'dist/index.js'; let content = fs.readFileSync(file, 'utf8'); if (!content.startsWith('#!/usr/bin/env node')) { fs.writeFileSync(file, '#!/usr/bin/env node\\n' + content); } fs.chmodSync(file, 0o755);\"",
     "prepublishOnly": "bun run build"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/Aryaman-rot/OpenArch.git"
+    "url": "git+https://github.com/Aryaman-rot/OpenArch.git"
   },
   "keywords": [
     "ai-agent",
