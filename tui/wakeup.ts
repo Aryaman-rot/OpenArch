@@ -10,7 +10,7 @@ import standardFont from "figlet/importable-fonts/Standard.js";
 import { runCliMode } from "../modes/cli";
 import { runTelegramMode } from "../modes/telegram";
 
-import { promptAndSaveModel } from "./model-select";
+import { promptAndSaveModel, promptAndSaveApiKey } from "./model-select";
 import { checkDockerStatus } from "../services/sandbox";
 
 // Register fonts in memory so figlet doesn't require font files on disk at runtime
@@ -49,9 +49,23 @@ export async function runWakeup() {
 
   printBannerWithShadow(ascii);
 
-  if (!process.env.MODEL && !process.env.OPENROUTER_DEFAULT_MODEL) {
-    console.log(chalk.cyan("First-run setup: Please choose your preferred AI model.\n"));
-    await promptAndSaveModel();
+  const needsApiKey = !process.env.OPENROUTER_API_KEY;
+  const needsModel = !process.env.MODEL && !process.env.OPENROUTER_DEFAULT_MODEL;
+
+  if (needsApiKey || needsModel) {
+    console.log(chalk.cyan("First-run setup: Please configure your OpenArch settings.\n"));
+
+    if (needsApiKey) {
+      const key = await promptAndSaveApiKey();
+      if (!key) {
+        console.log(chalk.dim("\nSetup canceled. Returning...\n"));
+        return;
+      }
+    }
+
+    if (needsModel) {
+      await promptAndSaveModel();
+    }
   }
 
   const dockerStatus = await checkDockerStatus();
@@ -66,6 +80,7 @@ export async function runWakeup() {
         { value: "cli", label: "CLI" },
         { value: "telegram", label: "Telegram" },
         { value: "model", label: "Change AI Model" },
+        { value: "key", label: "Change OpenRouter API Key" },
         { value: "exit", label: "Exit" },
       ],
     });
@@ -86,6 +101,8 @@ export async function runWakeup() {
       await runTelegramMode();
     } else if (mode === "model") {
       await promptAndSaveModel();
+    } else if (mode === "key") {
+      await promptAndSaveApiKey();
     }
   }
 }

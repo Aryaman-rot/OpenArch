@@ -157,6 +157,56 @@ async function fetchOpenRouterModels(): Promise<SelectOption[]> {
 
 import { getEnvWritePath, writeEnvFileSafely } from "../services/env-config";
 
+export function saveApiKeyToEnv(apiKey: string): void {
+  const envPath = getEnvWritePath();
+  let envContent = "";
+
+  if (fs.existsSync(envPath)) {
+    envContent = fs.readFileSync(envPath, "utf-8");
+    if (/^OPENROUTER_API_KEY=.*\r?$/m.test(envContent)) {
+      envContent = envContent.replace(
+        /^OPENROUTER_API_KEY=.*\r?$/m,
+        `OPENROUTER_API_KEY=${apiKey}`
+      );
+    } else {
+      if (envContent.length > 0 && !envContent.endsWith("\n")) {
+        envContent += "\n";
+      }
+      envContent += `OPENROUTER_API_KEY=${apiKey}\n`;
+    }
+  } else {
+    envContent = `OPENROUTER_API_KEY=${apiKey}\n`;
+  }
+
+  writeEnvFileSafely(envPath, envContent);
+  process.env.OPENROUTER_API_KEY = apiKey;
+}
+
+export async function promptAndSaveApiKey(): Promise<string | undefined> {
+  const currentKey = process.env.OPENROUTER_API_KEY ? " (Key set)" : "";
+  const input = await text({
+    message: `Enter your OpenRouter API key${currentKey} (get one at https://openrouter.ai/keys):`,
+    placeholder: "sk-or-v1-...",
+    validate: (value) => {
+      if (!value || value.trim().length === 0) {
+        return "API key cannot be empty";
+      }
+    },
+  });
+
+  if (isCancel(input)) return undefined;
+
+  const key = input.trim();
+  saveApiKeyToEnv(key);
+
+  note(
+    `OpenRouter API key saved to ${getEnvWritePath()}`,
+    "API Key Configuration"
+  );
+
+  return key;
+}
+
 export function saveModelToEnv(modelId: string): void {
   const envPath = getEnvWritePath();
   let envContent = "";
