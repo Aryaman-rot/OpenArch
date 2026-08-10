@@ -48,6 +48,46 @@ export function getEnvWritePath(): string {
 }
 
 /**
+ * Atomically writes content to the target .env file by writing to a temporary file
+ * first, setting restrictive file permissions (0o600 - owner read/write only), and
+ * renaming into place.
+ */
+export function writeEnvFileSafely(envPath: string, content: string): void {
+  const dir = path.dirname(envPath);
+  if (!fs.existsSync(dir)) {
+    fs.mkdirSync(dir, { recursive: true });
+  }
+
+  const tmpPath = path.join(
+    dir,
+    `.env.tmp.${Date.now()}.${Math.random().toString(36).slice(2)}`
+  );
+
+  fs.writeFileSync(tmpPath, content, "utf-8");
+
+  try {
+    fs.chmodSync(tmpPath, 0o600);
+  } catch {
+    // Ignore permissions errors on platforms without POSIX permissions (e.g. Windows)
+  }
+
+  try {
+    fs.renameSync(tmpPath, envPath);
+  } catch {
+    fs.copyFileSync(tmpPath, envPath);
+    try {
+      fs.unlinkSync(tmpPath);
+    } catch {}
+  }
+
+  try {
+    fs.chmodSync(envPath, 0o600);
+  } catch {
+    // Ignore permissions errors on platforms without POSIX permissions (e.g. Windows)
+  }
+}
+
+/**
  * Simple .env parser that loads key=value pairs into process.env.
  * Will not overwrite existing process.env variables.
  */

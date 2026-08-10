@@ -99,7 +99,22 @@ function runGitClone(
       opts.signal.addEventListener("abort", interrupt, { once: true });
     }
 
-    child.on("error", (error) => {
+    child.on("error", (error: any) => {
+      const isNotFound =
+        error?.code === "ENOENT" ||
+        String(error?.message ?? "").includes("ENOENT") ||
+        String(error?.message ?? "").includes("not found") ||
+        String(error?.message ?? "").includes("not recognized");
+
+      if (isNotFound) {
+        rejectIfOpen(
+          new Error(
+            "Git is required to clone repositories. Install it from https://git-scm.com/downloads."
+          )
+        );
+        return;
+      }
+
       rejectIfOpen(
         new Error(
           `Failed to clone repo: ${url}. ${

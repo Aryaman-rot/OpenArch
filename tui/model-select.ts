@@ -155,7 +155,7 @@ async function fetchOpenRouterModels(): Promise<SelectOption[]> {
 // .env writer
 // ---------------------------------------------------------------------------
 
-import { getEnvWritePath } from "../services/env-config";
+import { getEnvWritePath, writeEnvFileSafely } from "../services/env-config";
 
 export function saveModelToEnv(modelId: string): void {
   const envPath = getEnvWritePath();
@@ -180,7 +180,7 @@ export function saveModelToEnv(modelId: string): void {
     envContent = `MODEL=${modelId}\n`;
   }
 
-  fs.writeFileSync(envPath, envContent, "utf-8");
+  writeEnvFileSafely(envPath, envContent);
   process.env.MODEL = modelId;
 }
 
