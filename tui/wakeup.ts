@@ -1,6 +1,5 @@
-import {select , isCancel} from "@clack/prompts";
+import { select, isCancel, note } from "@clack/prompts";
 import chalk from "chalk";
-import { error } from "console";
 import figlet from "figlet";
 // @ts-ignore - figlet importable fonts don't have built-in d.ts types
 import ansiShadowFont from "figlet/importable-fonts/ANSI Shadow.js";
@@ -96,9 +95,19 @@ export async function runWakeup() {
       console.log(chalk.dim("Starting CLI..."));
       await runCliMode();
     } else if (mode === "telegram") {
-      console.log(chalk.dim("You chose Telegram mode!"));
-      console.log(chalk.dim("Starting Telegram Bot..."));
-      await runTelegramMode();
+      if (!process.env.TELEGRAM_BOT_TOKEN) {
+        note(
+          `Telegram mode requires additional setup:\n\n` +
+            `1. Create a bot with @BotFather on Telegram to get a TELEGRAM_BOT_TOKEN.\n` +
+            `2. Add TELEGRAM_BOT_TOKEN (and optionally TELEGRAM_OWNER_ID) to your ~/.openarch/.env (or local .env).\n\n` +
+            `See the README for step-by-step setup instructions.`,
+          "Telegram Setup Required"
+        );
+      } else {
+        console.log(chalk.dim("You chose Telegram mode!"));
+        console.log(chalk.dim("Starting Telegram Bot..."));
+        await runTelegramMode();
+      }
     } else if (mode === "model") {
       await promptAndSaveModel();
     } else if (mode === "key") {
