@@ -467,7 +467,7 @@ export async function startService(
       throw new Error(`Docker did not return a container id for ${containerName}`);
     }
 
-    const timeoutAt = Date.now() + 5000;
+    const timeoutAt = Date.now() + 30_000;
     while (Date.now() < timeoutAt) {
       if (opts?.signal?.aborted) {
         throw new Error(`Interrupted while starting service ${containerName}.`);

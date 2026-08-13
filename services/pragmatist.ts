@@ -87,6 +87,25 @@ function extractRelevantReadmeSection(readmeText: string): string {
   return section.join("\n");
 }
 
+/** Words that commonly appear in all-caps in READMEs but are not env vars. */
+const COMMON_FALSE_POSITIVES = new Set([
+  "JSON", "HTTP", "HTTPS", "REST", "API", "CLI", "URL", "HTML", "CSS",
+  "SQL", "XML", "YAML", "TOML", "UUID", "CORS", "JWT", "AUTH", "CRUD",
+  "NOTE", "TODO", "WARN", "INFO", "TRUE", "FALSE", "NULL", "NONE",
+  "NODE", "YARN", "PNPM", "VITE", "NEXT", "DOCKER", "LINUX", "WINDOWS",
+  "MACOS", "UNIX", "MIT", "ISC", "BUGS", "OPEN", "REPO", "DOCS",
+  "PULL", "PUSH", "FORK", "MAIN", "MASTER", "HEAD", "MAKE", "BASH",
+  "TSUP", "WEBPACK", "ESLINT", "PRETTIER", "JEST", "VENV", "PYTHON",
+]);
+
+function isLikelyEnvVar(key: string): boolean {
+  if (COMMON_FALSE_POSITIVES.has(key)) return false;
+  // Likely if it contains a typical env-var signal suffix/infix
+  if (/(?:KEY|TOKEN|SECRET|PASSWORD|PASS|PWD|URL|HOST|PORT|PATH|DIR|API|ID|BUCKET|REGION|USER|USERNAME)/.test(key)) return true;
+  // Require at least one underscore to distinguish compound env var names from simple acronyms
+  return key.includes("_");
+}
+
 function isSecretKey(key: string): boolean {
   return /KEY|SECRET|TOKEN|PASSWORD/i.test(key);
 }
@@ -164,14 +183,16 @@ export function detectEnvRequirements(repoPath: string): EnvRequirement[] {
     const readmeText = readFileSync(path.join(repoPath, readme), "utf8");
     const section = extractRelevantReadmeSection(readmeText);
     const sectionMatches = section.match(/\b[A-Z][A-Z0-9_]+\b/g) ?? [];
-    if (sectionMatches.length > 0) {
-      const result = dedupe(sectionMatches);
+    // Only use section matches if there's a meaningful env-var section (≥3 hits)
+    if (sectionMatches.length >= 3) {
+      const result = dedupe(sectionMatches.filter(isLikelyEnvVar));
       console.log(`[pragmatist] README section scan found: ${JSON.stringify(result)}`);
       return result;
     }
 
+    // Full-scan fallback: strictly filter common false positives and cap at 10
     const allMatches = readmeText.match(/\b[A-Z][A-Z0-9_]{3,}\b/g) ?? [];
-    const result = dedupe(allMatches);
+    const result = dedupe(allMatches.filter(isLikelyEnvVar)).slice(0, 10);
     console.log(`[pragmatist] README full scan found: ${JSON.stringify(result)}`);
     return result;
   }

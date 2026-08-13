@@ -1,6 +1,5 @@
 import { createHash } from "node:crypto";
 import { spawn } from "node:child_process";
-import { createOpenRouter } from "@openrouter/ai-sdk-provider";
 import { generateText } from "ai";
 import { rm } from "node:fs/promises";
 import { z } from "zod";
@@ -8,15 +7,8 @@ import { z } from "zod";
 import { buildImage, removeImage, runContainer } from "./sandbox";
 import { cloneRepo, detectRuntime, generateDockerfile } from "./repo-runner";
 import { getRegistryEntry, saveRegistryEntry, touchLastUsed } from "./registry";
+import { getAgentModel } from "../ai/ai.config";
 import type { RuntimeInfo, ToolSchema } from "./types";
-
-function getToolGeneratorModel() {
-  const provider = createOpenRouter({
-    apiKey: process.env.OPENROUTER_API_KEY,
-  });
-
-  return provider("openrouter/free");
-}
 
 function imageNameFromRepoUrl(url: string): string {
   const slug = url
@@ -99,7 +91,7 @@ export async function generateToolSchema(
   ].join("\n");
 
   const result = await generateText({
-    model: getToolGeneratorModel(),
+    model: getAgentModel(),
     system,
     prompt: helpText,
     abortSignal: opts?.signal,

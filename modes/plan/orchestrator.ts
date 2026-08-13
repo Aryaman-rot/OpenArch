@@ -22,81 +22,94 @@ function stepPrompt(goal: string, step: PlanStep): string {
 }
 
 
+const EXIT_PATTERN = /^(exit|back|quit)$/i;
+
 export async function runPlanMode(): Promise<void> {
   console.log(chalk.bold("\n🧭 Plan Mode"));
   console.log(chalk.dim("Tip: ask me what tools I have available."));
+  console.log(chalk.dim("Type 'exit', 'back', or 'quit' (or press Esc) to return to the mode menu.\n"));
 
-  const goal = await text({ message: "What is your goal?" });
-  if (isCancel(goal) || !goal.trim()) return;
+  while (true) {
+    const goal = await text({ message: "What is your goal?" });
+    if (isCancel(goal)) return;
 
-  const plan = await generatePlan(goal);
-  if (!plan) return;
+    const trimmed = goal.trim();
+    if (!trimmed || EXIT_PATTERN.test(trimmed)) {
+      console.log(chalk.dim("\nReturning to mode selection..."));
+      return;
+    }
 
-  printPlan(plan);
+    const plan = await generatePlan(trimmed);
+    if (!plan) continue;
 
-  const selected = await selectSteps(plan);
-  if (selected.length === 0) return;
+    printPlan(plan);
 
-  const proceed = await confirm({
-    message: `Execute ${selected.length} step(s)`,
-    initialValue: true,
-  });
+    const selected = await selectSteps(plan);
+    if (selected.length === 0) continue;
 
-  const config = defaultAgentConfig();
-  const tracker = new ActionTracker();
-  const executor = new ToolExecutor(tracker, config);
-
-
-  const agentTools = createAgentTools(executor, { showProgress: true });
-  const webTools = createWebTools(tracker);
-  const baseTools = { ...agentTools, ...wrapToolsWithStatus(webTools) };
-  const tools = {
-    ...baseTools,
-    list_available_tools: tool({
-      description:
-        "List all available tools in the current mode with their descriptions.",
-      inputSchema: z.object({}),
-      execute: async () =>
-        listAvailableTools(baseTools as Record<string, { description?: string }>),
-    }),
-  };
-
-  let executedCount = 0;
-  for (const [index, step] of selected.entries()) {
-    console.log(chalk.bold(`\n🔧 Step ${index + 1}/${selected.length}: ${step.title}\n`));
-
-    const agent = new ToolLoopAgent({
-      model: getAgentModel(),
-      stopWhen: stepCountIs(30),
-      tools,
+    const proceed = await confirm({
+      message: `Execute ${selected.length} step(s)`,
+      initialValue: true,
     });
 
-    let r: Awaited<ReturnType<typeof agent.generate>>;
-    try {
-      r = await agent.generate({ prompt: stepPrompt(plan.goal, step) });
-    } catch (err) {
-      if (handleAgentModelError(err)) return;
-      throw err;
+    if (isCancel(proceed) || !proceed) continue;
+
+    const config = defaultAgentConfig();
+    const tracker = new ActionTracker();
+    const executor = new ToolExecutor(tracker, config);
+
+
+    const agentTools = createAgentTools(executor, { showProgress: true });
+    const webTools = createWebTools(tracker);
+    const baseTools = { ...agentTools, ...wrapToolsWithStatus(webTools) };
+    const tools = {
+      ...baseTools,
+      list_available_tools: tool({
+        description:
+          "List all available tools in the current mode with their descriptions.",
+        inputSchema: z.object({}),
+        execute: async () =>
+          listAvailableTools(baseTools as Record<string, { description?: string }>),
+      }),
+    };
+
+    let executedCount = 0;
+    for (const [index, step] of selected.entries()) {
+      console.log(chalk.bold(`\n🔧 Step ${index + 1}/${selected.length}: ${step.title}\n`));
+
+      const agent = new ToolLoopAgent({
+        model: getAgentModel(),
+        stopWhen: stepCountIs(30),
+        tools,
+      });
+
+      let r: Awaited<ReturnType<typeof agent.generate>>;
+      try {
+        r = await agent.generate({ prompt: stepPrompt(plan.goal, step) });
+      } catch (err) {
+        if (handleAgentModelError(err)) return;
+        throw err;
+      }
+
+      if (r.text) {
+        console.log(renderTerminalMarkdown(r.text));
+      }
+      executedCount++;
     }
 
-    if (r.text) {
-      console.log(renderTerminalMarkdown(r.text));
+    console.log(chalk.green(`\n✓ Executed ${executedCount}/${selected.length} selected step(s).\n`));
+
+    const ok = await runApprovalFlow(tracker);
+
+    if(!ok) { executor.clearStaging(); continue; }
+
+     const { errors } = executor.applyApprovedFromTracker();
+    if (errors.length) {
+      console.log(chalk.red('\nSome operations reported errors:\n'));
+      for (const e of errors) console.log(chalk.red(`  • ${e}`));
+    } else {
+      console.log(chalk.green('\n✓ Applied.\n'));
     }
-    executedCount++;
+    executor.clearStaging();
   }
-
-  console.log(chalk.green(`\n✓ Executed ${executedCount}/${selected.length} selected step(s).\n`));
-
-  const ok = await runApprovalFlow(tracker);
-
-  if(!ok) return executor.clearStaging();
-
-   const { errors } = executor.applyApprovedFromTracker();
-  if (errors.length) {
-    console.log(chalk.red('\nSome operations reported errors:\n'));
-    for (const e of errors) console.log(chalk.red(`  • ${e}`));
-  } else {
-    console.log(chalk.green('\n✓ Applied.\n'));
-  }
-  executor.clearStaging();
-}
+}
