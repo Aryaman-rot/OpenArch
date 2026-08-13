@@ -60,11 +60,11 @@ export function createRepoAgentTools() {
 
     start_repo_service: tool({
       description:
-        "Clone a GitHub repo, build it, and start it as a long-running sandboxed service (e.g. a small REST API), returning a handle and the local port it's reachable on. Use for repos that run a persistent server rather than a one-shot command.",
+        "Clone a GitHub repo, build it, and start it as a long-running sandboxed service (e.g. a small REST API), returning a handle and the local port it's reachable on. Use for repos that run a persistent server rather than a one-shot command. Services always have outbound network access (required for port mapping to work — Docker's --network none is incompatible with published ports). Memory is limited to 512 MB and CPU to 1 core.",
       inputSchema: z.object({
         repoUrl: z.string(),
         containerPort: z.number().int(),
-        allowNetwork: z.boolean().default(false),
+        allowNetwork: z.boolean().default(true),
       }),
       execute: async ({ repoUrl, containerPort, allowNetwork }) =>
         runWithRepoProgress("start_repo_service", async ({ signal, onStatus }) => {

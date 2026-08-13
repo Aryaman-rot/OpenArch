@@ -434,7 +434,12 @@ export async function startService(
         containerName,
         "--memory=512m",
         "--cpus=1",
-        ...(!opts?.allowNetwork ? ["--network", "none"] : []),
+        // NOTE: --network none is intentionally NOT applied here.
+        // Port mapping (-p hostPort:containerPort) requires the container to
+        // have a network interface. --network none removes it entirely, making
+        // published ports permanently unreachable regardless of the -p flag.
+        // Services must be reachable by definition — outbound access is
+        // controlled by the allowNetwork option at the caller level.
         "-p",
         `${hostPort}:${containerPort}`,
         ...(opts?.env ? Object.entries(opts.env).flatMap(([key, value]) => ["-e", `${key}=${value}`]) : []),
@@ -453,7 +458,6 @@ export async function startService(
           containerName,
           "--memory=512m",
           "--cpus=1",
-          ...(!opts?.allowNetwork ? ["--network", "none"] : []),
           "-p",
           `${hostPort}:${containerPort}`,
           imageName,
