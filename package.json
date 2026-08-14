@@ -1,6 +1,6 @@
 {
   "name": "openarch",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "description": "CLI agent that containerizes GitHub repos on the fly, runs them in isolated Docker sandboxes, and exposes their CLIs as dynamic LLM tools.",
   "module": "dist/index.js",
   "main": "dist/index.js",

@@ -1,44 +1,19 @@
 import { spawnSync } from "node:child_process";
 import chalk from "chalk";
 import { select, isCancel } from "@clack/prompts";
-import { runAgentMode } from "./agent/orchestrator";
-import { runAskMode } from "./ask/orchestrator";
-import { runPlanMode } from "./plan/orchestrator";
-import { runPragmatistMode } from "./pragmatist/orchestrator";
-import { handleAgentModelError } from "../ai";
-import { restoreTerminalStdin, settleTerminalState, logDiag } from "../services/terminal-state";
+import { settleTerminalState } from "../services/terminal-state";
 
 function runModeInChildProcess(submode: string): void {
-    logDiag("runModeInChildProcess:SPAWNING", submode);
     const entryScript = process.argv[1] || "dist/index.js";
     spawnSync(process.execPath, [entryScript, "submode", submode], {
         stdio: "inherit",
         env: process.env,
     });
-    logDiag("runModeInChildProcess:CHILD_RETURNED", submode);
-}
-
-async function runModeSafely(label: string, run: () => Promise<void>): Promise<void> {
-    logDiag("runModeSafely:START", label);
-    await settleTerminalState(80, `runModeSafely:${label}:pre`);
-    try {
-        await run();
-    } catch (err) {
-        if (!handleAgentModelError(err)) {
-            const message = err instanceof Error ? err.message : String(err);
-            console.log(chalk.red(`\n✖  ${label} failed: ${message}\n`));
-        }
-    } finally {
-        await settleTerminalState(80, `runModeSafely:${label}:post`);
-        logDiag("runModeSafely:END", label);
-    }
 }
 
 export async function runCliMode() {
-    logDiag("runCliMode:ENTER");
     while (true) {
-        await settleTerminalState(80, "runCliMode:loopTop");
-        logDiag("runCliMode:beforeSelectPrompt");
+        await settleTerminalState(80);
         const mode = await select({
             message: "Choose your CLI Mode",
             options: [
@@ -49,11 +24,9 @@ export async function runCliMode() {
                 { value: "back", label: "Back to Main Menu" },
             ],
         });
-        logDiag("runCliMode:afterSelectPrompt", `chosen=${String(mode)}`);
 
         if (isCancel(mode) || mode === "back") {
-            logDiag("runCliMode:exitTriggered", `isCancel=${isCancel(mode)}, back=${mode === "back"}`);
-            await settleTerminalState(80, "runCliMode:exit");
+            await settleTerminalState(80);
             return;
         }
 
