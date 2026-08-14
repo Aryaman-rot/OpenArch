@@ -31,16 +31,16 @@ export async function runPlanMode(): Promise<void> {
   console.log(chalk.dim("Type 'exit', 'back', or 'quit' (or press Esc) to return to the mode menu.\n"));
 
   while (true) {
-    await settleTerminalState(20);
+    await settleTerminalState(80);
     const goal = await text({ message: "What is your goal?" });
     if (isCancel(goal)) {
-      await settleTerminalState(20);
+      await settleTerminalState(80);
       return;
     }
 
     const trimmed = goal.trim();
     if (!trimmed || EXIT_PATTERN.test(trimmed)) {
-      await settleTerminalState(20);
+      await settleTerminalState(80);
       console.log(chalk.dim("\nReturning to mode selection..."));
       return;
     }

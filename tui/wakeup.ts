@@ -75,7 +75,7 @@ export async function runWakeup() {
   }
 
   while (true) {
-    await settleTerminalState(20);
+    await settleTerminalState(80);
     const mode = await select({
       message: "Choose your mode",
       options: [
@@ -88,7 +88,7 @@ export async function runWakeup() {
     });
 
     if (isCancel(mode) || mode === "exit") {
-      await settleTerminalState(20);
+      await settleTerminalState(80);
       console.log(chalk.dim("\n Exiting... \n"));
       console.log(chalk.dim("Arrivederci!"));
       return;
@@ -98,7 +98,7 @@ export async function runWakeup() {
       console.log(chalk.dim("You chose CLI mode!"));
       console.log(chalk.dim("Starting CLI..."));
       await runCliMode();
-      await settleTerminalState(30);
+      await settleTerminalState(80);
     } else if (mode === "telegram") {
       if (!process.env.TELEGRAM_BOT_TOKEN) {
         note(
@@ -113,13 +113,13 @@ export async function runWakeup() {
         console.log(chalk.dim("Starting Telegram Bot..."));
         await runTelegramMode();
       }
-      await settleTerminalState(30);
+      await settleTerminalState(80);
     } else if (mode === "model") {
       await promptAndSaveModel();
-      await settleTerminalState(30);
+      await settleTerminalState(80);
     } else if (mode === "key") {
       await promptAndSaveApiKey();
-      await settleTerminalState(30);
+      await settleTerminalState(80);
     }
   }
 }

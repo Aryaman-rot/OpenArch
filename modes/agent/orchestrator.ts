@@ -35,20 +35,20 @@ export async function runAgentMode() {
     let history: ModelMessage[] = [];
 
     while (true) {
-        await settleTerminalState(20);
+        await settleTerminalState(80);
         const goal = await text({
             message: "What would you like me to do?",
             placeholder: "Concrete task for this codebase",
         });
 
         if (isCancel(goal)) {
-            await settleTerminalState(20);
+            await settleTerminalState(80);
             return;
         }
 
         const trimmed = goal.trim();
         if (!trimmed || EXIT_PATTERN.test(trimmed)) {
-            await settleTerminalState(20);
+            await settleTerminalState(80);
             console.log(chalk.dim("\nReturning to mode selection..."));
             return;
         }

@@ -120,16 +120,16 @@ export async function runAskMode() {
   let history: ModelMessage[] = [];
 
   while (true) {
-    await settleTerminalState(20);
+    await settleTerminalState(80);
     const question = await text({ message: "What do you want to ask?" });
     if (isCancel(question)) {
-      await settleTerminalState(20);
+      await settleTerminalState(80);
       return;
     }
 
     const trimmed = question.trim();
     if (!trimmed || EXIT_PATTERN.test(trimmed)) {
-      await settleTerminalState(20);
+      await settleTerminalState(80);
       console.log(chalk.dim("\nReturning to mode selection..."));
       return;
     }

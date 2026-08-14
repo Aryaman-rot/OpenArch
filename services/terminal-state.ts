@@ -1,13 +1,21 @@
 import { stdin, stdout } from "node:process";
-import chalk from "chalk";
 
 let guardInitialized = false;
 
 /**
- * Initializes automatic stdin auto-resume guards.
- * Whenever @clack/core or any prompt attaches a 'keypress' or 'data' listener,
- * this guard ensures process.stdin is actively resumed so the prompt never
- * hangs waiting on a paused input stream.
+ * Installs a persistent auto-resume guard on process.stdin.
+ *
+ * @clack/core's Prompt class calls `this.rl.close()` when any prompt
+ * finishes (submit OR cancel/Esc), which internally calls
+ * process.stdin.pause(). The next prompt then attaches a 'keypress' listener
+ * and calls setRawMode(true) but NEVER calls stdin.resume() itself.
+ *
+ * To make this robust against the Esc key specifically, we use a small timer
+ * (80ms, past @clack/core's escapeCodeTimeout:50ms) on the 'newListener'
+ * hook so we don't resume BEFORE readline's internal escape-sequence timeout
+ * has finished processing and potentially re-paused stdin.
+ *
+ * This guard is a module-level singleton and is installed once on import.
  */
 export function initTerminalStateGuard(): void {
   if (guardInitialized) return;
@@ -17,13 +25,16 @@ export function initTerminalStateGuard(): void {
     if (stdin && typeof stdin.on === "function") {
       stdin.on("newListener", (event) => {
         if (event === "keypress" || event === "data") {
-          process.nextTick(() => {
+          // Delay must be > escapeCodeTimeout (50ms in @clack/core) to
+          // ensure any pending readline escape-sequence flush timer has
+          // already fired before we call resume().
+          setTimeout(() => {
             try {
-              if (stdin.isTTY && typeof stdin.resume === "function" && stdin.isPaused()) {
+              if (typeof stdin.resume === "function" && stdin.isPaused()) {
                 stdin.resume();
               }
             } catch {}
-          });
+          }, 80);
         }
       });
     }
@@ -37,7 +48,7 @@ initTerminalStateGuard();
  * Restores terminal stdin to a clean, active, non-raw state and ensures
  * cursor visibility.
  */
-export function restoreTerminalStdin(tag?: string): void {
+export function restoreTerminalStdin(): void {
   try {
     const stream = stdin as NodeJS.ReadStream & {
       setRawMode?: (mode: boolean) => void;
@@ -58,10 +69,12 @@ export function restoreTerminalStdin(tag?: string): void {
 }
 
 /**
- * Explicitly waits for pending event-loop ticks / stream pauses to settle,
- * then restores terminal stdin state.
+ * Waits long enough to outlast @clack/core's escapeCodeTimeout (50ms),
+ * then restores stdin. The delay must be > 50ms to handle the Esc key path,
+ * where readline's internal escape-sequence timer fires at t+50ms and may
+ * re-pause stdin after our first resume() call.
  */
-export async function settleTerminalState(delayMs = 40): Promise<void> {
+export async function settleTerminalState(delayMs = 80): Promise<void> {
   restoreTerminalStdin();
   if (delayMs > 0) {
     await new Promise((r) => setTimeout(r, delayMs));

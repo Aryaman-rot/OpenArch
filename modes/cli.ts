@@ -8,7 +8,7 @@ import { handleAgentModelError } from "../ai";
 import { restoreTerminalStdin, settleTerminalState } from "../services/terminal-state";
 
 async function runModeSafely(label: string, run: () => Promise<void>): Promise<void> {
-    await settleTerminalState(30);
+    await settleTerminalState(80);
     try {
         await run();
     } catch (err) {
@@ -17,13 +17,13 @@ async function runModeSafely(label: string, run: () => Promise<void>): Promise<v
             console.log(chalk.red(`\n✖  ${label} failed: ${message}\n`));
         }
     } finally {
-        await settleTerminalState(40);
+        await settleTerminalState(80);
     }
 }
 
 export async function runCliMode() {
     while (true) {
-        await settleTerminalState(20);
+        await settleTerminalState(80);
         const mode = await select({
             message: "Choose your CLI Mode",
             options: [
@@ -36,7 +36,7 @@ export async function runCliMode() {
         });
 
         if (isCancel(mode) || mode === "back") {
-            await settleTerminalState(20);
+            await settleTerminalState(80);
             return;
         }
 
@@ -53,7 +53,7 @@ export async function runCliMode() {
             await runModeSafely("Pragmatist Mode", runPragmatistMode);
         }
 
-        await settleTerminalState(30);
+        await settleTerminalState(80);
 
         if (mode !== "agent" && mode !== "plan" && mode !== "ask" && mode !== "pragmatist") {
             console.log(chalk.red("Invalid mode selected."));
