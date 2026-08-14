@@ -5,10 +5,11 @@ import { runAskMode } from "./ask/orchestrator";
 import { runPlanMode } from "./plan/orchestrator";
 import { runPragmatistMode } from "./pragmatist/orchestrator";
 import { handleAgentModelError } from "../ai";
-import { restoreTerminalStdin, settleTerminalState } from "../services/terminal-state";
+import { restoreTerminalStdin, settleTerminalState, logDiag } from "../services/terminal-state";
 
 async function runModeSafely(label: string, run: () => Promise<void>): Promise<void> {
-    await settleTerminalState(80);
+    logDiag("runModeSafely:START", label);
+    await settleTerminalState(80, `runModeSafely:${label}:pre`);
     try {
         await run();
     } catch (err) {
@@ -17,13 +18,16 @@ async function runModeSafely(label: string, run: () => Promise<void>): Promise<v
             console.log(chalk.red(`\n✖  ${label} failed: ${message}\n`));
         }
     } finally {
-        await settleTerminalState(80);
+        await settleTerminalState(80, `runModeSafely:${label}:post`);
+        logDiag("runModeSafely:END", label);
     }
 }
 
 export async function runCliMode() {
+    logDiag("runCliMode:ENTER");
     while (true) {
-        await settleTerminalState(80);
+        await settleTerminalState(80, "runCliMode:loopTop");
+        logDiag("runCliMode:beforeSelectPrompt");
         const mode = await select({
             message: "Choose your CLI Mode",
             options: [
@@ -34,9 +38,11 @@ export async function runCliMode() {
                 { value: "back", label: "Back to Main Menu" },
             ],
         });
+        logDiag("runCliMode:afterSelectPrompt", `chosen=${String(mode)}`);
 
         if (isCancel(mode) || mode === "back") {
-            await settleTerminalState(80);
+            logDiag("runCliMode:exitTriggered", `isCancel=${isCancel(mode)}, back=${mode === "back"}`);
+            await settleTerminalState(80, "runCliMode:exit");
             return;
         }
 

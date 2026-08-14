@@ -8,11 +8,12 @@ import { stepCountIs, ToolLoopAgent, type ModelMessage } from "ai";
 import { getAgentModel, handleAgentModelError } from "../../ai";
 import { renderTerminalMarkdown } from "../../tui/terminal-md";
 import { runApprovalFlow } from "./approval";
-import { restoreTerminalStdin, settleTerminalState } from "../../services/terminal-state";
+import { restoreTerminalStdin, settleTerminalState, logDiag } from "../../services/terminal-state";
 
 const EXIT_PATTERN = /^(exit|back|quit)$/i;
 
 export async function runAgentMode() {
+    logDiag("runAgentMode:ENTER");
     console.log(chalk.bold("Running in Agent Mode..."));
     console.log(chalk.dim("Tip: ask me what tools I have available."));
     console.log(chalk.dim("Type 'exit', 'back', or 'quit' (or press Esc) to return to the mode menu."));
@@ -35,20 +36,25 @@ export async function runAgentMode() {
     let history: ModelMessage[] = [];
 
     while (true) {
-        await settleTerminalState(80);
+        logDiag("runAgentMode:loopTop");
+        await settleTerminalState(80, "runAgentMode:beforeTextPrompt");
+        logDiag("runAgentMode:beforeTextPrompt");
         const goal = await text({
             message: "What would you like me to do?",
             placeholder: "Concrete task for this codebase",
         });
+        logDiag("runAgentMode:afterTextPrompt", `isCancel=${isCancel(goal)}, val=${typeof goal === "string" ? goal : "symbol"}`);
 
         if (isCancel(goal)) {
-            await settleTerminalState(80);
+            logDiag("runAgentMode:goalCancelledViaEsc");
+            await settleTerminalState(80, "runAgentMode:exitOnEsc");
             return;
         }
 
         const trimmed = goal.trim();
         if (!trimmed || EXIT_PATTERN.test(trimmed)) {
-            await settleTerminalState(80);
+            logDiag("runAgentMode:goalExitPatternMatched", `trimmed=${trimmed}`);
+            await settleTerminalState(80, "runAgentMode:exitOnPattern");
             console.log(chalk.dim("\nReturning to mode selection..."));
             return;
         }
