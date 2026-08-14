@@ -58,17 +58,16 @@ export async function runCliMode() {
         }
 
         if (mode === "agent") {
-            // POC: Execute Agent Mode in a dedicated, isolated child process
             runModeInChildProcess("agent");
         }
         if (mode === "plan") {
-            await runModeSafely("Plan Mode", runPlanMode);
+            runModeInChildProcess("plan");
         }
         if (mode === "ask") {
-            await runModeSafely("Ask Mode", runAskMode);
+            runModeInChildProcess("ask");
         }
         if (mode === "pragmatist") {
-            await runModeSafely("Pragmatist Mode", runPragmatistMode);
+            runModeInChildProcess("pragmatist");
         }
 
         await settleTerminalState(80);

@@ -36,6 +36,41 @@ program
       await runAgentMode();
       process.exit(0);
     }
+    if (mode === "plan") {
+      const { runPlanMode } = await import("./modes/plan/orchestrator");
+      await runPlanMode();
+      process.exit(0);
+    }
+    if (mode === "ask") {
+      const { runAskMode } = await import("./modes/ask/orchestrator");
+      await runAskMode();
+      process.exit(0);
+    }
+    if (mode === "pragmatist") {
+      const { runPragmatistMode } = await import("./modes/pragmatist/orchestrator");
+      await runPragmatistMode();
+      process.exit(0);
+    }
+    if (mode === "cli") {
+      const { runCliMode } = await import("./modes/cli");
+      await runCliMode();
+      process.exit(0);
+    }
+    if (mode === "telegram") {
+      const { runTelegramMode } = await import("./modes/telegram");
+      await runTelegramMode();
+      process.exit(0);
+    }
+    if (mode === "model") {
+      const { promptAndSaveModel } = await import("./tui/model-select");
+      await promptAndSaveModel();
+      process.exit(0);
+    }
+    if (mode === "key") {
+      const { promptAndSaveApiKey } = await import("./tui/model-select");
+      await promptAndSaveApiKey();
+      process.exit(0);
+    }
   });
 
 program
