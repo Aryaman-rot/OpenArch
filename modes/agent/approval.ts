@@ -4,6 +4,7 @@ import type { ActionTracker } from "./action-tracker.ts";
 import type { ActionLog } from "./types.ts";
 import { composeBeforeAfter, formatPatch } from "./diff-view.ts";
 import { renderTerminalMarkdown } from "../../tui/terminal-md.ts";
+import { restoreTerminalStdin } from "../../services/terminal-state.ts";
 
 interface ReviewGroup {
   label: string;
@@ -65,6 +66,7 @@ function groupPending(pending: ActionLog[]): ReviewGroup[] {
 export async function runApprovalFlow(
   tracker: ActionTracker,
 ): Promise<boolean> {
+  restoreTerminalStdin();
   const pending = tracker.getPendingMutations();
 
   if (pending.length === 0) {
@@ -85,16 +87,19 @@ export async function runApprovalFlow(
 
   if (isCancel(choice) || choice === "cancel") {
     for (const a of pending) tracker.updateStatus(a.id, "rejected", false);
+    restoreTerminalStdin();
     return false;
   }
 
   if (choice === "all") {
     for (const a of pending) tracker.updateStatus(a.id, "approved", true);
+    restoreTerminalStdin();
     return true;
   }
 
   for (const g of groupPending(pending)) {
     while (true) {
+      restoreTerminalStdin();
       const opt = await select({
         message: chalk.bold(g.label),
         options: [
@@ -106,6 +111,7 @@ export async function runApprovalFlow(
 
       if (isCancel(opt)) {
         for (const a of pending) tracker.updateStatus(a.id, "rejected", false);
+        restoreTerminalStdin();
         return false;
       }
 
@@ -132,5 +138,6 @@ export async function runApprovalFlow(
     }
   }
 
+  restoreTerminalStdin();
   return tracker.getActions().some((a) => a.status === "approved");
 }

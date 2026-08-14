@@ -156,6 +156,7 @@ async function fetchOpenRouterModels(): Promise<SelectOption[]> {
 // ---------------------------------------------------------------------------
 
 import { getEnvWritePath, writeEnvFileSafely } from "../services/env-config";
+import { restoreTerminalStdin } from "../services/terminal-state";
 
 export function saveApiKeyToEnv(apiKey: string): void {
   const envPath = getEnvWritePath();
@@ -183,6 +184,7 @@ export function saveApiKeyToEnv(apiKey: string): void {
 }
 
 export async function promptAndSaveApiKey(): Promise<string | undefined> {
+  restoreTerminalStdin();
   const currentKey = process.env.OPENROUTER_API_KEY ? " (Key set)" : "";
   const input = await text({
     message: `Enter your OpenRouter API key${currentKey} (get one at https://openrouter.ai/keys):`,
@@ -194,7 +196,10 @@ export async function promptAndSaveApiKey(): Promise<string | undefined> {
     },
   });
 
-  if (isCancel(input)) return undefined;
+  if (isCancel(input)) {
+    restoreTerminalStdin();
+    return undefined;
+  }
 
   const key = input.trim();
   saveApiKeyToEnv(key);
@@ -204,6 +209,7 @@ export async function promptAndSaveApiKey(): Promise<string | undefined> {
     "API Key Configuration"
   );
 
+  restoreTerminalStdin();
   return key;
 }
 
@@ -239,6 +245,7 @@ export function saveModelToEnv(modelId: string): void {
 // ---------------------------------------------------------------------------
 
 export async function promptAndSaveModel(): Promise<string | undefined> {
+  restoreTerminalStdin();
   // Invalidate session cache so we always fetch a fresh list when the
   // config flow is entered.
   sessionCache = null;
@@ -259,6 +266,8 @@ export async function promptAndSaveModel(): Promise<string | undefined> {
       : `Loaded ${liveOptions.length} models from OpenRouter.`
   );
 
+  restoreTerminalStdin();
+
   const allOptions = [
     ...liveOptions,
     { value: "custom", label: "Enter a custom model ID…", hint: "Custom" },
@@ -269,11 +278,15 @@ export async function promptAndSaveModel(): Promise<string | undefined> {
     options: allOptions,
   });
 
-  if (isCancel(chosen)) return undefined;
+  if (isCancel(chosen)) {
+    restoreTerminalStdin();
+    return undefined;
+  }
 
   let finalModel = chosen as string;
 
   if (finalModel === "custom") {
+    restoreTerminalStdin();
     const customInput = await text({
       message: "Enter OpenRouter model ID:",
       placeholder: "e.g. mistralai/mistral-large",
@@ -284,7 +297,10 @@ export async function promptAndSaveModel(): Promise<string | undefined> {
       },
     });
 
-    if (isCancel(customInput)) return undefined;
+    if (isCancel(customInput)) {
+      restoreTerminalStdin();
+      return undefined;
+    }
     finalModel = customInput.trim();
   }
 
@@ -295,5 +311,6 @@ export async function promptAndSaveModel(): Promise<string | undefined> {
     "Model Configuration"
   );
 
+  restoreTerminalStdin();
   return finalModel;
 }

@@ -3,6 +3,7 @@ import { isCancel, text } from "@clack/prompts";
 
 import { runRepoWithEnvCheck } from "../../services/repo-runner";
 import { runWithRepoProgress } from "../../services/repo-progress";
+import { restoreTerminalStdin } from "../../services/terminal-state";
 
 function isAffirmative(value: string): boolean {
   return ["y", "yes"].includes(value.trim().toLowerCase());
@@ -72,6 +73,7 @@ function isValidRepoUrl(value: string): boolean {
 }
 
 export async function runPragmatistMode(): Promise<void> {
+  restoreTerminalStdin();
   console.log(chalk.bold("\nPragmatist Mode\n"));
   console.log(
     chalk.dim(
@@ -94,7 +96,10 @@ export async function runPragmatistMode(): Promise<void> {
     },
   });
 
-  if (isCancel(repoUrl) || !repoUrl.trim()) return;
+  if (isCancel(repoUrl) || !repoUrl.trim()) {
+    restoreTerminalStdin();
+    return;
+  }
 
   const rawArgs = await text({
     message: "Arguments to pass to the repo (optional)",
@@ -102,7 +107,10 @@ export async function runPragmatistMode(): Promise<void> {
     initialValue: "",
   });
 
-  if (isCancel(rawArgs)) return;
+  if (isCancel(rawArgs)) {
+    restoreTerminalStdin();
+    return;
+  }
 
   const args = rawArgs.trim() ? splitArgs(rawArgs) : [];
 
@@ -119,7 +127,10 @@ export async function runPragmatistMode(): Promise<void> {
     },
   });
 
-  if (isCancel(networkAnswer)) return;
+  if (isCancel(networkAnswer)) {
+    restoreTerminalStdin();
+    return;
+  }
 
   const allowNetwork = isAffirmative(networkAnswer ?? "");
 
@@ -148,5 +159,7 @@ export async function runPragmatistMode(): Promise<void> {
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);
     console.log(chalk.red(`\nPragmatist mode failed: ${message}\n`));
+  } finally {
+    restoreTerminalStdin();
   }
 }

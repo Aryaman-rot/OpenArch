@@ -2,6 +2,7 @@ import { multiselect, isCancel } from '@clack/prompts';
 import chalk from 'chalk';
 import type { Plan, PlanStep } from './types.ts';
 import { renderTerminalMarkdown } from '../../tui/terminal-md.ts';
+import { restoreTerminalStdin } from '../../services/terminal-state.ts';
 
 
 const COMPLEXITY_COLOR: Record<NonNullable<PlanStep['complexity']>, string> = {
@@ -35,6 +36,7 @@ export function printPlan(plan: Plan): void {
 
 
 export async function selectSteps(plan: Plan): Promise<PlanStep[]> {
+  restoreTerminalStdin();
   const steps = plan?.steps?.filter(
     (s) =>
       s &&
@@ -61,6 +63,7 @@ export async function selectSteps(plan: Plan): Promise<PlanStep[]> {
     required: false,
   });
 
+  restoreTerminalStdin();
   if (isCancel(picked)) return [];
   const set = new Set<string>(picked);
   return steps.filter((s) => set.has(s.id));

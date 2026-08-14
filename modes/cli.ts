@@ -1,41 +1,29 @@
 import chalk from "chalk";
 import { select, isCancel } from "@clack/prompts";
-import { stdin } from "node:process";
 import { runAgentMode } from "./agent/orchestrator";
 import { runAskMode } from "./ask/orchestrator";
 import { runPlanMode } from "./plan/orchestrator";
 import { runPragmatistMode } from "./pragmatist/orchestrator";
 import { handleAgentModelError } from "../ai";
-
-function restoreStdinState(): void {
-  try {
-    const stream = stdin as NodeJS.ReadStream & {
-      setRawMode?: (mode: boolean) => void;
-      isRaw?: boolean;
-    };
-    if (typeof stream.setRawMode === "function" && stream.isRaw) {
-      stream.setRawMode(false);
-    }
-    stream.resume();
-  } catch {
-    // best-effort terminal restore
-  }
-}
+import { restoreTerminalStdin } from "../services/terminal-state";
 
 async function runModeSafely(label: string, run: () => Promise<void>): Promise<void> {
+    restoreTerminalStdin();
     try {
         await run();
     } catch (err) {
-        restoreStdinState();
         if (!handleAgentModelError(err)) {
             const message = err instanceof Error ? err.message : String(err);
             console.log(chalk.red(`\n✖  ${label} failed: ${message}\n`));
         }
+    } finally {
+        restoreTerminalStdin();
     }
 }
 
 export async function runCliMode() {
     while (true) {
+        restoreTerminalStdin();
         const mode = await select({
             message: "Choose your CLI Mode",
             options: [
@@ -47,7 +35,10 @@ export async function runCliMode() {
             ],
         });
 
-        if (isCancel(mode) || mode === "back") return;
+        if (isCancel(mode) || mode === "back") {
+            restoreTerminalStdin();
+            return;
+        }
 
         if (mode === "agent") {
             await runModeSafely("Agent Mode", runAgentMode);
@@ -62,10 +53,10 @@ export async function runCliMode() {
             await runModeSafely("Pragmatist Mode", runPragmatistMode);
         }
 
+        restoreTerminalStdin();
+
         if (mode !== "agent" && mode !== "plan" && mode !== "ask" && mode !== "pragmatist") {
             console.log(chalk.red("Invalid mode selected."));
         }
     }
-
-
 }

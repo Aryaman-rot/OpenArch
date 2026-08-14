@@ -5,6 +5,7 @@ import { stdin as input, stdout as output } from "node:process";
 
 import type { EnvRequirement } from "./types";
 import { getRepoToolContext } from "./tool-context";
+import { restoreTerminalStdin } from "./terminal-state";
 
 function dedupe(keys: string[]): EnvRequirement[] {
   const seen = new Set<string>();
@@ -112,6 +113,7 @@ function isSecretKey(key: string): boolean {
 
 function askQuestion(prompt: string, mask: boolean, signal?: AbortSignal): Promise<string> {
   return new Promise((resolve, reject) => {
+    restoreTerminalStdin();
     const rl = readline.createInterface({
       input,
       output,
@@ -121,6 +123,7 @@ function askQuestion(prompt: string, mask: boolean, signal?: AbortSignal): Promi
     const cleanup = () => {
       signal?.removeEventListener("abort", onAbort);
       rl.close();
+      restoreTerminalStdin();
     };
 
     const onAbort = () => {

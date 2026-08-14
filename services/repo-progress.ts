@@ -5,6 +5,7 @@ import readline from "node:readline";
 import type { Tool, ToolExecutionOptions } from "ai";
 
 import { setRepoToolContext } from "./tool-context";
+import { restoreTerminalStdin } from "./terminal-state";
 
 export type RepoProgressWork<T> = (ctx: {
   signal: AbortSignal;
@@ -185,6 +186,7 @@ export async function runWithRepoProgress<T>(
       input.setRawMode(rawModeWasEnabled);
     }
     setRepoToolContext(undefined);
+    restoreTerminalStdin();
   }
 
   return outcome;

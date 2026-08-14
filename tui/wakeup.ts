@@ -11,6 +11,7 @@ import { runTelegramMode } from "../modes/telegram";
 
 import { promptAndSaveModel, promptAndSaveApiKey } from "./model-select";
 import { checkDockerStatus } from "../services/sandbox";
+import { restoreTerminalStdin } from "../services/terminal-state";
 
 // Register fonts in memory so figlet doesn't require font files on disk at runtime
 figlet.parseFont("ANSI Shadow", ansiShadowFont);
@@ -57,6 +58,7 @@ export async function runWakeup() {
     if (needsApiKey) {
       const key = await promptAndSaveApiKey();
       if (!key) {
+        restoreTerminalStdin();
         console.log(chalk.dim("\nSetup canceled. Returning...\n"));
         return;
       }
@@ -73,6 +75,7 @@ export async function runWakeup() {
   }
 
   while (true) {
+    restoreTerminalStdin();
     const mode = await select({
       message: "Choose your mode",
       options: [
@@ -85,6 +88,7 @@ export async function runWakeup() {
     });
 
     if (isCancel(mode) || mode === "exit") {
+      restoreTerminalStdin();
       console.log(chalk.dim("\n Exiting... \n"));
       console.log(chalk.dim("Arrivederci!"));
       return;
@@ -94,6 +98,7 @@ export async function runWakeup() {
       console.log(chalk.dim("You chose CLI mode!"));
       console.log(chalk.dim("Starting CLI..."));
       await runCliMode();
+      restoreTerminalStdin();
     } else if (mode === "telegram") {
       if (!process.env.TELEGRAM_BOT_TOKEN) {
         note(
@@ -108,10 +113,13 @@ export async function runWakeup() {
         console.log(chalk.dim("Starting Telegram Bot..."));
         await runTelegramMode();
       }
+      restoreTerminalStdin();
     } else if (mode === "model") {
       await promptAndSaveModel();
+      restoreTerminalStdin();
     } else if (mode === "key") {
       await promptAndSaveApiKey();
+      restoreTerminalStdin();
     }
   }
 }
