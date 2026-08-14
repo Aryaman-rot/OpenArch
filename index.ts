@@ -28,6 +28,17 @@ program
   });
 
 program
+  .command("submode <mode>")
+  .description("Internal child process runner for isolated mode execution")
+  .action(async (mode: string) => {
+    if (mode === "agent") {
+      const { runAgentMode } = await import("./modes/agent/orchestrator");
+      await runAgentMode();
+      process.exit(0);
+    }
+  });
+
+program
   .command("config")
   .description("Configure OpenArch settings (e.g. AI model)")
   .action(async () => {

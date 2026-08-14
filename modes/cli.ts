@@ -1,3 +1,4 @@
+import { spawnSync } from "node:child_process";
 import chalk from "chalk";
 import { select, isCancel } from "@clack/prompts";
 import { runAgentMode } from "./agent/orchestrator";
@@ -6,6 +7,16 @@ import { runPlanMode } from "./plan/orchestrator";
 import { runPragmatistMode } from "./pragmatist/orchestrator";
 import { handleAgentModelError } from "../ai";
 import { restoreTerminalStdin, settleTerminalState, logDiag } from "../services/terminal-state";
+
+function runModeInChildProcess(submode: string): void {
+    logDiag("runModeInChildProcess:SPAWNING", submode);
+    const entryScript = process.argv[1] || "dist/index.js";
+    spawnSync(process.execPath, [entryScript, "submode", submode], {
+        stdio: "inherit",
+        env: process.env,
+    });
+    logDiag("runModeInChildProcess:CHILD_RETURNED", submode);
+}
 
 async function runModeSafely(label: string, run: () => Promise<void>): Promise<void> {
     logDiag("runModeSafely:START", label);
@@ -47,7 +58,8 @@ export async function runCliMode() {
         }
 
         if (mode === "agent") {
-            await runModeSafely("Agent Mode", runAgentMode);
+            // POC: Execute Agent Mode in a dedicated, isolated child process
+            runModeInChildProcess("agent");
         }
         if (mode === "plan") {
             await runModeSafely("Plan Mode", runPlanMode);
