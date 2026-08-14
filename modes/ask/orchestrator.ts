@@ -11,7 +11,7 @@ import { runApprovalFlow } from "../agent/approval.ts";
 import { createWebTools } from "../plan/web-tools.ts";
 import { wrapToolsWithStatus } from "../../services/repo-progress.ts";
 import { listAvailableTools } from "../../services/tool-context.ts";
-import { restoreTerminalStdin } from "../../services/terminal-state.ts";
+import { restoreTerminalStdin, settleTerminalState } from "../../services/terminal-state.ts";
 
 
 function createAskTools(executor: ToolExecutor) {
@@ -120,16 +120,16 @@ export async function runAskMode() {
   let history: ModelMessage[] = [];
 
   while (true) {
-    restoreTerminalStdin();
+    await settleTerminalState(20);
     const question = await text({ message: "What do you want to ask?" });
     if (isCancel(question)) {
-      restoreTerminalStdin();
+      await settleTerminalState(20);
       return;
     }
 
     const trimmed = question.trim();
     if (!trimmed || EXIT_PATTERN.test(trimmed)) {
-      restoreTerminalStdin();
+      await settleTerminalState(20);
       console.log(chalk.dim("\nReturning to mode selection..."));
       return;
     }

@@ -5,10 +5,10 @@ import { runAskMode } from "./ask/orchestrator";
 import { runPlanMode } from "./plan/orchestrator";
 import { runPragmatistMode } from "./pragmatist/orchestrator";
 import { handleAgentModelError } from "../ai";
-import { restoreTerminalStdin } from "../services/terminal-state";
+import { restoreTerminalStdin, settleTerminalState } from "../services/terminal-state";
 
 async function runModeSafely(label: string, run: () => Promise<void>): Promise<void> {
-    restoreTerminalStdin();
+    await settleTerminalState(30);
     try {
         await run();
     } catch (err) {
@@ -17,13 +17,13 @@ async function runModeSafely(label: string, run: () => Promise<void>): Promise<v
             console.log(chalk.red(`\n✖  ${label} failed: ${message}\n`));
         }
     } finally {
-        restoreTerminalStdin();
+        await settleTerminalState(40);
     }
 }
 
 export async function runCliMode() {
     while (true) {
-        restoreTerminalStdin();
+        await settleTerminalState(20);
         const mode = await select({
             message: "Choose your CLI Mode",
             options: [
@@ -36,7 +36,7 @@ export async function runCliMode() {
         });
 
         if (isCancel(mode) || mode === "back") {
-            restoreTerminalStdin();
+            await settleTerminalState(20);
             return;
         }
 
@@ -53,7 +53,7 @@ export async function runCliMode() {
             await runModeSafely("Pragmatist Mode", runPragmatistMode);
         }
 
-        restoreTerminalStdin();
+        await settleTerminalState(30);
 
         if (mode !== "agent" && mode !== "plan" && mode !== "ask" && mode !== "pragmatist") {
             console.log(chalk.red("Invalid mode selected."));

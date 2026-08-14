@@ -15,7 +15,7 @@ import type { PlanStep } from "./types.ts";
 import { createWebTools } from "./web-tools.ts";
 import { wrapToolsWithStatus } from "../../services/repo-progress.ts";
 import { listAvailableTools } from "../../services/tool-context.ts";
-import { restoreTerminalStdin } from "../../services/terminal-state.ts";
+import { restoreTerminalStdin, settleTerminalState } from "../../services/terminal-state.ts";
 
 
 function stepPrompt(goal: string, step: PlanStep): string {
@@ -31,16 +31,16 @@ export async function runPlanMode(): Promise<void> {
   console.log(chalk.dim("Type 'exit', 'back', or 'quit' (or press Esc) to return to the mode menu.\n"));
 
   while (true) {
-    restoreTerminalStdin();
+    await settleTerminalState(20);
     const goal = await text({ message: "What is your goal?" });
     if (isCancel(goal)) {
-      restoreTerminalStdin();
+      await settleTerminalState(20);
       return;
     }
 
     const trimmed = goal.trim();
     if (!trimmed || EXIT_PATTERN.test(trimmed)) {
-      restoreTerminalStdin();
+      await settleTerminalState(20);
       console.log(chalk.dim("\nReturning to mode selection..."));
       return;
     }

@@ -8,7 +8,7 @@ import { stepCountIs, ToolLoopAgent, type ModelMessage } from "ai";
 import { getAgentModel, handleAgentModelError } from "../../ai";
 import { renderTerminalMarkdown } from "../../tui/terminal-md";
 import { runApprovalFlow } from "./approval";
-import { restoreTerminalStdin } from "../../services/terminal-state";
+import { restoreTerminalStdin, settleTerminalState } from "../../services/terminal-state";
 
 const EXIT_PATTERN = /^(exit|back|quit)$/i;
 
@@ -35,20 +35,20 @@ export async function runAgentMode() {
     let history: ModelMessage[] = [];
 
     while (true) {
-        restoreTerminalStdin();
+        await settleTerminalState(20);
         const goal = await text({
             message: "What would you like me to do?",
             placeholder: "Concrete task for this codebase",
         });
 
         if (isCancel(goal)) {
-            restoreTerminalStdin();
+            await settleTerminalState(20);
             return;
         }
 
         const trimmed = goal.trim();
         if (!trimmed || EXIT_PATTERN.test(trimmed)) {
-            restoreTerminalStdin();
+            await settleTerminalState(20);
             console.log(chalk.dim("\nReturning to mode selection..."));
             return;
         }
