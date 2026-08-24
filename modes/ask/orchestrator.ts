@@ -140,7 +140,10 @@ export async function runAskMode() {
         messages: [...history, { role: "user", content: trimmed }],
       });
     } catch (err) {
-      if (handleAgentModelError(err)) return;
+      if (handleAgentModelError(err)) {
+        await settleTerminalState(80);
+        return;
+      }
       throw err;
     }
 

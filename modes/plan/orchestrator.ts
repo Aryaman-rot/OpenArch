@@ -93,7 +93,10 @@ export async function runPlanMode(): Promise<void> {
       try {
         r = await agent.generate({ prompt: stepPrompt(plan.goal, step) });
       } catch (err) {
-        if (handleAgentModelError(err)) return;
+        if (handleAgentModelError(err)) {
+          await settleTerminalState(80);
+          return;
+        }
         throw err;
       }
 

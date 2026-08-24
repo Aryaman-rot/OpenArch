@@ -10,8 +10,10 @@ import pkg from "./package.json" assert { type: "json" };
 // Load configuration from ~/.openarch/.env and/or local .env
 loadEnvConfig();
 
-// Non-blocking update check
-checkForUpdatesAsync(pkg.version);
+// Non-blocking update check (only in main interactive session, not submode workers)
+if (!process.argv.includes("submode")) {
+  checkForUpdatesAsync(pkg.version);
+}
 
 const program = new Command();
 
@@ -31,45 +33,65 @@ program
   .command("submode <mode>")
   .description("Internal child process runner for isolated mode execution")
   .action(async (mode: string) => {
+    // Safe exit: unref stdin so it doesn't keep the event loop alive,
+    // then let all pending timers/handles drain naturally before exiting.
+    // This prevents the libuv UV_HANDLE_CLOSING assertion crash that occurs
+    // when process.exit(0) tears down handles while timers are still pending.
+    function safeExit(): void {
+      try {
+        if (process.stdin && typeof process.stdin.unref === "function") {
+          process.stdin.unref();
+        }
+        if (process.stdout && typeof process.stdout.unref === "function") {
+          process.stdout.unref();
+        }
+        if (process.stderr && typeof process.stderr.unref === "function") {
+          process.stderr.unref();
+        }
+      } catch {}
+      // Allow any pending timers/IO callbacks to drain, then exit cleanly
+      setTimeout(() => process.exit(0), 100);
+    }
+
     if (mode === "agent") {
       const { runAgentMode } = await import("./modes/agent/orchestrator");
       await runAgentMode();
-      process.exit(0);
+      safeExit();
     }
     if (mode === "plan") {
       const { runPlanMode } = await import("./modes/plan/orchestrator");
       await runPlanMode();
-      process.exit(0);
+      safeExit();
     }
     if (mode === "ask") {
       const { runAskMode } = await import("./modes/ask/orchestrator");
       await runAskMode();
-      process.exit(0);
+      safeExit();
     }
     if (mode === "pragmatist") {
       const { runPragmatistMode } = await import("./modes/pragmatist/orchestrator");
       await runPragmatistMode();
-      process.exit(0);
+      safeExit();
     }
     if (mode === "cli") {
       const { runCliMode } = await import("./modes/cli");
       await runCliMode();
-      process.exit(0);
+      safeExit();
     }
     if (mode === "telegram") {
       const { runTelegramMode } = await import("./modes/telegram");
       await runTelegramMode();
-      process.exit(0);
+      safeExit();
     }
     if (mode === "model") {
       const { promptAndSaveModel } = await import("./tui/model-select");
       await promptAndSaveModel();
-      process.exit(0);
+      safeExit();
     }
     if (mode === "key") {
       const { promptAndSaveApiKey } = await import("./tui/model-select");
       await promptAndSaveApiKey();
-      process.exit(0);
+      safeExit();
     }
   });
 

@@ -69,7 +69,10 @@ export async function runAgentMode() {
                 },
             });
         } catch (err) {
-            if (handleAgentModelError(err)) return;
+            if (handleAgentModelError(err)) {
+                await settleTerminalState(80);
+                return;
+            }
             throw err;
         }
 
