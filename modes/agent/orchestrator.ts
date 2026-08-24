@@ -78,7 +78,22 @@ export async function runAgentMode() {
 
         history = result.response.messages;
 
-        if (result.text?.trim()) console.log(renderTerminalMarkdown(result.text));
+        const hasToolCalls = result.steps.some((s) => s.toolCalls.length > 0);
+        const hasText = !!result.text?.trim();
+
+        if (hasText) {
+            console.log(renderTerminalMarkdown(result.text));
+        } else if (!hasToolCalls) {
+            console.log(
+                "\n" +
+                    chalk.yellow("⚠  The model returned an empty response.\n") +
+                    chalk.dim(
+                        "   This model may not support tool calling or encountered an internal generation issue.\n" +
+                        "   • Try rephrasing your request or run 'openarch config' to pick a different model (e.g. meta-llama/llama-3.3-70b-instruct).\n"
+                    )
+            );
+            continue;
+        }
 
         const ok = await runApprovalFlow(tracker);
         if (!ok) {

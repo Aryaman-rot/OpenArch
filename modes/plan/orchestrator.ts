@@ -100,8 +100,20 @@ export async function runPlanMode(): Promise<void> {
         throw err;
       }
 
-      if (r.text) {
+      const hasToolCalls = r.steps?.some((s) => s.toolCalls.length > 0);
+      const hasText = !!r.text?.trim();
+
+      if (hasText) {
         console.log(renderTerminalMarkdown(r.text));
+      } else if (!hasToolCalls) {
+        console.log(
+          "\n" +
+            chalk.yellow("⚠  The model returned an empty response for this step.\n") +
+            chalk.dim(
+              "   This model may not support tool calling or encountered an internal generation issue.\n" +
+                "   • Try rephrasing your goal or run 'openarch config' to pick a different model (e.g. meta-llama/llama-3.3-70b-instruct).\n"
+            )
+        );
       }
       executedCount++;
     }

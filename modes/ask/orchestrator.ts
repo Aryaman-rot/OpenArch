@@ -149,8 +149,22 @@ export async function runAskMode() {
 
     history = result.response.messages;
 
-    const answer = result.text?.trim() || "(no answer)";
-    console.log("\n" + renderTerminalMarkdown(answer) + "\n");
+    const hasToolCalls = result.steps.some((s) => s.toolCalls.length > 0);
+    const answer = result.text?.trim();
+
+    if (!answer && !hasToolCalls) {
+      console.log(
+        "\n" +
+          chalk.yellow("⚠  The model returned an empty response.\n") +
+          chalk.dim(
+            "   This model may not support tool calling or encountered an internal generation issue.\n" +
+              "   • Try rephrasing your question or run 'openarch config' to pick a different model (e.g. meta-llama/llama-3.3-70b-instruct).\n"
+          )
+      );
+      continue;
+    }
+
+    console.log("\n" + renderTerminalMarkdown(answer || "(no answer)") + "\n");
 
     const wantsSave = await confirm({
       message: "Save this answer to a .md file in the current directory?",
